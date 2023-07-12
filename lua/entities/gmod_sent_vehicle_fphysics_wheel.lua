@@ -538,20 +538,25 @@ if CLIENT then
 
 	function ENT:Think()
 		local curtime = CurTime()
-		self.SmokeTimer = self.SmokeTimer or 0
-		if self.SmokeTimer < curtime then
+		local entTable = self:GetTable()
+		entTable.SmokeTimer = entTable.SmokeTimer or 0
+		if entTable.SmokeTimer < curtime then
 			self:ManageSmoke()
-			self.SmokeTimer = curtime + 0.005
+			entTable.SmokeTimer = curtime + 0.005
 		end
 		
 		self:NextThink( curtime )
 		return true
 	end
 
+	local distance = 6000 * 6000
 	function ENT:ManageSmoke()
 		local BaseEnt = self:GetBaseEnt()
+
 		if not IsValid( BaseEnt ) then return end
-		
+		if LocalPlayer():GetPos():DistToSqr(self:GetPos()) > distance then return end
+		if not BaseEnt:GetActive() then return end
+
 		local WheelOnGround = self:GetOnGround()
 		local GripLoss = self:GetGripLoss()
 		local Material = self:GetSurfaceMaterial()
@@ -562,7 +567,7 @@ if CLIENT then
 			self.FadeHeat = self.FadeHeat * 0.995
 		end
 			
-		local Scale = self.FadeHeat ^ 3 / 1000
+		local Scale = self.FadeHeat ^ 3 * 0.001
 		local SmokeOn = (self.FadeHeat >= 7)
 		local DirtOn = GripLoss > 0.05
 		local lcolor = BaseEnt:GetTireSmokeColor() * 255
@@ -601,6 +606,7 @@ if CLIENT then
 		if (Speed > 150 or DirtOn) and OnRim then
 			self:MakeSparks( GripLoss, Dir, Pos, WheelSize )
 		end
+
 	end
 
 	function ENT:MakeSparks( Scale, Dir, Pos, WheelSize )

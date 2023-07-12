@@ -53,8 +53,8 @@ function ENT:PostEntityPaste( ply , ent , createdEntities )
 	self:SetThrottle( 0 )
 end
 
-function ENT:UpdateTransmitState() 
-	return TRANSMIT_ALWAYS
+function ENT:UpdateTransmitState()
+	return TRANSMIT_PVS -- TODO: originally this was TRANSMIT_ALWAYS which would network players all over the map for no reason, it was changed to PVS only, *might* cause issues.
 end
 
 function ENT:SetupView()
