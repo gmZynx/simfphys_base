@@ -221,7 +221,6 @@ function TOOL:LeftClick( trace )
 
         timer.Simple( 0.25, function()
             if not IsValid( ent ) then return end
-            if not IsValid( self ) then return end
 
             local front_model = self:GetClientInfo("frontwheelmodel")
             local front_angle = GetAngleFromSpawnlist(front_model)
