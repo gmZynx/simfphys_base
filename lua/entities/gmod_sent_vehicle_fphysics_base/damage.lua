@@ -200,13 +200,15 @@ function ENT:ExplodeVehicle()
 
 	local Driver = self:GetDriver()
 	if IsValid( Driver ) and self.RemoteDriver ~= Driver then
-		Driver:TakeDamage( Driver:Health() + Driver:Armor(), self.LastAttacker or Entity(0), self.LastInflictor or Entity(0) )
+		Driver:ExitVehicle()
+		Driver:TakeDamage( Driver:Health() + Driver:Armor(), self.LastAttacker, self.LastInflictor )
 	end
 
 	if self.PassengerSeats then
 		for i = 1, table.Count( self.PassengerSeats ) do
 			local Passenger = self.pSeat[i]:GetDriver()
 			if IsValid( Passenger ) then
+				Passenger:ExitVehicle()
 				Passenger:TakeDamage( Passenger:Health() + Passenger:Armor(), self.LastAttacker or Entity(0), self.LastInflictor or Entity(0) )
 			end
 		end
