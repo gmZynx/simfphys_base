@@ -1,4 +1,4 @@
-local checkinterval = 2
+local checkinterval = 3
 local NextCheck = CurTime() + checkinterval
 
 local mat = Material( "sprites/light_ignorez" )
@@ -787,7 +787,7 @@ hook.Add( "Think", "simfphys_lights_managment", function()
 	if NextCheck < curtime then
 		NextCheck = curtime + checkinterval
 
-		for i, ent in pairs( ents.FindByClass( "gmod_sent_vehicle_fphysics_base" ) ) do
+		for _, ent in pairs( ents.FindByClass( "gmod_sent_vehicle_fphysics_base" ) ) do
 			if ent.EnableLights ~= true then
 				local listname = ent:GetLights_List()
 
