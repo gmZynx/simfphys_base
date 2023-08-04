@@ -186,26 +186,27 @@ end
 function ENT:ManageEffects( Active, fThrottle, LimitRPM )
 	self:DamageEffects()
 
-	Active = Active and (self:GetFlyWheelRPM() ~= 0)
+	Active = Active and self:GetFlyWheelRPM() ~= 0
 	if not Active then return end
 	if not self.ExhaustPositions then return end
 
-	local Scale = fThrottle * (0.2 + math.min(self:GetRPM() / LimitRPM,1) * 0.8) ^ 2
+	local Scale = fThrottle * ( 0.2 + math.min( self:GetRPM() / LimitRPM, 1 ) * 0.8 ) ^ 2
 
-	for i = 1, table.Count( self.ExhaustPositions ) do
-		if self.ExhaustPositions[i].OnBodyGroups then
-			if self:BodyGroupIsValid( self.ExhaustPositions[i].OnBodyGroups ) then
+	for i = 1, #self.ExhaustPositions do
+		local positions = self.ExhaustPositions[i]
+		if positions.OnBodyGroups then
+			if self:BodyGroupIsValid( positions.OnBodyGroups ) then
 				local effectdata = EffectData()
-					effectdata:SetOrigin( self.ExhaustPositions[i].pos )
-					effectdata:SetAngles( self.ExhaustPositions[i].ang )
+					effectdata:SetOrigin( positions.pos )
+					effectdata:SetAngles( positions.ang )
 					effectdata:SetMagnitude( Scale )
 					effectdata:SetEntity( self )
 				util.Effect( "simfphys_exhaust", effectdata )
 			end
 		else
 			local effectdata = EffectData()
-				effectdata:SetOrigin( self.ExhaustPositions[i].pos )
-				effectdata:SetAngles( self.ExhaustPositions[i].ang )
+				effectdata:SetOrigin( positions.pos )
+				effectdata:SetAngles( positions.ang )
 				effectdata:SetMagnitude( Scale )
 				effectdata:SetEntity( self )
 			util.Effect( "simfphys_exhaust", effectdata )
