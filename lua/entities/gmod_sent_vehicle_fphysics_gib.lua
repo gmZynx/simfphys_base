@@ -57,7 +57,6 @@ if SERVER then
 				net.Broadcast()
 				
 				util.ScreenShake( self:GetPos(), 50, 50, 1.5, 700 )
-				util.BlastDamage( self, Entity(0), self:GetPos(), 300,200 )
 				
 				local Light = ents.Create( "light_dynamic" )
 				Light:SetPos( self:GetPos() + Vector( 0, 0, 10 ) )
