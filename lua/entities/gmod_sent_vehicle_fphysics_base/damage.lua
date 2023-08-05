@@ -278,7 +278,13 @@ function ENT:PhysicsCollide( data, physobj )
 
 			self:HurtPlayers( 5 )
 
-			self:TakeDamage( (data.Speed / 7) * simfphys.DamageMul, Entity(0), Entity(0) )
+			local dmg = DamageInfo()
+				dmg:SetDamageType( DMG_CRUSH )
+				dmg:SetDamage( ( data.Speed / 7 ) * simfphys.DamageMul )
+				dmg:SetAttacker( Entity( 0 ) )
+				dmg:SetInflictor( Entity( 0 ) )
+				dmg:SetDamagePosition( pos )
+			self:TakeDamageInfo( dmg )
 		else
 			Spark( pos , data.HitNormal , "MetalVehicle.ImpactSoft" )
 
@@ -286,7 +292,13 @@ function ENT:PhysicsCollide( data, physobj )
 				local hitent = data.HitEntity:IsPlayer()
 				if not hitent then
 					if simfphys.DamageMul > 1 then
-						self:TakeDamage( (data.Speed / 28) * simfphys.DamageMul, Entity(0), Entity(0) )
+						local dmg = DamageInfo()
+							dmg:SetDamageType( DMG_CRUSH )
+							dmg:SetDamage( ( data.Speed / 28 ) * simfphys.DamageMul )
+							dmg:SetAttacker( Entity( 0 ) )
+							dmg:SetInflictor( Entity( 0 ) )
+							dmg:SetDamagePosition( pos )
+						self:TakeDamageInfo( dmg )
 					end
 				end
 			end
@@ -294,7 +306,13 @@ function ENT:PhysicsCollide( data, physobj )
 			if data.Speed > 500 then
 				self:HurtPlayers( 2 )
 
-				self:TakeDamage( (data.Speed / 14) * simfphys.DamageMul, Entity(0), Entity(0) )
+				local dmg = DamageInfo()
+					dmg:SetDamageType( DMG_CRUSH )
+					dmg:SetDamage( ( data.Speed / 14 ) * simfphys.DamageMul )
+					dmg:SetAttacker( Entity( 0 ) )
+					dmg:SetInflictor( Entity( 0 ) )
+					dmg:SetDamagePosition( pos )
+				self:TakeDamageInfo( dmg )
 			end
 		end
 	end
