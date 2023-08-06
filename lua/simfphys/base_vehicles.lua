@@ -405,7 +405,7 @@ local V = {
 		LightsTable = "conapc",
 		
 		GibModels = {
-			"models/blu/conscript_apc.mdl",
+			"models/props_vehicles/apc001.mdl",
 			"models/props_vehicles/apc_tire001.mdl",
 			"models/props_vehicles/apc_tire001.mdl",
 			"models/props_vehicles/apc_tire001.mdl",
