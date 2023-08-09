@@ -58,7 +58,7 @@ simfphys.rock = CreateConVar( "sv_simfphys_traction_rock", "1", {FCVAR_REPLICATE
 simfphys.wood = CreateConVar( "sv_simfphys_traction_wood", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 
 function simfphys.IsCar( ent )
-	return ent:IsValid() and ent.IsSimfphyscar or false
+	return ent:IsValid() and ent.IsSimfphyscar and true or false
 end
 
 local meta = FindMetaTable( "Player" )
