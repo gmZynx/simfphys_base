@@ -250,7 +250,7 @@ function TOOL:LeftClick( trace )
                 ent:SteerVehicle( 0 )
 
                 local Wheels = ent.Wheels
-                for i = 1, Wheels do
+                for i = 1, #Wheels do
                     local Wheel = Wheels[ i ]
                     if Wheel:IsValid() then
                         local physobj = Wheel:GetPhysicsObject()
