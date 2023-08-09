@@ -81,7 +81,7 @@ if SERVER then
 		local base = self:GetBaseEnt()
 		if not base:IsValid() then return end
 
-		if base:GetIsVehicleLocked() or base:HasPassengerEnemyTeam( ply ) then
+		if base:GetIsVehicleLocked() then
 			base:EmitSound( "doors/default_locked.wav" )
 
 			return
