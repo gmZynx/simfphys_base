@@ -98,11 +98,12 @@ local function DrawCircle( X, Y, radius )
 	end
 end
 
+local LastSteerVehicle
 hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 	if ply ~= LocalPlayer() then return end
 	
 	local vehicle = ply:GetVehicle()
-	if not IsValid(vehicle) then return end
+	if not vehicle:IsValid() then return end
 	
 	if isMouseSteer then
 		local freelook = input.IsButtonDown( ms_key_freelook )
@@ -124,10 +125,13 @@ hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 		SteerVehicle = 0
 	end
 	
-	net.Start( "simfphys_mousesteer" )
-		net.WriteEntity( vehicle )
-		net.WriteFloat( SteerVehicle )
-	net.SendToServer()
+	if LastSteerVehicle ~= SteerVehicle then
+		LastSteerVehicle = SteerVehicle
+		net.Start( "simfphys_mousesteer" )
+			net.WriteEntity( vehicle )
+			net.WriteFloat( SteerVehicle )
+		net.SendToServer()
+	end
 end)
 
 -- draw.arc function by bobbleheadbob
