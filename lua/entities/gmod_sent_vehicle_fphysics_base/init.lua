@@ -1068,10 +1068,12 @@ function ENT:GetClosestSeat( ply )
 	
 	for i = 1, #pseats do
 		local pseat = pseats[ i ]
-		local Dist = pseat:GetPos():DistToSqr( plypos )
-		if ( Dist < Distance ) then
-			Seat = pseat
-			Distance = Dist
+		if not pseat:GetDriver():IsValid() then
+			local Dist = pseat:GetPos():DistToSqr( plypos )
+			if ( Dist < Distance ) then
+				Seat = pseat
+				Distance = Dist
+			end
 		end
 	end
 	
