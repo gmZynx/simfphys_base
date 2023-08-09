@@ -22,13 +22,13 @@ function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
 	local Ent = data:GetEntity()
 	
-	if not IsValid( Ent ) then return end
+	if not Ent:IsValid() then return end
 	
 	local Vel = Ent:GetVelocity():Length()
 	
 	local emitter = ParticleEmitter( Pos, false )
 
-	local particle = emitter:Add( Materials[math.Round(math.Rand(1,table.Count( Materials )),0)], Pos )
+	local particle = emitter:Add( Materials[math.Round(math.Rand(1,#Materials),0)], Pos )
 	
 	if particle then
 		particle:SetVelocity( VectorRand() * 100 + Vector(0,0,math.min(Vel,600) ) )

@@ -294,7 +294,7 @@ local function buildcontrolsmenu( self )
 	
 	local yy = 45
 	local binders = {}
-	for i = 1, table.Count( k_list ) do
+	for i = 1, #k_list do
 		binders[i] = simplebinder(25,yy,k_list,i,self.PropPanel)
 		yy = yy + 45
 	end
@@ -305,7 +305,7 @@ local function buildcontrolsmenu( self )
 	ResetButton:SetPos( 25, yy + 10 )
 	ResetButton:SetSize( 500, 25 )
 	ResetButton.DoClick = function()
-		for i = 1, table.Count( binders ) do
+		for i = 1, #binders do
 			local kentry = k_list[i]
 			local key = kentry[1]
 			local default = kentry[2]
@@ -376,13 +376,6 @@ local function buildserversettingsmenu( self )
 	local y = 0
 	
 	if LocalPlayer():IsSuperAdmin() then
-		y = y + 25
-		local CheckBoxTeam = vgui.Create( "DCheckBoxLabel", self.PropPanel)
-		CheckBoxTeam:SetPos( 25, y )
-		CheckBoxTeam:SetText( "Disallow players of different teams to enter the same vehicle" )
-		CheckBoxTeam:SetValue( GetConVar( "sv_simfphys_teampassenger" ) :GetInt() )
-		CheckBoxTeam:SizeToContents()
-	
 		y = y + 25
 		local CheckBoxDamage = vgui.Create( "DCheckBoxLabel", self.PropPanel)
 		CheckBoxDamage:SetPos( 25, y )
@@ -562,14 +555,6 @@ local function buildserversettingsmenu( self )
 		Label:SetPos( 30, y )
 		Label:SetText( "Fuel tank size multiplier is: "..fuelscale )
 		Label:SizeToContents()
-		
-		if GetConVar( "sv_simfphys_teampassenger" ):GetBool() then
-			y = y + 25
-			local Label = vgui.Create( "DLabel", self.PropPanel )
-			Label:SetPos( 30, y )
-			Label:SetText( "Only players of the same team can enter the same vehicle" )
-			Label:SizeToContents()
-		end
 
 		y = y + 40
 		local Label = vgui.Create( "DLabel", self.PropPanel )
@@ -770,7 +755,7 @@ spawnmenu.AddContentType( "simfphys_vehicles", function( container, obj )
 
 	end
 	
-	if IsValid( container ) then
+	if container:IsValid() then
 		container:Add( icon )
 	end
 

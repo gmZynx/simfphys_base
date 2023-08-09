@@ -4,7 +4,7 @@ util.AddNetworkString( "simfphys_send_ppdata" )
 local function sendppdata( length, ply )
 	local ent = net.ReadEntity()
 	
-	if not IsValid( ent ) then return end
+	if not ent:IsValid() then return end
 	
 	if ent.IsInitialized and not ent:IsInitialized() then return end
 	if not istable( ent.Wheels ) then return end

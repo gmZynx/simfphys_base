@@ -70,7 +70,7 @@ if CLIENT then
 		local p3 = self:LocalToWorld( Vector(0,-20,30) )
 		local endPos = self:LocalToWorld( Vector(0.06,-20.3,37) )
 		
-		if IsValid( ply ) then
+		if ply then
 			local id = ply:LookupAttachment("anim_attachment_rh")
 			local attachment = ply:GetAttachment( id )
 			
@@ -80,17 +80,14 @@ if CLIENT then
 			p3 = endPos + attachment.Ang:Right() * 5 - attachment.Ang:Up() * 20
 		end
 		
+		local active = ply:IsValid()
+		local de = active and 1 or 2
+		
+		render.SetMaterial( cable )
 		for i = 1,15 do
-			local active = IsValid( ply )
-			
-			local de = active and 1 or 2
-			
 			if (not active and i > 1) or active then
-			
 				local sp = bezier(startPos, p2, p3, endPos, (i - de) / 15)
 				local ep = bezier(startPos, p2, p3, endPos, i / 15)
-				
-				render.SetMaterial( cable )
 				render.DrawBeam( sp, ep, 2, 1, 1, Color( 100, 100, 100, 255 ) ) 
 			end
 		end
@@ -164,7 +161,7 @@ function ENT:Use( ply )
 			ply.gas_InUse = true
 			
 			local weapon = ply:GetActiveWeapon()
-			if IsValid( weapon ) and weapon:GetClass() == "weapon_simfillerpistol" then
+			if weapon:IsValid() and weapon:GetClass() == "weapon_simfillerpistol" then
 				weapon:SetFuelType( FUELTYPE_DIESEL )
 			end
 		end
@@ -190,11 +187,11 @@ function ENT:OnActiveChanged( name, old, new)
 		self.sound:PlayEx(0,0)
 		self.sound:ChangeVolume( 0.4,2 )
 		self.sound:ChangePitch( 255,3 )
-		if IsValid( self.PumpEnt ) then
+		if self.PumpEnt:IsValid() then
 			self.PumpEnt:SetNoDraw( true )
 		end
 	else
-		if IsValid( self.PumpEnt ) then
+		if self.PumpEnt:IsValid() then
 			self.PumpEnt:SetNoDraw( false )
 		end
 		
@@ -224,9 +221,7 @@ function ENT:Initialize()
 	self.PumpEnt:SetParent( self )
 	
 	local PObj = self:GetPhysicsObject()
-	if not IsValid( PObj ) then return end
-	
-	PObj:EnableMotion( false )
+	if PObj:IsValid() then PObj:EnableMotion( false ) end
 end
 
 function ENT:Think()
@@ -235,7 +230,7 @@ function ENT:Think()
 	self:NextThink( CurTime() + 0.5 )
 	
 	local ply = self:GetUser()
-	if IsValid( ply ) then
+	if ply:IsValid() then
 		self:SetFuelUsed( ply.usedFuel )
 		
 		local Dist = (ply:GetPos() - self:GetPos()):Length()
@@ -280,7 +275,7 @@ function ENT:OnRemove()
 	
 	local ply = self:GetUser()
 	
-	if IsValid( ply ) then
+	if ply:IsValid() then
 		ply.gas_InUse = false
 		if ply:Alive() then
 			if ply:HasWeapon( "weapon_simfillerpistol" ) then

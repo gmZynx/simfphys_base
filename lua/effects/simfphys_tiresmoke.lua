@@ -32,12 +32,12 @@ function EFFECT:Init( data )
 	local emitter = ParticleEmitter(Pos, false )
 	
 	if emitter then
-		if IsValid( Entity ) then
+		if Entity:IsValid() then
 				local Vel = Entity:GetVelocity() / 3
 				
 				local OffsetPos = OffsetPos + Ran * 0.4 + Vector(0,0,-WheelSize * 0.8)
 				
-				local particle = emitter:Add( Materials[math.Round(math.Rand(1, table.Count(Materials) ),0)], OffsetPos )
+				local particle = emitter:Add( Materials[math.Round(math.Rand(1, #Materials ),0)], OffsetPos )
 				
 				local Mul = 0.3 + Mul * 0.05
 				
@@ -61,8 +61,8 @@ function EFFECT:Init( data )
 		else
 			local OffsetPos2 = OffsetPos + Ran * 0.4 + Vector(0,0,-WheelSize)
 
-			local particle1 = emitter:Add( Materials[math.Round(math.Rand(1, table.Count(Materials) ),0)], OffsetPos )
-			local particle2 = emitter:Add( Materials[math.Round(math.Rand(1, table.Count(Materials) ),0)], OffsetPos2 )
+			local particle1 = emitter:Add( Materials[math.Round(math.Rand(1, #Materials ),0)], OffsetPos )
+			local particle2 = emitter:Add( Materials[math.Round(math.Rand(1, #Materials ),0)], OffsetPos2 )
 
 			if particle1 then
 				particle1:SetVelocity( Vector(0,0,-50) )

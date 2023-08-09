@@ -14,8 +14,6 @@ local RearProjectedLights = true
 local Shadows = false
 local vtable = istable( vtable ) and vtable or {}
 
-local IsValid = IsValid
-
 cvars.AddChangeCallback( "cl_simfphys_hidesprites", function( convar, oldValue, newValue ) SpritesDisabled = ( tonumber( newValue )~=0 ) end)
 cvars.AddChangeCallback( "cl_simfphys_frontlamps", function( convar, oldValue, newValue ) FrontProjectedLights = ( tonumber( newValue )~=0 ) end)
 cvars.AddChangeCallback( "cl_simfphys_rearlamps", function( convar, oldValue, newValue ) RearProjectedLights = ( tonumber( newValue )~=0 ) end)
@@ -33,7 +31,7 @@ Shadows = GetConVar( "cl_simfphys_shadows" ):GetBool()
 local function BodyGroupIsValid( bodygroups, entity )
 	for index, groups in pairs( bodygroups ) do
 		local mygroup = entity:GetBodygroup( index )
-		for g_index = 1, table.Count( groups ) do
+		for g_index = 1, #groups do
 			if (mygroup == groups[g_index]) then return true end
 		end
 	end
@@ -173,7 +171,7 @@ end
 local function ManageProjTextures()
 	if vtable then
 		for i, ent in pairs(vtable) do
-			if IsValid(ent) then
+			if ent:IsValid() then
 				local entTable = ent:GetTable()
 				local vel = ent:GetVelocity() * RealFrameTime()
 
@@ -224,14 +222,14 @@ local function ManageProjTextures()
 
 							proj.projector = thelamp
 						else
-							if IsValid( proj.projector ) then
+							if proj.projector and proj.projector:IsValid() then
 								proj.projector:Remove()
 								proj.projector = nil
 							end
 						end
 					end
 
-					if IsValid( proj.projector ) then
+					if proj.projector and proj.projector:IsValid() then
 						local pos = ent:LocalToWorld( proj.pos )
 						local ang = ent:LocalToWorldAngles( proj.ang )
 
@@ -346,7 +344,7 @@ local function SetupProjectedTextures( ent, vehiclelist )
 	ent:CallOnRemove( "remove_projected_textures", function( vehicle )
 		for i, proj in pairs( ent.Projtexts ) do
 			local thelamp = proj.projector
-			if IsValid(thelamp) then
+			if thelamp and thelamp:IsValid() then
 				thelamp:Remove()
 			end
 		end
@@ -372,7 +370,7 @@ local function SetUpLights( vname , ent )
 
 	if istable(vehiclelist.ems_sprites) then
 		ent.PixVisEMS = {}
-		for i = 1, table.Count( vehiclelist.ems_sprites ) do
+		for i = 1, #vehiclelist.ems_sprites do
 			ent.PixVisEMS[i] = util.GetPixelVisibleHandle()
 
 			ent.LightsEMS[i].material = ent.LightsEMS[i].material and Material( ent.LightsEMS[i].material ) or mat2
@@ -736,36 +734,36 @@ local function DrawEMSLights( ent )
 	local Time = CurTime()
 
 	if ent.LightsEMS then
+		local LightsEMS = ent.LightsEMS
+		for i = 1, #LightsEMS do
+			if not LightsEMS[i].Damaged then
 
-		for i = 1, table.Count( ent.LightsEMS ) do
-			if not ent.LightsEMS[i].Damaged then
-
-				local size = ent.LightsEMS[i].size
-				local LightPos = ent:LocalToWorld( ent.LightsEMS[i].pos )
+				local size = LightsEMS[i].size
+				local LightPos = ent:LocalToWorld( LightsEMS[i].pos )
 				local Visible = util.PixelVisible( LightPos, 4, ent.PixVisEMS[i] )
-				local mat = ent.LightsEMS[i].material
-				local numcolors = table.Count( ent.LightsEMS[i].Colors )
+				local mat = LightsEMS[i].material
+				local numcolors = #LightsEMS[i].Colors
 
-				ent.LightsEMS[i].Timer = ent.LightsEMS[i].Timer or 0
-				ent.LightsEMS[i].Index = ent.LightsEMS[i].Index or 0
+				LightsEMS[i].Timer = LightsEMS[i].Timer or 0
+				LightsEMS[i].Index = LightsEMS[i].Index or 0
 
 				if numcolors > 1 then
 
-					if ent.LightsEMS[i].Timer < Time then
+					if LightsEMS[i].Timer < Time then
 
-						ent.LightsEMS[i].Timer = Time + ent.LightsEMS[i].Speed
-						ent.LightsEMS[i].Index = ent.LightsEMS[i].Index + 1
+						LightsEMS[i].Timer = Time + LightsEMS[i].Speed
+						LightsEMS[i].Index = LightsEMS[i].Index + 1
 
-						if ent.LightsEMS[i].Index > numcolors then
-							ent.LightsEMS[i].Index = 1
+						if LightsEMS[i].Index > numcolors then
+							LightsEMS[i].Index = 1
 						end
 					end
 				end
 
-				local col = ent.LightsEMS[i].Colors[ent.LightsEMS[i].Index]
+				local col = LightsEMS[i].Colors[LightsEMS[i].Index]
 
-				if ent.LightsEMS[i].OnBodyGroups then
-					Visible = ent:BodyGroupIsValid( ent.LightsEMS[i].OnBodyGroups ) and Visible or 0
+				if LightsEMS[i].OnBodyGroups then
+					Visible = ent:BodyGroupIsValid( LightsEMS[i].OnBodyGroups ) and Visible or 0
 				end
 
 				if Visible and Visible >= 0.6 and col ~= Color(0,0,0,0) then
@@ -806,7 +804,7 @@ end )
 hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function()
 	if vtable then
 		for i, ent in pairs( vtable ) do
-			if IsValid( ent ) then
+			if ent:IsValid() then
 				local entTable = ent:GetTable()
 				if ent:GetEMSEnabled() then
 					DrawEMSLights( ent )
@@ -857,10 +855,10 @@ local function spritedamage( length )
 	if not simfphys.DamageEnabled then return end
 
 	local veh = net.ReadEntity()
-	if not IsValid( veh ) then return end
+	if not veh:IsValid() then return end
 
 	local pos = veh:LocalToWorld( net.ReadVector() )
-	local Rad = net.ReadBool() and 26 or 8
+	local Rad = ( net.ReadBool() and 26 or 8 ) ^ 2
 	local curtime = CurTime()
 
 	veh.NextImpactsnd = veh.NextImpactsnd or 0
@@ -910,17 +908,17 @@ local function spritedamage( length )
 		end
 	end
 
-	if istable(veh.LightsEMS) then
+	local LightsEMS = veh.LightsEMS
+	if istable(LightsEMS) then
+		for i = 1, #LightsEMS do
 
-		for i = 1, table.Count( veh.LightsEMS ) do
+			if not LightsEMS[i].Damaged then
 
-			if not veh.LightsEMS[i].Damaged then
-
-				local spritepos = veh:LocalToWorld( veh.LightsEMS[i].pos )
-				local Dist = (spritepos - pos):Length()
+				local spritepos = veh:LocalToWorld( LightsEMS[i].pos )
+				local Dist = (spritepos - pos):LengthSqr()
 
 				if Dist < Rad then
-					veh.LightsEMS[i].Damaged = true
+					LightsEMS[i].Damaged = true
 
 					local effectdata = EffectData()
 						effectdata:SetOrigin( spritepos )
@@ -940,7 +938,7 @@ net.Receive("simfphys_spritedamage", spritedamage)
 local function spriterepair( length )
 	local veh = net.ReadEntity()
 
-	if not IsValid( veh ) then return end
+	if not veh:IsValid() then return end
 
 	veh.turnsignals_damaged = nil
 
@@ -956,9 +954,10 @@ local function spriterepair( length )
 		end
 	end
 
-	if istable( veh.LightsEMS ) then
-		for i = 1, table.Count( veh.LightsEMS ) do
-			veh.LightsEMS[i].Damaged = false
+	local LightsEMS = veh.LightsEMS
+	if istable( LightsEMS ) then
+		for i = 1, #LightsEMS do
+			LightsEMS[i].Damaged = false
 		end
 	end
 end
@@ -969,25 +968,29 @@ net.Receive( "simfphys_turnsignal", function( length )
 	local ent = net.ReadEntity()
 	local turnmode = net.ReadInt( 32 )
 
-	if not IsValid( ent ) then return end
+	if not ent:IsValid() then return end
 
 	if turnmode == 0 then
 		ent.signal_left = false
 		ent.signal_right = false
+		return
 	end
 
 	if turnmode == 1 then
 		ent.signal_left = true
 		ent.signal_right = true
+		return
 	end
 
 	if turnmode == 2 then
 		ent.signal_left = true
 		ent.signal_right = false
+		return
 	end
 
 	if turnmode == 3 then
 		ent.signal_left = false
 		ent.signal_right = true
+		return
 	end
 end )

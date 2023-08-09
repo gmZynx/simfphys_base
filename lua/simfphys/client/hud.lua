@@ -660,12 +660,12 @@ hook.Add( "HUDPaint", "simfphys_HUD", function()
 	local ply = LocalPlayer()
 	local turnmenu_isopen = false
 	
-	if not IsValid( ply ) or not ply:Alive() then turnmenu_wasopen = false return end
+	if not ply:IsValid() or not ply:Alive() then turnmenu_wasopen = false return end
 
 	local vehicle = ply:GetVehicle()
 	local vehiclebase = ply:GetSimfphys()
 	
-	if not IsValid( vehicle ) or not IsValid( vehiclebase ) then 
+	if not vehicle:IsValid() or not vehiclebase:IsValid() then 
 		ply.oldPassengersmf = {}
 		
 		turnmenu_wasopen = false
@@ -674,7 +674,7 @@ hook.Add( "HUDPaint", "simfphys_HUD", function()
 	end
 	
 	local pSeats = vehiclebase:GetPassengerSeats()
-	local SeatCount = table.Count( pSeats )
+	local SeatCount = #pSeats + 1
 	
 	PaintSeatSwitcher( vehiclebase, pSeats, SeatCount )
 	
@@ -715,7 +715,7 @@ hook.Add("HUDPaint", "simfphys_vehicleditorinfo", function()
 	if ply:InVehicle() then return end
 	
 	local wep = ply:GetActiveWeapon()
-	if not IsValid( wep ) or wep:GetClass() ~= "gmod_tool" or ply:GetInfo("gmod_toolmode") ~= "simfphyseditor" then return end
+	if not wep:IsValid() or wep:GetClass() ~= "gmod_tool" or ply:GetInfo("gmod_toolmode") ~= "simfphyseditor" then return end
 
 	local trace = ply:GetEyeTrace()
 	

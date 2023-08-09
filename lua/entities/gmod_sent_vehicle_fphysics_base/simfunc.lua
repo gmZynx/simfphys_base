@@ -2,9 +2,10 @@ function ENT:WheelOnGround()
 	self.FrontWheelPowered = self:GetPowerDistribution() ~= 1
 	self.RearWheelPowered = self:GetPowerDistribution() ~= -1
 	
-	for i = 1, table.Count( self.Wheels ) do
-		local Wheel = self.Wheels[i]		
-		if IsValid(Wheel) then
+	local Wheels = self.Wheels
+	for i = 1, #Wheels do
+		local Wheel = Wheels[i]		
+		if Wheel:IsValid() then
 			local dmgMul = Wheel:GetDamaged() and 0.5 or 1
 			local surfacemul = simfphys.TractionData[Wheel:GetSurfaceMaterial():lower()]
 			
@@ -147,7 +148,7 @@ function ENT:SimulateEngine(IdleRPM,LimitRPM,Powerbandstart,Powerbandend,c_time)
 end
 
 function ENT:SimulateTransmission(k_throttle,k_brake,k_fullthrottle,k_clutch,k_handbrake,k_gearup,k_geardown,isauto,IdleRPM,Powerbandstart,Powerbandend,shiftmode,cruisecontrol,curtime)
-	local GearsCount = table.Count( self.Gears ) 
+	local GearsCount = #self.Gears
 	local cruiseThrottle = math.min( math.max(self.cc_speed - math.abs(self.ForwardSpeed),0) / 10 ^ 2, 1)
 	
 	if isnumber(self.ForceTransmission) then
@@ -319,10 +320,11 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 	local Efficiency = self:GetEfficiency()
 	local GripOffset = self:GetTractionBias() * MaxGrip
 
-	for i = 1, table.Count( self.Wheels ) do
-		local Wheel = self.Wheels[i]
+	local Wheels = self.Wheels
+	for i = 1, #Wheels do
+		local Wheel = Wheels[i]
 		
-		if IsValid( Wheel ) then
+		if Wheel:IsValid() then
 			local WheelPos = self:LogicWheelPos( i )
 			local WheelRadius = WheelPos.IsFrontWheel and self.FrontWheelRadius or self.RearWheelRadius
 			local WheelDiameter = WheelRadius * 2
@@ -340,10 +342,10 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 			
 			if self.CustomWheels then
 				if WheelPos.IsFrontWheel then
-					Forward = IsValid(self.SteerMaster) and Steer.Forward or self.Forward
-					Right = IsValid(self.SteerMaster) and Steer.Right or self.Right
+					Forward = self.SteerMaster:IsValid() and Steer.Forward or self.Forward
+					Right = self.SteerMaster:IsValid() and Steer.Right or self.Right
 				else
-					if IsValid( self.SteerMaster2 ) then
+					if self.SteerMaster2 and self.SteerMaster2:IsValid() then
 						Forward = Steer.Forward2
 						Right = Steer.Right2
 					end
@@ -408,7 +410,7 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 			
 			if self.CustomWheels then
 				local GhostEnt = self.GhostWheels[i]
-				if IsValid( GhostEnt ) then
+				if GhostEnt:IsValid() then
 					local Angle = GhostEnt:GetAngles()
 					local offsetang = WheelPos.IsFrontWheel and self.CustomWheelAngleOffset or (self.CustomWheelAngleOffset_R or self.CustomWheelAngleOffset)
 					local Direction = GhostEnt:LocalToWorldAngles( offsetang ):Forward()

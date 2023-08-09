@@ -79,7 +79,7 @@ function TOOL:RightClick( trace )
 		
 		local gears = ent.Gears
 		local diffgear = ent:GetDifferentialGear()
-		local num = table.Count( gears ) - 2
+		local num = #gears - 2
 		
 		for i = 3, 13 do
 			ply:ConCommand( "simfphysgeareditor_gear_"..(i - 2).." "..(gears[i] or 0.001))

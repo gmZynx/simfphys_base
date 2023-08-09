@@ -11,7 +11,7 @@ local function EntityLookup(CreatedEntities)
 		if id == nil then return default end
 		if id == 0 then return game.GetWorld() end
 		local ent = CreatedEntities[id] or (isnumber(id) and ents.GetByIndex(id))
-		if IsValid(ent) then return ent else return default end
+		if Ent:IsValid() then return ent else return default end
 	end
 end
 
@@ -61,9 +61,9 @@ function ENT:Think()
 	if self.NextTick < Time then
 		self.NextTick = Time + 0.025
 		
-		if IsValid( self.DriverSeat ) then
+		if self.DriverSeat:IsValid() then
 			local Driver = self.DriverSeat:GetDriver()
-			Driver = IsValid( self.RemoteDriver ) and self.RemoteDriver or Driver
+			Driver = self.RemoteDriver and self.RemoteDriver:IsValid() and self.RemoteDriver or Driver
 			
 			local OldDriver = self:GetDriver()
 			if OldDriver ~= Driver then
@@ -73,8 +73,8 @@ function ENT:Think()
 
 				self:SetDriver( Driver )
 				
-				local HadDriver = IsValid( OldDriver )
-				local HasDriver = IsValid( Driver )
+				local HadDriver = OldDriver:IsValid()
+				local HasDriver = Driver:IsValid()
 				
 				if HasDriver then
 					self:SetActive( true )
@@ -102,8 +102,9 @@ function ENT:Think()
 					end
 					
 					if self.keys then
-						for i = 1, table.Count( self.keys ) do
-							numpad.Remove( self.keys[i] )
+						local keys = self.keys
+						for i = 1, #keys do
+							numpad.Remove( keys[ i ] )
 						end
 					end
 					
@@ -222,19 +223,19 @@ function ENT:TriggerInput( name, value )
 	
 	if name == "Eject Driver" then
 		local Driver = self:GetDriver()
-		if IsValid( Driver ) then
+		if Driver:IsValid() then
 			Driver:ExitVehicle()
 		end
 	end
 	
 	if name == "Eject Passengers" then
 		if istable( self.pSeat ) then
-			for i = 1, table.Count( self.pSeat ) do
-				if IsValid( self.pSeat[i] ) then
+			local passenger_seats = self.pSeat
+			for i = 1, #passenger_seats do
+				if passenger_seats[i]:IsValid() then
+					local Driver = passenger_seats[i]:GetDriver()
 					
-					local Driver = self.pSeat[i]:GetDriver()
-					
-					if IsValid( Driver ) then
+					if Driver:IsValid() then
 						Driver:ExitVehicle()
 					end
 				end
@@ -244,9 +245,11 @@ function ENT:TriggerInput( name, value )
 	
 	if name == "Steer" then
 		self:SteerVehicle( math.Clamp( value, -1 , 1) * self.VehicleData["steerangle"] )
-		for i = 1, table.Count(self.Wheels) do
-			local Wheel = self.Wheels[i]
-			if IsValid( Wheel ) then
+
+		local Wheels = self.Wheels
+		for i = 1, #Wheels do
+			local Wheel = Wheels[i]
+			if Wheel:IsValid() then
 				Wheel:PhysWake()
 			end
 		end
@@ -262,14 +265,14 @@ function ENT:TriggerInput( name, value )
 
 	if name == "Gear Up" then
 		if value >= 1 then
-			self.CurrentGear = math.Clamp(self.CurrentGear + 1,1,table.Count( self.Gears ) )
+			self.CurrentGear = math.Clamp( self.CurrentGear + 1, 1, #self.Gears )
 			self:SetGear( self.CurrentGear )
 		end
 	end
 	
 	if name == "Gear Down" then
 		if value >= 1 then
-			self.CurrentGear = math.Clamp(self.CurrentGear - 1,1,table.Count( self.Gears ) )
+			self.CurrentGear = math.Clamp( self.CurrentGear - 1, 1, #self.Gears )
 			self:SetGear( self.CurrentGear )
 		end
 	end
@@ -288,7 +291,7 @@ function ENT:TriggerInput( name, value )
 end
 
 function ENT:ForceGear( desGear )
-	self.CurrentGear = math.Clamp( math.Round( desGear, 0 ),1,table.Count( self.Gears ) )
+	self.CurrentGear = math.Clamp( math.Round( desGear, 0 ), 1, #self.Gears )
 	self:SetGear( self.CurrentGear )
 end
 
@@ -356,10 +359,11 @@ function ENT:OnActiveChanged( name, old, new)
 		self:SetIsBraking( false )
 	end
 	
-	if istable( self.Wheels ) then
-		for i = 1, table.Count( self.Wheels ) do
-			local Wheel = self.Wheels[ i ]
-			if IsValid(Wheel) then
+	local Wheels = self.Wheels
+	if istable( Wheels ) then
+		for i = 1, #Wheels do
+			local Wheel = Wheels[ i ]
+			if Wheel:IsValid() then
 				Wheel:SetOnGround( 0 )
 			end
 		end
@@ -434,7 +438,7 @@ function ENT:SetColors()
 		if dot ~= self.OldColor then
 			
 			for i, prop in pairs( self.ColorableProps ) do
-				if IsValid(prop) then
+				if prop:IsValid() then
 					prop:SetColor( Color )
 					prop:SetRenderMode( self:GetRenderMode() )
 				end
@@ -527,7 +531,7 @@ function ENT:SimulateVehicle( curtime )
 	
 	if Active then
 		local ply = self:GetDriver()
-		local IsValidDriver = IsValid( ply )
+		local IsValidDriver = ply:IsValid()
 		
 		local GearUp = self.PressedKeys["M1"] and 1 or self.PressedKeys["joystick_gearup"]
 		local GearDown = self.PressedKeys["M2"] and 1 or self.PressedKeys["joystick_geardown"]
@@ -592,12 +596,13 @@ function ENT:SetupControls( ply )
 	self:ResetJoystick()
 	
 	if self.keys then
-		for i = 1, table.Count( self.keys ) do
-			numpad.Remove( self.keys[i] )
+		local keys = self.keys
+		for i = 1, #keys do
+			numpad.Remove( keys[ i ] )
 		end
 	end
 
-	if IsValid(ply) then
+	if ply:IsValid() then
 		self.cl_SteerSettings = {
 			Overwrite = (ply:GetInfoNum( "cl_simfphys_overwrite", 0 ) >= 1),
 			TurnSpeed = ply:GetInfoNum( "cl_simfphys_steerspeed", 8 ),
@@ -724,9 +729,9 @@ end
 
 function ENT:PhysicalSteer()
 	
-	if IsValid(self.SteerMaster) then
+	if self.SteerMaster and self.SteerMaster:IsValid() then
 		local physobj = self.SteerMaster:GetPhysicsObject()
-		if not IsValid(physobj) then return end
+		if not physobj:IsValid() then return end
 		
 		if physobj:IsMotionEnabled() then
 			physobj:EnableMotion(false)
@@ -735,9 +740,9 @@ function ENT:PhysicalSteer()
 		self.SteerMaster:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(-self.VehicleData[ "Steer" ],-self.CustomSteerAngle,self.CustomSteerAngle),0) ) )
 	end
 	
-	if IsValid(self.SteerMaster2) then
+	if self.SteerMaster2 and self.SteerMaster2:IsValid() then
 		local physobj = self.SteerMaster2:GetPhysicsObject()
-		if not IsValid(physobj) then return end
+		if not physobj:IsValid() then return end
 		
 		if physobj:IsMotionEnabled() then
 			physobj:EnableMotion(false)
@@ -789,7 +794,7 @@ function ENT:DamagedStall()
 	local rtimer = 0.8
 	
 	timer.Simple( rtimer, function()
-		if not IsValid( self ) then return end
+		if not self:IsValid() then return end
 		net.Start( "simfphys_backfire" )
 			net.WriteEntity( self )
 		net.Broadcast()
@@ -854,18 +859,18 @@ function ENT:StallAndRestart( nTimer, bIgnoreSettings )
 	self:StopEngine()
 	
 	local ply = self:GetDriver()
-	if IsValid(ply) and not bIgnoreSettings then
+	if ply:IsValid() and not bIgnoreSettings then
 		if ply:GetInfoNum( "cl_simfphys_autostart", 1 ) <= 0 then return end
 	end
 	
 	timer.Simple( nTimer, function()
-		if not IsValid(self) then return end
+		if not self:IsValid() then return end
 		self:StartEngine( bIgnoreSettings )
 	end)
 end
 
 function ENT:PlayerSteerVehicle( ply, left, right )
-	if IsValid( ply ) then
+	if ply:IsValid() then
 		local CounterSteeringEnabled = (ply:GetInfoNum( "cl_simfphys_ctenable", 0 ) or 1) == 1
 		local CounterSteeringMul =  math.Clamp(ply:GetInfoNum( "cl_simfphys_ctmul", 0 ) or 0.7,0.1,2)
 		local MaxHelpAngle = math.Clamp(ply:GetInfoNum( "cl_simfphys_ctang", 0 ) or 15,1,90)
@@ -970,8 +975,9 @@ function ENT:EnteringSequence( ply )
 			end
 		end
 	else
-		for i = 1, table.Count( self.Enterpoints ) do
-			local a_ = self.Enterpoints[ i ]
+		local enterpoints = self.Enterpoints
+		for i = 1, #enterpoints do
+			local a_ = enterpoints[ i ]
 			
 			local a_pos = self:GetAttachment( self:LookupAttachment( a_ ) ).Pos
 			local a_dist = (ply:GetPos() - a_pos):Length()
@@ -995,17 +1001,17 @@ function ENT:EnteringSequence( ply )
 end
 
 function ENT:GetMouseSteer()
-	if IsValid(self.DriverSeat) then return (self.DriverSeat.ms_Steer or 0) end
+	if self.DriverSeat:IsValid() then return (self.DriverSeat.ms_Steer or 0) end
 	
 	return 0
 end
 
 function ENT:Use( ply )
-	if not IsValid( ply ) then return end
+	if not ply:IsValid() then return end
 	
 	if hook.Run( "simfphysUse", self, ply ) then return end
 
-	if self:GetIsVehicleLocked() or self:HasPassengerEnemyTeam( ply ) then 
+	if self:GetIsVehicleLocked() then 
 		self:EmitSound( "doors/default_locked.wav" )
 
 		return
@@ -1015,17 +1021,17 @@ function ENT:Use( ply )
 end
 
 function ENT:SetPassenger( ply )
-	if not IsValid( ply ) then return end
+	if not ply:IsValid() then return end
 	
-	if not IsValid(self:GetDriver()) and not ply:KeyDown(IN_WALK) then
+	if not self:GetDriver():IsValid() and not ply:KeyDown(IN_WALK) then
 		ply:SetAllowWeaponsInVehicle( false ) 
-		if IsValid(self.DriverSeat) then
+		if self.DriverSeat:IsValid() then
 			
 			self:EnteringSequence( ply )
 			ply:EnterVehicle( self.DriverSeat )
 			
 			timer.Simple( 0.01, function()
-				if IsValid(ply) then
+				if ply:IsValid() then
 					local angles = Angle(0,90,0)
 					ply:SetEyeAngles( angles )
 				end
@@ -1035,17 +1041,13 @@ function ENT:SetPassenger( ply )
 		if self.PassengerSeats then
 			local closestSeat = self:GetClosestSeat( ply )
 			
-			if not closestSeat or IsValid( closestSeat:GetDriver() ) then
-				
-				for i = 1, table.Count( self.pSeat ) do
-					if IsValid(self.pSeat[i]) then
-						
-						local HasPassenger = IsValid(self.pSeat[i]:GetDriver())
-						
-						if not HasPassenger then
-							ply:EnterVehicle( self.pSeat[i] )
-							break
-						end
+			if not closestSeat or closestSeat:GetDriver():IsValid() then
+				local pseats = self.pSeat
+				for i = 1, #pseats do
+					local pseat = self.pseats[ i ]
+					if pseat:IsValid() and not pseat:GetDriver() then
+						ply:EnterVehicle( pseat )
+						break
 					end
 				end
 			else
@@ -1056,56 +1058,33 @@ function ENT:SetPassenger( ply )
 end
 
 function ENT:GetClosestSeat( ply )
-	local Seat = self.pSeat[1]
-	if not IsValid(Seat) then return false end
+	local pseats = self.pSeat
+
+	local Seat = pseats[ 1 ]
+	if not Seat:IsValid() then return false end
+	local plypos = ply:GetPos()
+
+	local Distance = Seat:GetPos():DistToSqr( plypos )
 	
-	local Distance = (Seat:GetPos() - ply:GetPos()):Length()
-	
-	for i = 1, table.Count( self.pSeat ) do
-		local Dist = (self.pSeat[i]:GetPos() - ply:GetPos()):Length()
-		if (Dist < Distance) then
-			Seat = self.pSeat[i]
+	for i = 1, #pseats do
+		local pseat = pseats[ i ]
+		local Dist = pseat:GetPos():DistToSqr( plypos )
+		if ( Dist < Distance ) then
+			Seat = pseat
+			Distance = Dist
 		end
 	end
 	
 	return Seat
 end
 
-function ENT:HasPassengerEnemyTeam( ply )
-	if not GetConVar( "sv_simfphys_teampassenger" ):GetBool() then return false end
-	
-	if not IsValid( ply ) then return true end
-	
-	local myteam = ply:Team()
-	if IsValid( self:GetDriver() ) then
-		if self:GetDriver():Team() ~= myteam then
-			return true
-		end
-	end
-	
-	if self.PassengerSeats then
-		for i = 1, table.Count( self.pSeat ) do
-			if IsValid(self.pSeat[i]) then
-				
-				local Passenger = self.pSeat[i]:GetDriver()
-				if IsValid( Passenger ) then
-					if Passenger:Team() ~= myteam then
-						return true
-					end
-				end
-			end
-		end
-	end
-	
-	return false
-end
-
 function ENT:SetPhysics( enable )
+	local Wheels = self.Wheels
 	if enable then
 		if not self.PhysicsEnabled then
-			for i = 1, table.Count( self.Wheels ) do
-				local Wheel = self.Wheels[i]
-				if IsValid(Wheel) then
+			for i = 1, #Wheels do
+				local Wheel = Wheels[i]
+				if Wheel:IsValid() then
 					Wheel:GetPhysicsObject():SetMaterial("jeeptire")
 				end
 			end
@@ -1113,9 +1092,9 @@ function ENT:SetPhysics( enable )
 		end
 	else
 		if self.PhysicsEnabled ~= false then
-			for i = 1, table.Count( self.Wheels ) do
-				local Wheel = self.Wheels[i]
-				if IsValid(Wheel) then
+			for i = 1, #Wheels do
+				local Wheel = Wheels[i]
+				if Wheel:IsValid() then
 					Wheel:GetPhysicsObject():SetMaterial("friction_00")
 					if Wheel:GetPhysicsObject():GetMaterial() ~= "friction_00" then
 						print("(SIMFPHYS) ERROR! MISSING ''friction_00'' PHYSPROP-MATERIAL!!! THIS SHOULD NEVER HAPPEN!! CLEAN YOUR GMOD!! DON'T USE CONTENT OF GAMES YOU DON'T OWN!! DON'T EVEN BOTHER REPORTING THIS ISSUE, BECAUSE ONLY YOU CAN FIX THIS AS THIS IS AN ISSUE WITH YOUR GAME!!!!")
@@ -1145,20 +1124,20 @@ function ENT:SetSuspension( index , bIsDamaged )
 		[6] = self.RearHeight + self.VehicleData.suspensiontravel_rr * -h_mod
 	}
 	local Wheel = self.Wheels[index]
-	if not IsValid(Wheel) then return end
+	if not Wheel:IsValid() then return end
 	
 	local subRadius = bIsDamaged and Wheel.dRadius or 0
 	
 	local newheight = heights[index] + subRadius
 
 	local Elastic = self.Elastics[index]
-	if IsValid(Elastic) then
+	if Elastic:IsValid() then
 		Elastic:Fire( "SetSpringLength", newheight )
 	end
 	
 	if self.StrengthenSuspension == true then
 		local Elastic2 = self.Elastics[index * 10]
-		if IsValid(Elastic2) then
+		if Elastic2:IsValid() then
 			Elastic2:Fire( "SetSpringLength", newheight )
 		end
 	end
@@ -1169,9 +1148,9 @@ function ENT:OnFrontSuspensionHeightChanged( name, old, new )
 	if not self.CustomWheels and new > 0 then new = 0 end
 	if not self:IsInitialized() then return end
 	
-	if IsValid(self.Wheels[1]) then
+	if self.Wheels[1]:IsValid() then
 		local Elastic = self.Elastics[1]
-		if IsValid(Elastic) then
+		if Elastic:IsValid() then
 			Elastic:Fire( "SetSpringLength", self.FrontHeight + self.VehicleData.suspensiontravel_fl * -new )
 		end
 		
@@ -1179,15 +1158,15 @@ function ENT:OnFrontSuspensionHeightChanged( name, old, new )
 			
 			local Elastic2 = self.Elastics[10]
 			
-			if IsValid(Elastic2) then
+			if Elastic2:IsValid() then
 				Elastic2:Fire( "SetSpringLength", self.FrontHeight + self.VehicleData.suspensiontravel_fl * -new )
 			end
 		end
 	end
 	
-	if IsValid(self.Wheels[2]) then
+	if self.Wheels[2]:IsValid() then
 		local Elastic = self.Elastics[2]
-		if IsValid(Elastic) then
+		if Elastic:IsValid() then
 			Elastic:Fire( "SetSpringLength", self.FrontHeight + self.VehicleData.suspensiontravel_fr * -new )
 		end
 		
@@ -1195,7 +1174,7 @@ function ENT:OnFrontSuspensionHeightChanged( name, old, new )
 			
 			local Elastic2 = self.Elastics[20]
 			
-			if (IsValid(Elastic2)) then
+			if (Elastic2:IsValid()) then
 				Elastic2:Fire( "SetSpringLength", self.FrontHeight + self.VehicleData.suspensiontravel_fr * -new )
 			end
 		end
@@ -1207,9 +1186,9 @@ function ENT:OnRearSuspensionHeightChanged( name, old, new )
 	if not self.CustomWheels and new > 0 then new = 0 end
 	if not self:IsInitialized() then return end
 	
-	if IsValid(self.Wheels[3]) then
+	if self.Wheels[3]:IsValid() then
 		local Elastic = self.Elastics[3]
-		if IsValid(Elastic) then
+		if Elastic:IsValid() then
 			Elastic:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rl * -new )
 		end
 		
@@ -1217,15 +1196,15 @@ function ENT:OnRearSuspensionHeightChanged( name, old, new )
 			
 			local Elastic2 = self.Elastics[30]
 			
-			if IsValid(Elastic2) then
+			if Elastic2:IsValid() then
 				Elastic2:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rl * -new )
 			end
 		end
 	end
 	
-	if IsValid(self.Wheels[4]) then
+	if self.Wheels[4]:IsValid() then
 		local Elastic = self.Elastics[4]
-		if IsValid(Elastic) then
+		if Elastic:IsValid() then
 			Elastic:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rr * -new )
 		end
 		
@@ -1233,15 +1212,15 @@ function ENT:OnRearSuspensionHeightChanged( name, old, new )
 			
 			local Elastic2 = self.Elastics[40]
 			
-			if IsValid(Elastic2) then
+			if Elastic2:IsValid() then
 				Elastic2:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rr * -new )
 			end
 		end
 	end
 	
-	if IsValid(self.Wheels[5]) then
+	if self.Wheels[5]:IsValid() then
 		local Elastic = self.Elastics[5]
-		if IsValid(Elastic) then
+		if Elastic:IsValid() then
 			Elastic:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rl * -new )
 		end
 		
@@ -1249,15 +1228,15 @@ function ENT:OnRearSuspensionHeightChanged( name, old, new )
 			
 			local Elastic2 = self.Elastics[50]
 			
-			if IsValid(Elastic2) then
+			if Elastic2:IsValid() then
 				Elastic2:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rl * -new )
 			end
 		end
 	end
 	
-	if IsValid(self.Wheels[6]) then
+	if self.Wheels[6]:IsValid() then
 		local Elastic = self.Elastics[6]
-		if IsValid(Elastic) then
+		if Elastic:IsValid() then
 			Elastic:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rr * -new )
 		end
 		
@@ -1265,7 +1244,7 @@ function ENT:OnRearSuspensionHeightChanged( name, old, new )
 			
 			local Elastic2 = self.Elastics[60]
 			
-			if IsValid(Elastic2) then
+			if Elastic2:IsValid() then
 				Elastic2:Fire( "SetSpringLength", self.RearHeight + self.VehicleData.suspensiontravel_rr * -new )
 			end
 		end
@@ -1313,16 +1292,18 @@ end
 
 function ENT:OnRemove()
 	if self.Wheels then
-		for i = 1, table.Count( self.Wheels ) do
-			local Ent = self.Wheels[ i ]
-			if IsValid(Ent) then
+		local Wheels = self.Wheels
+		for i = 1, #Wheels do
+			local Ent = Wheels[ i ]
+			if Ent:IsValid() then
 				Ent:Remove()
 			end
 		end
 	end
 	if self.keys then
-		for i = 1, table.Count( self.keys ) do
-			numpad.Remove( self.keys[i] )
+		local keys = self.keys
+		for i = 1, #keys do
+			numpad.Remove( keys[i] )
 		end
 	end
 	if self.Turbo then

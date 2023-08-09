@@ -39,7 +39,7 @@ function EFFECT:Explosion( pos )
 	
 	if emitter then
 		for i = 0,60 do
-			local particle = emitter:Add( Materials[math.random(1,table.Count( Materials ))], pos )
+			local particle = emitter:Add( Materials[math.random(1,#Materials)], pos )
 			
 			if particle then
 				particle:SetVelocity( VectorRand() * 800 )
@@ -72,7 +72,7 @@ function EFFECT:Explosion( pos )
 		end
 		
 		for i = 0,36 do
-			local particle = emitter:Add( Materials[math.Round(math.Rand(1,table.Count( Materials )),0)], pos )
+			local particle = emitter:Add( Materials[math.Round(math.Rand(1,#Materials),0)], pos )
 			
 			if particle then
 				local ang = i * 10

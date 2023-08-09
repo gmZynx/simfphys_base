@@ -26,15 +26,14 @@ function ENT:Initialize()
 	end
 
 	local PObj = self:GetPhysicsObject()
-
-	if not IsValid( PObj ) then print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE! '"..self:GetModel().."' has no physics model!") self:Remove() return end
+	if not PObj:IsValid() then print("[SIMFPHYS] ERROR COULDN'T INITIALIZE VEHICLE! '"..self:GetModel().."' has no physics model!") self:Remove() return end
 
 	PObj:EnableMotion( false )
 
 	self:SetValues()
 
 	timer.Simple( 0.1, function()
-		if not IsValid( self ) then return end
+		if not self:IsValid() then return end
 		self:InitializeVehicle()
 	end)
 end
@@ -110,21 +109,20 @@ function ENT:SetupEnteringAnims()
 		end
 	end
 	
-	if table.Count( self.Enterpoints ) < 1 then
+	if #self.Enterpoints < 1 then
 		self.Enterpoints = nil
 	end
 	
-	if table.Count( self.Exitpoints ) < 1 then
+	if #self.Exitpoints < 1 then
 		self.Exitpoints = nil
 	end
 end
 
 function ENT:InitializeVehicle()
-	if not IsValid( self ) then return end
+	if not self:IsValid() then return end
 	
 	local physObj = self:GetPhysicsObject()
-	
-	if not IsValid( physObj ) then return end
+	if not physObj:IsValid() then return end
 	
 	if self.LightsTable then
 		local vehiclelist = list.Get( "simfphys_lights" )[self.LightsTable] or false
@@ -192,14 +190,15 @@ function ENT:InitializeVehicle()
 	self.DriverSeat:DrawShadow( false )
 	simfphys.SetOwner( self.EntityOwner, self.DriverSeat )
 	
-	if self.PassengerSeats then
-		for i = 1, table.Count( self.PassengerSeats ) do
+	local PassengerSeats = self.PassengerSeats
+	if PassengerSeats then
+		for i = 1, #PassengerSeats do
 			self.pSeat[i] = ents.Create( "prop_vehicle_prisoner_pod" )
 			self.pSeat[i]:SetModel( "models/nova/airboat_seat.mdl" )
 			self.pSeat[i]:SetKeyValue( "vehiclescript","scripts/vehicles/prisoner_pod.txt" )
 			self.pSeat[i]:SetKeyValue( "limitview", 0)
-			self.pSeat[i]:SetPos( self:LocalToWorld( self.PassengerSeats[i].pos ) )
-			self.pSeat[i]:SetAngles( self:LocalToWorldAngles( self.PassengerSeats[i].ang ) )
+			self.pSeat[i]:SetPos( self:LocalToWorld( PassengerSeats[i].pos ) )
+			self.pSeat[i]:SetAngles( self:LocalToWorldAngles( PassengerSeats[i].ang ) )
 			self.pSeat[i]:SetOwner( self )
 			self.pSeat[i]:Spawn()
 			self.pSeat[i]:Activate()
@@ -236,7 +235,7 @@ function ENT:InitializeVehicle()
 	end
 	
 	if self.Attachments then
-		for i = 1, table.Count( self.Attachments ) do
+		for i = 1, #self.Attachments do
 			local prop = ents.Create( ((self.Attachments[i].IsGlass == true) and "gmod_sent_vehicle_fphysics_attachment_translucent" or "gmod_sent_vehicle_fphysics_attachment") )
 			prop:SetModel( self.Attachments[i].model )			
 			prop:SetMaterial( self.Attachments[i].material )
@@ -257,7 +256,7 @@ function ENT:InitializeVehicle()
 			end
 			
 			if self.Attachments[i].bodygroups then
-				for b = 1, table.Count( self.Attachments[i].bodygroups ) do
+				for b = 1, #self.Attachments[i].bodygroups do
 					prop:SetBodygroup(b, self.Attachments[i].bodygroups[b] )
 				end
 			end
@@ -284,7 +283,7 @@ function ENT:GetVehicleData()
 	self:SetPoseParameter("vehicle_wheel_rr_height",1)
 	
 	timer.Simple( 0.15, function()
-		if not IsValid(self) then return end
+		if not self:IsValid() then return end
 		self.posepositions["Pose0_Steerangle"] = self.CustomWheels and Angle(0,0,0) or self:GetAttachment( self:LookupAttachment( "wheel_fl" ) ).Ang
 		self.posepositions["Pose0_Pos_FL"] = self.CustomWheels and self:LocalToWorld( self.CustomWheelPosFL ) or self:GetAttachment( self:LookupAttachment( "wheel_fl" ) ).Pos
 		self.posepositions["Pose0_Pos_FR"] = self.CustomWheels and self:LocalToWorld( self.CustomWheelPosFR ) or self:GetAttachment( self:LookupAttachment( "wheel_fr" ) ).Pos
@@ -377,7 +376,7 @@ function ENT:WriteVehicleDataTable()
 	self:SetPoseParameter("vehicle_wheel_rr_height",0)
 	
 	timer.Simple( 0.15, function()
-		if not IsValid(self) then return end
+		if not self:IsValid() then return end
 		self.posepositions["Pose1_Steerangle"] = self.CustomWheels and Angle(0,0,0) or self:GetAttachment( self:LookupAttachment( "wheel_fl" ) ).Ang
 		self.posepositions["Pose1_Pos_FL"] = self.CustomWheels and self:LocalToWorld( self.CustomWheelPosFL ) or self:GetAttachment( self:LookupAttachment( "wheel_fl" ) ).Pos
 		self.posepositions["Pose1_Pos_FR"] = self.CustomWheels and self:LocalToWorld( self.CustomWheelPosFR ) or self:GetAttachment( self:LookupAttachment( "wheel_fr" ) ).Pos
@@ -472,9 +471,6 @@ function ENT:SetupVehicle()
 	if self.CustomWheels then
 		if self.CustomWheelModel then
 			if not file.Exists( self.CustomWheelModel, "GAME" ) then 
-				if IsValid( self.EntityOwner ) then
-					self.EntityOwner:PrintMessage( HUD_PRINTTALK, "ERROR: \""..self.CustomWheelModel.."\" does not exist! Removing vehicle. (Class: "..self:GetSpawn_List()..")")
-				end
 				self:Remove()
 				return
 			end
@@ -489,12 +485,9 @@ function ENT:SetupVehicle()
 				
 				local pobj = self.SteerMaster:GetPhysicsObject()
 				
-				if IsValid(pobj) then
+				if pobj:IsValid() then
 					pobj:EnableMotion(false)
 				else
-					if IsValid( self.EntityOwner ) then
-						self.EntityOwner:PrintMessage( HUD_PRINTTALK, "ERROR: \""..self.CustomWheelModel.."\" doesn't have an collision model! Removing vehicle. (Class: "..self:GetSpawn_List()..")")
-					end
 					self.SteerMaster:Remove()
 					self:Remove()
 					
@@ -519,10 +512,10 @@ function ENT:SetupVehicle()
 				self.SteerMaster2:Activate()
 				
 				local pobj = self.SteerMaster2:GetPhysicsObject()
-				if IsValid(pobj) then
+				if pobj:IsValid() then
 					pobj:EnableMotion(false)
 				else
-					if IsValid( self.EntityOwner ) then
+					if self.EntityOwner:IsValid() then
 						self.EntityOwner:PrintMessage( HUD_PRINTTALK, "ERROR: \""..self.CustomWheelModel.."\" doesn't have an collision model! Removing vehicle. (Class: "..self:GetSpawn_List()..")")
 					end
 					self.SteerMaster2:Remove()
@@ -539,7 +532,7 @@ function ENT:SetupVehicle()
 				simfphys.SetOwner( self.EntityOwner, self.SteerMaster2 )
 			end
 			
-			local radius = IsValid(self.SteerMaster) and (self.SteerMaster:OBBMaxs() - self.SteerMaster:OBBMins()) or (self.SteerMaster2:OBBMaxs() - self.SteerMaster2:OBBMins())
+			local radius = self.SteerMaster:IsValid() and (self.SteerMaster:OBBMaxs() - self.SteerMaster:OBBMins()) or (self.SteerMaster2:OBBMaxs() - self.SteerMaster2:OBBMins())
 			self.FrontWheelRadius = self.FrontWheelRadius or math.max( radius.x, radius.y, radius.z ) * 0.5
 			self.RearWheelRadius = self.RearWheelRadius or self.FrontWheelRadius
 			
@@ -556,9 +549,6 @@ function ENT:SetupVehicle()
 				self:CreateWheel(6, WheelMR, self:LocalToWorld( self.CustomWheelPosMR ), self.RearHeight, self.RearWheelRadius, true , self:LocalToWorld( self.CustomWheelPosMR + Vector(0,0,self.CustomSuspensionTravel * 0.5) ), self.CustomSuspensionTravel, self.RearConstant, self.RearDamping, self.RearRelativeDamping)
 			end
 		else
-			if IsValid( self.EntityOwner ) then
-				self.EntityOwner:PrintMessage( HUD_PRINTTALK, "ERROR: no wheel model defined. Removing vehicle. (Class: "..self:GetSpawn_List()..")")
-			end
 			self:Remove()
 		end
 	else
@@ -568,25 +558,28 @@ function ENT:SetupVehicle()
 		self:CreateWheel(4, WheelRR, self:GetAttachment( self:LookupAttachment( "wheel_rr" ) ).Pos, self.RearHeight, self.RearWheelRadius, true , self.posepositions.Pose1_Pos_RR, self.VehicleData.suspensiontravel_rr, self.RearConstant, self.RearDamping, self.RearRelativeDamping)
 	end
 	
-	timer.Simple( 0.01, function()		
-		if not istable( self.Wheels ) then return end
+	timer.Simple( 0.01, function()
+		if not self:IsValid() then return end
+
+		local Wheels = self.Wheels
+		if not istable( Wheels ) then return end
 		
-		for i = 1, table.Count( self.Wheels ) do
-			local Ent = self.Wheels[ i ]
+		for i = 1, #Wheels do
+			local Ent = Wheels[ i ]
 			local PhysObj = Ent:GetPhysicsObject()
 			
-			if IsValid( PhysObj ) then
+			if PhysObj:IsValid() then
 				PhysObj:EnableMotion( true )
 			end
 		end
 		
 		timer.Simple( 0.1, function()
-			if not IsValid( self ) then return end
+			if not self:IsValid() then return end
 			
 			self:GetPhysicsObject():EnableMotion(true)
 			
 			local PhysObj = self.MassOffset:GetPhysicsObject()
-			if IsValid( PhysObj ) then
+			if PhysObj:IsValid() then
 				PhysObj:EnableMotion(true)
 			end
 		end )
@@ -715,19 +708,19 @@ function ENT:CreateWheel(index, name, attachmentpos, height, radius, swap_y , po
 	Rope2.DoNotDuplicate = true
 	
 	if index == 2 then
-		if IsValid( self.Wheels[ 1 ] ) and IsValid( self.Wheels[ 2 ] ) then
+		if self.Wheels[ 1 ]:IsValid() and self.Wheels[ 2 ]:IsValid() then
 			local nocollide = constraint.NoCollide( self.Wheels[ 1 ], self.Wheels[ 2 ], 0, 0 )
 			nocollide.DoNotDuplicate = true
 		end
 		
 	elseif index == 4 then
-		if IsValid( self.Wheels[ 3 ] ) and IsValid( self.Wheels[ 4 ] ) then
+		if self.Wheels[ 3 ]:IsValid() and self.Wheels[ 4 ]:IsValid() then
 			local nocollide = constraint.NoCollide( self.Wheels[ 3 ], self.Wheels[ 4 ], 0, 0 )
 			nocollide.DoNotDuplicate = true
 		end
 		
 	elseif index == 6 then
-		if IsValid( self.Wheels[ 5 ] ) and IsValid( self.Wheels[ 6 ] ) then
+		if self.Wheels[ 5 ]:IsValid() and self.Wheels[ 6 ]:IsValid() then
 			local nocollide = constraint.NoCollide( self.Wheels[ 5 ], self.Wheels[ 6 ], 0, 0 )
 			nocollide.DoNotDuplicate = true
 		end

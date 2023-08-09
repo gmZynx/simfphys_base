@@ -26,7 +26,7 @@ function EFFECT:Init( data )
 	
 	local Delay = bdamaged and 0 or math.random(0,0.4)
 	timer.Simple( Delay, function()
-		if IsValid( Entity ) then
+		if Entity:IsValid() then
 			local Vel = Entity:GetVelocity()
 			local Pos = Entity:LocalToWorld( lPos ) + Vel * FrameTime() * 0.5
 			local Ang = Entity:LocalToWorldAngles( lAng )
@@ -49,7 +49,7 @@ function EFFECT:Init( data )
 			end)
 			
 			timer.Simple(5, function() 
-				if not IsValid( Entity ) then return end
+				if not Entity:IsValid() then return end
 				if Entity.CurBackFireSound then
 					Entity.CurBackFireSound:Stop()
 				end
@@ -84,7 +84,7 @@ function EFFECT:Init( data )
 						particle1:SetCollide( false )
 					end
 					
-					local particle2 = emitter:Add( Materials[ math.Round( math.Rand(1, table.Count( Materials ) ) , 0 ) ], Pos )
+					local particle2 = emitter:Add( Materials[ math.Round( math.Rand(1, #Materials ) , 0 ) ], Pos )
 					
 					if particle2 then
 						particle2:SetVelocity( Vel + Ang:Forward() * (10 + Vel:Length() / 20) )
@@ -98,7 +98,7 @@ function EFFECT:Init( data )
 					end
 					
 					if bdamaged then
-						local particle3 = emitter:Add( Materials[ math.Round( math.Rand(1, table.Count( Materials ) ) , 0 ) ], Pos )
+						local particle3 = emitter:Add( Materials[ math.Round( math.Rand(1, #Materials ) , 0 ) ], Pos )
 
 						if particle3 then
 							particle3:SetVelocity( Vel + Ang:Forward() * math.random(30,60) )

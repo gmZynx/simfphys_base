@@ -5,7 +5,6 @@ CreateConVar( "sv_simfphys_playerdamage", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE
 CreateConVar( "sv_simfphys_damagemultiplicator", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"vehicle damage multiplicator" )
 CreateConVar( "sv_simfphys_fuel", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"enable fuel? 1 = enabled, 0 = disabled" )
 CreateConVar( "sv_simfphys_fuelscale", "0.1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"fuel tank size multiplier. 1 = Realistic fuel tank size (about 2-3 hours of fullthrottle driving, Lol, have fun)" )
-CreateConVar( "sv_simfphys_teampassenger", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"allow players of different teams to enter the same vehicle?, 0 = allow everyone, 1 = team only" )
 
 simfphys.DamageEnabled = false
 simfphys.DamageMul = 1
@@ -59,30 +58,23 @@ simfphys.rock = CreateConVar( "sv_simfphys_traction_rock", "1", {FCVAR_REPLICATE
 simfphys.wood = CreateConVar( "sv_simfphys_traction_wood", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 
 function simfphys.IsCar( ent )
-	if not IsValid( ent ) then return false end
-
-	local IsVehicle = ent:GetClass():lower() == "gmod_sent_vehicle_fphysics_base"
-
-	return IsVehicle
+	return ent:IsValid() and ent.IsSimfphyscar or false
 end
 
 local meta = FindMetaTable( "Player" )
 function meta:IsDrivingSimfphys()
 	local Car = self:GetSimfphys()
-	local Pod = self:GetVehicle()
-
-	if not IsValid( Pod ) or not IsValid( Car ) then return false end
+	if not Car:IsValid() then return false end
 	if not Car.GetDriverSeat or not isfunction( Car.GetDriverSeat ) then return false end
 
-	return Pod == Car:GetDriverSeat()
+	return self:GetVehicle() == Car:GetDriverSeat()
 end
 
 function meta:GetSimfphys()
 	if not self:InVehicle() then return NULL end
 
 	local Pod = self:GetVehicle()
-
-	if not IsValid( Pod ) then return NULL end
+	if not Pod:IsValid() then return NULL end
 
 	if Pod.SPHYSchecked == true then
 
@@ -91,8 +83,7 @@ function meta:GetSimfphys()
 	elseif Pod.SPHYSchecked == nil then
 
 		local Parent = Pod:GetParent()
-
-		if not IsValid( Parent ) then Pod.SPHYSchecked = false return NULL end
+		if not Parent:IsValid() then Pod.SPHYSchecked = false return NULL end
 
 		if not simfphys.IsCar( Parent ) then Pod.SPHYSchecked = false return NULL end
 
@@ -116,8 +107,6 @@ if SERVER then
 	util.AddNetworkString( "simfphys_plyrequestinfo" )
 
 	net.Receive( "simfphys_plyrequestinfo", function( length, ply )
-		if not IsValid( ply ) then return end
-
 		ply.simeditor_nextrequest = isnumber( ply.simeditor_nextrequest ) and ply.simeditor_nextrequest or 0
 
 		if ply.simeditor_nextrequest > CurTime() then return end
@@ -149,7 +138,7 @@ if SERVER then
 		local ent = net.ReadEntity()
 		local mode = net.ReadInt( 32 )
 
-		if not IsValid( ent ) or ply:GetSimfphys() ~= ent then return end
+		if not ent:IsValid() or ply:GetSimfphys() ~= ent then return end
 		ent:SetTSInternal( mode )
 
 		net.Start( "simfphys_turnsignal" )
@@ -159,7 +148,7 @@ if SERVER then
 	end )
 
 	net.Receive( "simfphys_settings", function( length, ply )
-		if not IsValid( ply ) or not ply:IsSuperAdmin() then return end
+		if not ply:IsValid() or not ply:IsSuperAdmin() then return end
 
 		local dmgEnabled = tostring(net.ReadBool() and 1 or 0)
 		local giblifetime = tostring(net.ReadFloat())
@@ -181,8 +170,6 @@ if SERVER then
 		RunConsoleCommand("sv_simfphys_fuel", fuel )
 		RunConsoleCommand("sv_simfphys_fuelscale", fuelscale )
 
-		RunConsoleCommand("sv_simfphys_teampassenger", teamonly )
-
 		for k, v in pairs( newtraction ) do
 			RunConsoleCommand("sv_simfphys_traction_"..k, v)
 		end
@@ -203,7 +190,7 @@ if SERVER then
 		local Mass = 0
 		for _, Entity in pairs( constraint.GetAllConstrainedEntities( ent ) ) do
 			local EPOBJ = Entity:GetPhysicsObject()
-			if IsValid( EPOBJ ) then
+			if EPOBJ:IsValid() then
 				Mass = Mass + EPOBJ:GetMass()
 			end
 		end
@@ -211,7 +198,7 @@ if SERVER then
 		local data = {}
 		data["torque"] = ent:GetMaxTorque() * (WheelRad / 10) * ent:GetEfficiency() * (1 + (ent:GetTurboCharged() and 0.3 or 0) + (ent:GetSuperCharged() and 0.48 or 0))
 		data["horsepower"] = (data["torque"] * ent:GetLimitRPM() / 9548.8) * 1.34
-		data["maxspeed"] = ((ent:GetLimitRPM() * ent.Gears[ table.Count( ent.Gears ) ] * ent:GetDifferentialGear()) * 3.14 * WheelRad * 2) / 52
+		data["maxspeed"] = ((ent:GetLimitRPM() * ent.Gears[ #ent.Gears ] * ent:GetDifferentialGear()) * 3.14 * WheelRad * 2) / 52
 		data["weight"] = Mass
 
 		return data
@@ -263,7 +250,7 @@ if SERVER then
 
 			if Ent.ModelInfo then
 				if Ent.ModelInfo.Bodygroups then
-					for i = 1, table.Count( Ent.ModelInfo.Bodygroups ) do
+					for i = 1, #Ent.ModelInfo.Bodygroups do
 						Ent:SetBodygroup(i, Ent.ModelInfo.Bodygroups[i] )
 					end
 				end
@@ -365,7 +352,7 @@ if SERVER then
 			duplicator.StoreEntityModifier( Ent, "VehicleMemDupe", VTable.Members )
 		end
 
-		if IsValid( Player ) then
+		if Player:IsValid() then
 			gamemode.Call( "PlayerSpawnedVehicle", Player, Ent )
 
 			return Ent
@@ -375,33 +362,19 @@ if SERVER then
 	end
 
 	function simfphys.SetOwner( ply, entity )
-		if not IsValid( entity ) or not IsValid( ply ) then return end
+		if not entity:IsValid() or not ply:IsValid() then return end
 
 		if CPPI then
 			if not IsEntity( ply ) then return end
 
-			if IsValid( ply ) then
+			if ply:IsValid() then
 				entity:CPPISetOwner( ply )
 			end
 		end
 	end
-
-	-- hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
-	-- 	if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
-
-	-- 	if not ply:IsAdmin() and property == "editentity" then
-	-- 		if (GetConVar("sv_simfphys_devmode"):GetInt() or 1) < 1 then return false end
-	-- 	end
-	-- end )
 end
 
 if CLIENT then
-	-- hook.Add( "CanProperty", "!!!!simfphysEditPropertiesDisabler", function( ply, property, ent )
-	-- 	if not IsValid( ent ) or ent:GetClass() ~= "gmod_sent_vehicle_fphysics_base" then return end
-
-	-- 	if not ply:IsAdmin() and property == "editentity" then return false end
-	-- end )
-
 	net.Receive( "simfphys_plyrequestinfo", function( length )
 		local ent = net.ReadEntity()
 

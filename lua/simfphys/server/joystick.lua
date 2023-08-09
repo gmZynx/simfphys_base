@@ -161,8 +161,7 @@ hook.Add("JoystickInitialize", "simfphys_joystick", function()
 			
 			if ply:IsConnected() then
 				local vehicle = ply:GetVehicle()
-				
-				if not IsValid( vehicle ) then return end
+				if not vehicle:IsValid() then return end
 				
 				if not vehicle.fphysSeat then return end
 				

@@ -20,7 +20,7 @@ if CLIENT then
 	end
 	net.Receive("simfphys_explosion_fx", function(length)
 		local self = net.ReadEntity()
-		if IsValid( self ) then
+		if self:IsValid() then
 			local effectdata = EffectData()
 				effectdata:SetOrigin( self:GetPos() )
 			util.Effect( "simfphys_explosion", effectdata )
@@ -36,7 +36,7 @@ if SERVER then
 		self:SetMoveType( MOVETYPE_VPHYSICS )
 		self:SetSolid( SOLID_VPHYSICS )
 		
-		if not IsValid( self:GetPhysicsObject() ) then
+		if not self:GetPhysicsObject():IsValid() then
 			self.RemoveTimer = 0
 			
 			self:Remove()
@@ -50,7 +50,7 @@ if SERVER then
 		
 		
 		timer.Simple( 0.05, function()
-			if not IsValid( self ) then return end
+			if not self:IsValid() then return end
 			if self.MakeSound == true then
 				net.Start( "simfphys_explosion_fx" )
 					net.WriteEntity( self )
@@ -71,7 +71,7 @@ if SERVER then
 				Light:Fire( "TurnOn", "", "0" )
 				
 				timer.Simple( 0.7, function()
-					if not IsValid( self ) then return end
+					if not self:IsValid() then return end
 					
 					self.particleeffect = ents.Create( "info_particle_system" )
 					self.particleeffect:SetKeyValue( "effect_name" , "fire_large_01")
@@ -88,13 +88,13 @@ if SERVER then
 				end)
 				
 				timer.Simple( 120, function()
-					if not IsValid( self ) then return end
+					if not self:IsValid() then return end
 					
-					if IsValid( Light ) then
+					if Light:IsValid() then
 						Light:Remove()
 					end
 					
-					if IsValid( self.particleeffect ) then
+					if self.particleeffect:IsValid() then
 						self.particleeffect:Remove()
 					end
 					

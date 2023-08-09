@@ -34,7 +34,7 @@ end
 
 function SWEP:IsAimingAt( vpos )
 	local Owner = self:GetOwner()
-	if not IsValid( Owner ) then return false end
+	if not Owner:IsValid() then return false end
 	local dir = Owner:GetAimVector()
 	local pos = Owner:GetShootPos()
 	local des_dir = (vpos - pos):GetNormalized()
@@ -62,7 +62,7 @@ if CLIENT then
 	
 	function SWEP:ViewModelDrawn()
 		local Owner = self:GetOwner()
-		if IsValid( Owner ) then
+		if Owner:IsValid() then
 			
 			local ZOOM = Owner:KeyDown( IN_ZOOM )
 			
@@ -91,7 +91,7 @@ if CLIENT then
 	
 	function SWEP:DrawWorldModel()
 		local Owner = self:GetOwner()
-		if not IsValid( Owner ) then return end
+		if not Owner:IsValid() then return end
 		
 		local id = Owner:LookupAttachment("anim_attachment_rh")
 		local attachment = Owner:GetAttachment( id )
@@ -137,7 +137,7 @@ if CLIENT then
 		surface.SetDrawColor( 0, 0, 0, 80 )
 		surface.DrawRect( xpos, ypos, sizex * 0.118, sizey * 0.02 )
 		
-		if not IsValid( ent ) then
+		if not ent:IsValid() then
 			draw.SimpleText( "0 / 0", "simfphysfont", xpos + sizex * 0.059, ypos + sizey * 0.01, Color( 255, 235, 0, 255 ), 1, 1 )
 			return
 		end
@@ -182,7 +182,7 @@ function SWEP:Initialize()
 	self.Weapon:SetHoldType( self.HoldType )
 	
 	local Owner = self:GetOwner()
-	if IsValid( Owner ) then
+	if Owner:IsValid() then
 		Owner.usedFuel = 0
 	end
 end
@@ -199,13 +199,13 @@ function SWEP:Think()
 		self.nextThink = CurTime() + 0.02
 		
 		local Owner = self:GetOwner()
-		if not IsValid( Owner ) then return end
+		if not Owner:IsValid() then return end
 		if not Owner:KeyDown( IN_ATTACK ) then return end
 		
 		local Trace = Owner:GetEyeTrace()
 		local ent = Trace.Entity
 		local InRange = (Trace.HitPos - Owner:GetPos()):Length() < self.MaxDistance
-		local HIT = IsValid( ent ) and simfphys.IsCar( ent ) and InRange
+		local HIT = ent:IsValid() and simfphys.IsCar( ent ) and InRange
 	
 		if HIT then
 			if self:GetFuelType() ~=  ent:GetFuelType() then inv_time = CurTime() return end
@@ -229,7 +229,7 @@ function SWEP:Think()
 		local emitter = ParticleEmitter( Pos, false )
 		local particle = emitter:Add( "effects/slime1", Pos )
 		
-		if not HIT and InRange or (IsValid( ent ) and simfphys.IsCar( ent ) and ent:GetFuel() >= ent:GetMaxFuel()) or (IsValid( ent ) and simfphys.IsCar( ent ) and not self:IsAimingAt( ent:GetFuelPos() ) )  then
+		if not HIT and InRange or (ent:IsValid() and simfphys.IsCar( ent ) and ent:GetFuel() >= ent:GetMaxFuel()) or (ent:IsValid() and simfphys.IsCar( ent ) and not self:IsAimingAt( ent:GetFuelPos() ) )  then
 			self.NextSplash = self.NextSplash or 0
 			if self.NextSplash < CurTime() then
 				self.NextSplash = CurTime() + math.Rand(0.05,0.2)
@@ -295,7 +295,7 @@ function SWEP:PrimaryAttack()
 	local Trace = Owner:GetEyeTrace()
 	local ent = Trace.Entity
 	local InRange = (Trace.HitPos - Owner:GetPos()):Length() < self.MaxDistance
-	local HIT = IsValid( ent ) and simfphys.IsCar( ent ) and InRange
+	local HIT = ent:IsValid() and simfphys.IsCar( ent ) and InRange
 	
 	if SERVER then
 		Owner.usedFuel = Owner.usedFuel or 0
@@ -307,16 +307,16 @@ function SWEP:PrimaryAttack()
 			if self:IsAimingAt( ent:GetFuelPos() )  then
 				if Fuel < MaxFuel then
 					timer.Simple(0.2, function()
-						if not IsValid( ent ) then return end
-						if not IsValid( self ) then return end
-						if not IsValid( Owner ) then return end
+						if not ent:IsValid() then return end
+						if not self:IsValid() then return end
+						if not Owner:IsValid() then return end
 						
 						if self:GetFuelType() ~=  ent:GetFuelType() then return end
 						
 						ent:SetFuel( Fuel + self.RefilAmount )
 					
 						timer.Simple(0.2, function()
-							if not IsValid( self ) or not IsValid( Owner ) then return end
+							if not self:IsValid() or not Owner:IsValid() then return end
 							if self:GetFuelType() == FUELTYPE_ELECTRIC then
 								sound.Play( Sound( "items/battery_pickup.wav" ), Trace.HitPos, 50)
 								

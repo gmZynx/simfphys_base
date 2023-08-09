@@ -213,7 +213,7 @@ if CLIENT then
 							TOOLMemory[name] = {}
 							
 							local submats = string.Explode( ",", variable )
-							for i = 0, (table.Count( submats ) - 1) do
+							for i = 0, ( #submats - 1 ) do
 								TOOLMemory[name][i] = submats[i+1]
 							end
 						else
@@ -286,7 +286,7 @@ local function ValidateModel( model )
 end
 
 function TOOL:GetVehicleData( ent, ply )
-	if not IsValid(ent) then return end
+	if not ent:IsValid() then return end
 	if not istable(ply.TOOLMemory) then ply.TOOLMemory = {} end
 	
 	table.Empty( ply.TOOLMemory )
@@ -329,15 +329,15 @@ function TOOL:GetVehicleData( ent, ply )
 	
 	if ent.CustomWheels then
 		if ent.GhostWheels then
-			if IsValid(ent.GhostWheels[1]) then
+			if ent.GhostWheels[1]:IsValid() then
 				ply.TOOLMemory.FrontWheelOverride = ent.GhostWheels[1]:GetModel()
-			elseif IsValid(ent.GhostWheels[2]) then
+			elseif ent.GhostWheels[2]:IsValid() then
 				ply.TOOLMemory.FrontWheelOverride = ent.GhostWheels[2]:GetModel()
 			end
 			
-			if IsValid(ent.GhostWheels[3]) then
+			if ent.GhostWheels[3]:IsValid() then
 				ply.TOOLMemory.RearWheelOverride = ent.GhostWheels[3]:GetModel()
-			elseif IsValid(ent.GhostWheels[4]) then
+			elseif ent.GhostWheels[4]:IsValid() then
 				ply.TOOLMemory.RearWheelOverride = ent.GhostWheels[4]:GetModel()
 			end
 		end
@@ -393,11 +393,11 @@ function TOOL:GetVehicleData( ent, ply )
 	ply.TOOLMemory.backfiresound = ent:GetBackfireSound()
 	
 	ply.TOOLMemory.SubMaterials = {}
-	for i = 0, (table.Count( ent:GetMaterials() ) - 1) do
+	for i = 0, ( #ent:GetMaterials() - 1 ) do
 		ply.TOOLMemory.SubMaterials[i] = ent:GetSubMaterial( i )
 	end
 	
-	if not IsValid( ply ) then return end
+	if not ply:IsValid() then return end
 	
 	net.Start("sphys_dupe")
 		net.WriteTable( ply.TOOLMemory )
@@ -410,28 +410,28 @@ local function GetRight( ent, index, WheelPos )
 	local Right = ent.Right
 	
 	if WheelPos.IsFrontWheel then
-		Right = (IsValid( ent.SteerMaster ) and Steer.Right or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
+		Right = (ent.SteerMaster and ent.SteerMaster:IsValid() and Steer.Right or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
 	else
-		Right = (IsValid( ent.SteerMaster ) and Steer.Right2 or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
+		Right = (ent.SteerMaster and ent.SteerMaster:IsValid() and Steer.Right2 or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
 	end
 	
 	return Right
 end
 
 local function SetWheelOffset( ent, offset_front, offset_rear )
-	if not IsValid( ent ) then return end
+	if not ent:IsValid() then return end
 	
 	ent.WheelTool_Foffset = offset_front
 	ent.WheelTool_Roffset = offset_rear
 	
-	if not istable( ent.Wheels ) or not istable( ent.GhostWheels ) then return end
-	
-	for i = 1, table.Count( ent.GhostWheels ) do
-		local Wheel = ent.Wheels[ i ]
-		local WheelModel = ent.GhostWheels[i]
+	local Wheels, GhostWheels = ent.Wheels, ent.GhostWheels
+	if not istable( Wheels ) or not istable( GhostWheels ) then return end
+	for i = 1, #GhostWheels do
+		local Wheel = Wheels[ i ]
+		local WheelModel = GhostWheels[i]
 		local WheelPos = ent:LogicWheelPos( i )
 		
-		if IsValid( Wheel ) and IsValid( WheelModel ) then
+		if Wheel:IsValid() and WheelModel:IsValid() then
 			local Pos = Wheel:GetPos()
 			local Right = GetRight( ent, i, WheelPos )
 			local offset = WheelPos.IsFrontWheel and offset_front or offset_rear
@@ -439,7 +439,7 @@ local function SetWheelOffset( ent, offset_front, offset_rear )
 			WheelModel:SetParent( nil )
 			
 			local physObj = WheelModel:GetPhysicsObject()
-			if IsValid( physObj ) then
+			if physObj:IsValid() then
 				physObj:EnableMotion( false )
 			end
 			
@@ -454,11 +454,12 @@ local function ApplyWheel(ent, data)
 	ent.CustomWheelAngleOffset_R = data[4]
 	
 	timer.Simple( 0.05, function()
-		if not IsValid( ent ) then return end
-		for i = 1, table.Count( ent.GhostWheels ) do
-			local Wheel = ent.GhostWheels[i]
+		if not ent:IsValid() then return end
+		local GhostWheels = ent.GhostWheels
+		for i = 1, #GhostWheels do
+			local Wheel = GhostWheels[i]
 			
-			if IsValid( Wheel ) then
+			if Wheel:IsValid() then
 				local isfrontwheel = (i == 1 or i == 2)
 				local swap_y = (i == 2 or i == 4 or i == 6)
 				
@@ -488,7 +489,7 @@ local function ApplyWheel(ent, data)
 				Wheel:SetAngles( ghostAng )
 				
 				timer.Simple( 0.05, function()
-					if not IsValid(Wheel) or not IsValid( ent ) then return end
+					if not Wheel:IsValid() or not ent:IsValid() then return end
 					local wheelsize = Wheel:OBBMaxs() - Wheel:OBBMins()
 					local radius = isfrontwheel and ent.FrontWheelRadius or ent.RearWheelRadius
 					local size = (radius * 2) / math.max(wheelsize.x,wheelsize.y,wheelsize.z)
@@ -551,7 +552,7 @@ function TOOL:LeftClick( trace )
 	if not vehicle then return false end
 
 	ply.LockRightClick = true
-	timer.Simple( 0.6, function() if IsValid( ply ) then ply.LockRightClick = false end end )
+	timer.Simple( 0.6, function() if ply:IsValid() then ply.LockRightClick = false end end )
 	
 	local SpawnPos = trace.HitPos + Vector(0,0,25) + (vehicle.SpawnOffset or Vector(0,0,0))
 	
@@ -570,7 +571,7 @@ function TOOL:LeftClick( trace )
 		Ent = simfphys.SpawnVehicle( ply, SpawnPos, SpawnAng, vehicle.Model, vehicle.Class, vname, vehicle )
 	end
 
-	if not IsValid( Ent ) then return end
+	if not Ent:IsValid() then return end
 
 	undo.Create( "Vehicle" )
 		undo.SetPlayer( ply )
@@ -581,7 +582,7 @@ function TOOL:LeftClick( trace )
 	ply:AddCleanup( "vehicles", Ent )
 	
 	timer.Simple( 0.5, function()
-		if not IsValid(Ent) then return end
+		if not Ent:IsValid() then return end
 
 		local tsc = string.Explode( ",", ply.TOOLMemory.TireSmokeColor )
 		Ent:SetTireSmokeColor( Vector( tonumber(tsc[1]), tonumber(tsc[2]), tonumber(tsc[3]) ) )
@@ -631,11 +632,11 @@ function TOOL:LeftClick( trace )
 		Ent:SetBackfireSound( ply.TOOLMemory.backfiresound or "" )
 		
 		local Gears = {}
-		local Data = string.Explode( ",", ply.TOOLMemory.Gears  )
-		for i = 1, table.Count( Data ) do 
+		local Data = string.Explode( ",", ply.TOOLMemory.Gears )
+		for i = 1, #Data do
 			local gRatio = tonumber( Data[i] )
 			
-			if isnumber( gRatio ) then
+			if gRatio ~= nil then
 				if i == 1 then
 					Gears[i] = math.Clamp( gRatio, -5, -0.001)
 					
@@ -650,7 +651,7 @@ function TOOL:LeftClick( trace )
 		Ent.Gears = Gears
 		
 		if istable( ply.TOOLMemory.SubMaterials ) then
-			for i = 0, table.Count( ply.TOOLMemory.SubMaterials ) do
+			for i = 0, #ply.TOOLMemory.SubMaterials do
 				Ent:SetSubMaterial( i, ply.TOOLMemory.SubMaterials[i] )
 			end
 		end
@@ -672,20 +673,20 @@ function TOOL:LeftClick( trace )
 			
 			local elastics = Ent.Elastics
 			if elastics then
-				for i = 1, table.Count( elastics ) do
+				for i = 1, #elastics do
 					local elastic = elastics[i]
 					if Ent.StrengthenSuspension == true then
-						if IsValid( elastic ) then
+						if elastic:IsValid() then
 							elastic:Fire( "SetSpringConstant", data[i][1] * 0.5, 0 )
 							elastic:Fire( "SetSpringDamping", data[i][2] * 0.5, 0 )
 						end
 						local elastic2 = elastics[i * 10]
-						if IsValid( elastic2 ) then
+						if elastic2:IsValid() then
 							elastic2:Fire( "SetSpringConstant", data[i][1] * 0.5, 0 )
 							elastic2:Fire( "SetSpringDamping", data[i][2] * 0.5, 0 )
 						end
 					else
-						if IsValid( elastic ) then
+						if elastic:IsValid() then
 							elastic:Fire( "SetSpringConstant", data[i][1], 0 )
 							elastic:Fire( "SetSpringDamping", data[i][2], 0 )
 						end
@@ -698,7 +699,7 @@ function TOOL:LeftClick( trace )
 		Ent:SetRearSuspensionHeight( tonumber( ply.TOOLMemory.RearHeight ) )
 		
 		local groups = string.Explode( ",", ply.TOOLMemory.BodyGroups)
-		for i = 1, table.Count( groups ) do
+		for i = 1, #groups do
 			Ent:SetBodygroup(i, tonumber(groups[i]) )
 		end
 		
@@ -720,7 +721,7 @@ function TOOL:LeftClick( trace )
 		
 		if Update then
 			local PhysObj = Ent:GetPhysicsObject()
-			if not IsValid( PhysObj ) then return end
+			if not physObj:IsValid() then return end
 			
 			local freezeWhenDone = PhysObj:IsMotionEnabled()
 			local freezeWheels = {}
@@ -733,12 +734,13 @@ function TOOL:LeftClick( trace )
 			Ent:SetPos( ResetPos + Vector(0,0,30) )
 			Ent:SetAngles( Angle(0,ResetAng.y,0) )
 			
-			for i = 1, table.Count( Ent.Wheels ) do
-				local Wheel = Ent.Wheels[ i ]
-				if IsValid( Wheel ) then
+			local Wheels = ent.Wheels
+			for i = 1, #Wheels do
+				local Wheel = Wheels[ i ]
+				if Wheel:IsValid() then
 					local wPObj = Wheel:GetPhysicsObject()
 					
-					if IsValid( wPObj ) then
+					if wPObj:IsValid() then
 						freezeWheels[ i ] = {}
 						freezeWheels[ i ].dofreeze = wPObj:IsMotionEnabled()
 						freezeWheels[ i ].pos = Wheel:GetPos()
@@ -751,22 +753,23 @@ function TOOL:LeftClick( trace )
 			end
 			
 			timer.Simple( 0.5, function()
-				if not IsValid( Ent ) then return end
-				if not IsValid( PhysObj ) then return end
+				if not ent:IsValid() then return end
+				if not physObj:IsValid() then return end
 				
 				PhysObj:EnableMotion( freezeWhenDone )
 				Ent:SetNotSolid( false )
 				Ent:SetPos( ResetPos )
 				Ent:SetAngles( ResetAng )
 		
-				for i = 1, table.Count( freezeWheels ) do
-					local Wheel = Ent.Wheels[ i ]
-					if IsValid( Wheel ) then
+				local Wheels = ent.Wheels
+				for i = 1, #freezeWheels do
+					local Wheel = Wheels[ i ]
+					if Wheel:IsValid() then
 						local wPObj = Wheel:GetPhysicsObject()
 						
 						Wheel:SetNotSolid( false )
 						
-						if IsValid( wPObj ) then
+						if wPObj:IsValid() then
 							wPObj:EnableMotion( freezeWheels[i].dofreeze ) 
 						end
 						
@@ -780,7 +783,7 @@ function TOOL:LeftClick( trace )
 		if Ent.CustomWheels then
 			if Ent.GhostWheels then
 				timer.Simple( Update and 0.25 or 0, function()
-					if not IsValid( Ent ) then return end
+					if not ent:IsValid() then return end
 					if ply.TOOLMemory.WheelTool_Foffset and ply.TOOLMemory.WheelTool_Roffset then
 						SetWheelOffset( Ent, ply.TOOLMemory.WheelTool_Foffset, ply.TOOLMemory.WheelTool_Roffset )
 					end
@@ -822,7 +825,7 @@ function TOOL:RightClick( trace )
 		ply.TOOLMemory = {}
 	end
 	
-	if not IsValid(ent) then 
+	if not ent:IsValid() then 
 		table.Empty( ply.TOOLMemory )
 		
 		net.Start("sphys_dupe")

@@ -21,7 +21,7 @@ function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
 	local Entity = data:GetEntity()
 	
-	if not IsValid( Entity ) then return end
+	if not Entity:IsValid() then return end
 	
 	local Vel = Entity:GetVelocity() * 0.9
 	
@@ -36,7 +36,7 @@ function EFFECT:DoFX( pos, vel )
 	local emitter = ParticleEmitter( pos, false )
 	
 	if emitter then
-		local particle = emitter:Add( Materials[math.Round(math.Rand(1,table.Count( Materials )),0)], pos )
+		local particle = emitter:Add( Materials[math.Round(math.Rand(1,#Materials),0)], pos )
 		
 		local vz = math.min(vel:Length(),600)
 		

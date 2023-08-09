@@ -1,7 +1,7 @@
 local function receiveppdata( length )
 	local ent = net.ReadEntity()
 	
-	if IsValid( ent ) then
+	if ent:IsValid() then
 		ent.CustomWheels = net.ReadBool()
 		
 		if not ent.CustomWheels then
@@ -21,7 +21,7 @@ local function receiveppdata( length )
 			local posRR = net.ReadFloat()
 			local travelRR = net.ReadFloat()
 			
-			if not IsValid( wheelFL ) or not IsValid( wheelFR ) or not IsValid( wheelRL ) or not IsValid( wheelRR ) then return end
+			if not wheelFL:IsValid() or not wheelFR:IsValid() or not wheelRL:IsValid() or not wheelRR:IsValid() then return end
 			
 			ent.pp_data = {
 				[1] = {

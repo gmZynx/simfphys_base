@@ -111,8 +111,7 @@ end
 function TOOL:Think()
 	if CLIENT then
 		local ply = self:GetOwner()
-		
-		if not IsValid( ply ) then return end
+		if not ply:IsValid() then return end
 		
 		ply.simeditor_nextrequest = isnumber( ply.simeditor_nextrequest ) and ply.simeditor_nextrequest or 0
 		

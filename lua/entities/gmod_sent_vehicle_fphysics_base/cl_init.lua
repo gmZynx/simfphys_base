@@ -89,10 +89,10 @@ function ENT:SetPoseParameters( curtime )
 		end
 	else
 		if not selfTable.CustomWheels then
-			for i = 1, table.Count( selfTable.pp_data ) do
+			for i = 1, #selfTable.pp_data do
 				local Wheel = selfTable.pp_data[i].entity
 
-				if IsValid( Wheel ) then
+				if Wheel and Wheel:IsValid() then
 					local addPos = Wheel:GetDamaged() and selfTable.pp_data[i].dradius or 0
 
 					local Pose = (selfTable.pp_data[i].pos - self:WorldToLocal( Wheel:GetPos()).z + addPos ) / selfTable.pp_data[i].travel
@@ -348,7 +348,7 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 							if selfTable.SmoothRPM > LimitRPM * 0.6 then
 								if math.random(0,4) >= 3 then
 									timer.Simple(0.4, function()
-										if not IsValid( self ) then return end
+										if not self:IsValid() then return end
 										self:Backfire()
 									end)
 								end
@@ -409,7 +409,7 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 							if selfTable.SmoothRPM > LimitRPM * 0.6 then
 								if math.random(0,4) >= 3 then
 									timer.Simple(0.4, function()
-										if not IsValid( self ) then return end
+										if not self:IsValid() then return end
 										self:Backfire()
 									end)
 								end
@@ -453,7 +453,7 @@ function ENT:Backfire( damaged )
 
 	local expos = self.ExhaustPositions
 
-	for i = 1, table.Count( expos ) do
+	for i = 1, #expos do
 		if math.random(1,3) >= 2 or damaged then
 			local Pos = expos[i].pos
 			local Ang = expos[i].ang - Angle(90,0,0)
@@ -608,7 +608,7 @@ function ENT:SetSoundPreset(index)
 	end
 
 	if index > 0 then
-		local clampindex = math.Clamp(index,1,table.Count(simfphys.SoundPresets))
+		local clampindex = math.Clamp(index,1,#simfphys.SoundPresets)
 		self.EngineSounds[ "Idle" ] = simfphys.SoundPresets[clampindex][1]
 		self.EngineSounds[ "LowRPM" ] = simfphys.SoundPresets[clampindex][2]
 		self.EngineSounds[ "HighRPM" ] = simfphys.SoundPresets[clampindex][3]

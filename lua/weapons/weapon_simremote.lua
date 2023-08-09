@@ -36,21 +36,14 @@ if (CLIENT) then
 	SWEP.Slot				= 1
 	SWEP.SlotPos			= 10
 	
+	local color_blue = Color( 0, 127, 255 )
 	hook.Add( "PreDrawHalos", "s_remote_halos", function()
 		local ply = LocalPlayer()
-		local weapon = ply:GetActiveWeapon()
-		
-		if IsValid( ply ) and IsValid( weapon ) then
-			if ply:InVehicle() then return end
-			
-			if weapon:GetClass() == "weapon_simremote" then
-				if not weapon:GetActive() then
-					local car = weapon:GetCar()
-					
-					if IsValid( car ) then
-						halo.Add( {car}, Color( 0, 127, 255 ) )
-					end
-				end
+		if ply:IsValid() and not ply:InVehicle() then
+			local weapon = ply:GetActiveWeapon()
+			if weapon:IsValid() and weapon:GetClass() == "weapon_simremote" and not weapon:GetActive() then	
+				local car = weapon:GetCar()
+				if car:IsValid() then halo.Add( {car}, color_blue ) end
 			end
 		end
 	end )
@@ -89,7 +82,7 @@ end
 
 function SWEP:Think()
 	if self:GetOwner():KeyPressed( IN_USE ) then
-		if self:GetActive() or not IsValid( self:GetCar() ) then
+		if self:GetActive() or not self:GetCar():IsValid() then
 			self:Disable()
 		else
 			self:Enable()
@@ -116,7 +109,7 @@ end
 function SWEP:SecondaryAttack()
 	if self:GetActive() then return false end
 	
-	if IsValid( self:GetCar() ) then
+	if self:GetCar():IsValid() then
 		self:SetCar( NULL )
 		self:GetOwner():ChatPrint("Remote Controller unlinked.")
 		
@@ -129,10 +122,9 @@ end
 function SWEP:Enable()
 	local car = self:GetCar()
 	
-	if IsValid( car ) then
-	
+	if car:IsValid() then
 		local ply = self:GetOwner()
-		if IsValid( car:GetDriver() ) then
+		if car:GetDriver():IsValid() then
 			ply:ChatPrint("vehicle is already in use")
 		else
 			if car:GetIsVehicleLocked() then
@@ -167,7 +159,7 @@ function SWEP:Disable()
 	self.OldMoveType = nil
 	ply:DrawViewModel( true )
 	
-	if IsValid( car ) then
+	if car:IsValid() then
 		car.RemoteDriver = nil
 	end
 end
@@ -178,14 +170,14 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
-	if IsValid( self:GetCar() ) then
+	if self:GetCar():IsValid() then
 		self:Disable()
 	end
 	return true
 end
 
 function SWEP:OnDrop()
-	if IsValid( self:GetCar() ) then
+	if self:GetCar():IsValid() then
 		self:Disable()
 		self.TheCar = nil
 	end

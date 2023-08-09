@@ -4,16 +4,18 @@ if CLIENT then
 	LockedPitch = GetConVar( "cl_simfphys_ms_lockedpitch" ):GetFloat()
 end
 
+local blank_vec = Vector()
+local static_vec = Vector( 0, -9, 5 )
 local function GetViewOverride( ent )
-	if not IsValid( ent ) then return Vector(0,0,0) end
+	if not ent:IsValid() then return blank_vec end
 	
 	if not ent.customview then
 		local vehiclelist = list.Get( "simfphys_vehicles" )[ ent:GetSpawn_List() ]
 		
 		if vehiclelist then
-			ent.customview = vehiclelist.Members.FirstPersonViewPos or Vector(0,-9,5)
+			ent.customview = vehiclelist.Members.FirstPersonViewPos or static_vec
 		else
-			ent.customview = Vector(0,-9,5)
+			ent.customview = static_vec
 		end
 	end
 	
@@ -23,8 +25,7 @@ end
 hook.Add("CalcVehicleView", "simfphysViewOverride", function(Vehicle, ply, view)
 
 	local vehiclebase = ply:GetSimfphys()
-	
-	if not IsValid( vehiclebase ) then return end
+	if not vehiclebase:IsValid() then return end
 
 	local IsDriverSeat = ply:IsDrivingSimfphys()
 	
@@ -56,11 +57,8 @@ hook.Add("CalcVehicleView", "simfphysViewOverride", function(Vehicle, ply, view)
 	local tr = util.TraceHull( {
 		start = view.origin,
 		endpos = TargetOrigin,
-		filter = function( e )
-			local c = e:GetClass()
-			local collide = not c:StartWith( "prop_physics" ) and not c:StartWith( "prop_dynamic" ) and not c:StartWith( "prop_ragdoll" ) and not e:IsVehicle() and not c:StartWith( "gmod_" ) and not c:StartWith( "player" )
-			return collide
-		end,
+		filter = vehiclebase,
+		collisiongroup = COLLISION_GROUP_WORLD,
 		mins = Vector( -WallOffset, -WallOffset, -WallOffset ),
 		maxs = Vector( WallOffset, WallOffset, WallOffset ),
 	} )
@@ -79,12 +77,10 @@ hook.Add("StartCommand", "simfphys_lockview", function(ply, ucmd)
 	if not ply:IsDrivingSimfphys() then return end
 
 	local vehicle = ply:GetVehicle()
-	
-	if not IsValid( vehicle ) then return end
+	if not vehicle:IsValid() then return end
 	
 	local vehiclebase = ply:GetSimfphys()
-	
-	if not IsValid( vehiclebase ) then return end
+	if not vehiclebase:IsValid() then return end
 	
 	if not (ply:GetInfoNum( "cl_simfphys_mousesteer", 0 ) == 1) then return end
 	

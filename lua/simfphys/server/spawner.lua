@@ -33,7 +33,7 @@ function SpawnSimfphysVehicle( Player, vname, tr )
 
 	local Ent = simfphys.SpawnVehicle( Player, pos, Angles, vehicle.Model, vehicle.Class, vname, vehicle )
 	
-	if not IsValid( Ent ) then return end
+	if not Ent:IsValid() then return end
 	
 	undo.Create( "Vehicle" )
 		undo.SetPlayer( Player )

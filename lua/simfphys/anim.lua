@@ -1,7 +1,6 @@
 hook.Add("CalcMainActivity", "simfphysSeatActivityOverride", function(ply)
 	local veh = ply:GetSimfphys()
-
-	if not IsValid( veh ) then return end
+	if not veh:IsValid() then return end
 
 	if ply.m_bWasNoclipping then 
 		ply.m_bWasNoclipping = nil 
@@ -15,7 +14,7 @@ hook.Add("CalcMainActivity", "simfphysSeatActivityOverride", function(ply)
 	ply.CalcIdeal = ACT_HL2MP_SIT
 	ply.CalcSeqOverride = isfunction( veh.GetSeatAnimation ) and veh:GetSeatAnimation( ply ) or -1
 
-	if not ply:IsDrivingSimfphys() and ply:GetAllowWeaponsInVehicle() and IsValid( ply:GetActiveWeapon() ) then
+	if not ply:IsDrivingSimfphys() and ply:GetAllowWeaponsInVehicle() and ply:GetActiveWeapon():IsValid() then
 		
 		local holdtype = ply:GetActiveWeapon():GetHoldType()
 		
@@ -38,8 +37,7 @@ hook.Add("UpdateAnimation", "simfphysPoseparameters", function(ply , vel, seq)
 		if not ply:IsDrivingSimfphys() then return end
 		
 		local Car = ply:GetSimfphys()
-		
-		if not IsValid( Car ) then return end
+		if not Car:IsValid() then return end
 		
 		local Steer = Car:GetVehicleSteer()
 		

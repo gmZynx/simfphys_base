@@ -27,7 +27,7 @@ function EFFECT:Init( data )
 	local TurboCharged = Entity:GetTurboCharged()
 	local SuperCharged = Entity:GetSuperCharged()
 	
-	if IsValid( Entity ) then
+	if Entity:IsValid() then
 		local Vel = Entity:GetVelocity()
 		local Dir = Entity:LocalToWorldAngles( lAng ):Forward()
 		local Pos = Entity:LocalToWorld( lPos )
@@ -38,7 +38,7 @@ function EFFECT:Init( data )
 			local MaxHealth = Entity:GetMaxHealth()
 			local Health = Entity:GetCurHealth()
 			
-			local particle = emitter:Add( Materials[ math.Round( math.Rand(1, table.Count( Materials ) ) , 0 ) ], Pos )
+			local particle = emitter:Add( Materials[ math.Round( math.Rand(1, #Materials ) , 0 ) ], Pos )
 			local cAdd = (1 - (Health / MaxHealth)) * 100
 			local cInt = math.Clamp(100 - 40 * Size,0,255)
 			local rand = Vector( math.random(-1,1), math.random(-1,1), math.random(-1,1) ) * 0.25

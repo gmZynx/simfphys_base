@@ -7,9 +7,10 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 	local Filter1 = {ent,ply}
 	local Filter2 = {ent,ply,b_ent}
 	
-	for i = 1, table.Count( b_ent.Wheels ) do
-		table.insert(Filter1, b_ent.Wheels[i])
-		table.insert(Filter2, b_ent.Wheels[i])
+	local Wheels = b_ent.Wheels
+	for i = 1, #Wheels do
+		table.insert(Filter1, Wheels[i])
+		table.insert(Filter2, Wheels[i])
 	end
 	
 	if vel:Length() > 250 then
@@ -121,8 +122,9 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 	local Filter = {ent,ply,b_ent}
 	local LinkedDoorAnims = istable(b_ent.ModelInfo) and istable(b_ent.ModelInfo.LinkDoorAnims)
 	
-	for i = 1, table.Count( b_ent.Wheels ) do
-		table.insert(Filter, b_ent.Wheels[i])
+	local Wheels = b_ent.Wheels
+	for i = 1, #Wheels do
+		table.insert(Filter, Wheels[i])
 	end
 
 	local IsDriverSeat = ent == b_ent:GetDriverSeat()
@@ -158,8 +160,9 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 				end
 			end
 		else
-			for i = 1, table.Count( b_ent.Exitpoints ) do
-				local seq_att = b_ent.Exitpoints[i]
+			local Exitpoints = b_ent.Exitpoints
+			for i = 1, #Exitpoints do
+				local seq_att = Exitpoints[i]
 				local attachmentdata = b_ent:GetAttachment( b_ent:LookupAttachment( seq_att ) )
 				if attachmentdata then
 					local targetpos = attachmentdata.Pos
@@ -192,24 +195,20 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 end
 
 local function Exit_vehicle_simple( ent, ply, b_ent )
-
-	if not IsValid( ent ) then return end
-	if not IsValid( ply ) then return end
-	if not IsValid( b_ent ) then return end
-	
-	if istable( b_ent.Exitpoints ) and b_ent:GetVelocity():Length() < 250 then
-		ExitUsingAttachments( ent, ply, b_ent )
-	else
-		ExitUsingMyTraces( ent, ply, b_ent )
+	if ent:IsValid() and ply:IsValid() and b_ent:IsValid() then
+		if istable( b_ent.Exitpoints ) and b_ent:GetVelocity():Length() < 250 then
+			ExitUsingAttachments( ent, ply, b_ent )
+		else
+			ExitUsingMyTraces( ent, ply, b_ent )
+		end
 	end
 end
 
  local function HandleVehicleExit( ply, vehicle )
-	if not IsValid( ply ) then return end
+	if not ply:IsValid() then return end
 	
 	local vehicle = ply:GetVehicle()
-	
-	if not IsValid( vehicle ) then return end
+	if not vehicle:IsValid() then return end
 
 	if vehicle.fphysSeat then
 		local base = vehicle.base

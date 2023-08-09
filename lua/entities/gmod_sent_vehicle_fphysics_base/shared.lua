@@ -142,7 +142,7 @@ end
 function ENT:BodyGroupIsValid( bodygroups )
 	for index, groups in pairs( bodygroups ) do
 		local mygroup = self:GetBodygroup( index )
-		for g_index = 1, table.Count( groups ) do
+		for g_index = 1, #groups do
 			if mygroup == groups[g_index] then return true end
 		end
 	end
@@ -170,11 +170,8 @@ function ENT:GetVehicleClass()
 end
 
 function ENT:GetSeatAnimation( ply )
-	if not IsValid( ply ) or not ply:IsPlayer() then return -1 end
-
 	local Pod = ply:GetVehicle()
-
-	if not IsValid( Pod ) then return -1 end
+	if not Pod:IsValid() then return -1 end
 
 	if Pod == self:GetDriverSeat() then 
 

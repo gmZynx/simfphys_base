@@ -51,8 +51,7 @@ function ENT:HurtPlayers( damage )
 	if not simfphys.pDamageEnabled then return end
 
 	local Driver = self:GetDriver()
-
-	if IsValid( Driver ) then
+	if Driver:IsValid() then
 		if self.RemoteDriver ~= Driver then
 			local dmginfo = DamageInfo()
 			dmginfo:SetDamage( damage )
@@ -66,23 +65,22 @@ function ENT:HurtPlayers( damage )
 
 	if not istable( self.PassengerSeats ) then return end
 
-	for i = 1, table.Count( self.PassengerSeats ) do
+	for i = 1, #self.PassengerSeats do
 		local Passenger = self.pSeat[i]:GetDriver()
+		if Passenger:IsValid() then
+			local dmginfo = DamageInfo()
+			dmginfo:SetDamage( damage )
+			dmginfo:SetAttacker( game.GetWorld() )
+			dmginfo:SetInflictor( self )
+			dmginfo:SetDamageType( DMG_DIRECT )
 
-		if not IsValid(Passenger) then continue end
-
-		local dmginfo = DamageInfo()
-		dmginfo:SetDamage( damage )
-		dmginfo:SetAttacker( game.GetWorld() )
-		dmginfo:SetInflictor( self )
-		dmginfo:SetDamageType( DMG_DIRECT )
-
-		Passenger:TakeDamageInfo( dmginfo )
+			Passenger:TakeDamageInfo( dmginfo )
+		end
 	end
 end
 
 function ENT:ExplodeVehicle()
-	if not IsValid( self ) then return end
+	if not self:IsValid() then return end
 	if self.destroyed then return end
 
 	self.destroyed = true
@@ -116,7 +114,7 @@ function ENT:ExplodeVehicle()
 
 		simfphys.SetOwner( ply , bprop )
 
-		if IsValid( ply ) then
+		if ply and ply:IsValid() then
 			undo.Create( "Gib" )
 			undo.SetPlayer( ply )
 			undo.AddEntity( bprop )
@@ -126,9 +124,10 @@ function ENT:ExplodeVehicle()
 		end
 
 		bprop.Gibs = {}
-		for i = 2, table.Count( self.GibModels ) do
+		local GibModels = self.GibModels
+		for i = 2, #GibModels do
 			local prop = ents.Create( "gmod_sent_vehicle_fphysics_gib" )
-			prop:SetModel( self.GibModels[i] )
+			prop:SetModel( GibModels[i] )
 			prop:SetPos( self:GetPos() )
 			prop:SetAngles( self:GetAngles() )
 			prop:SetOwner( bprop )
@@ -139,7 +138,7 @@ function ENT:ExplodeVehicle()
 			bprop.Gibs[i-1] = prop
 
 			local PhysObj = prop:GetPhysicsObject()
-			if IsValid( PhysObj ) then
+			if PhysObj:IsValid() then
 				PhysObj:SetVelocityInstantaneous( VectorRand() * 500 + self:GetVelocity() + Vector(0,0,math.random(150,250)) )
 				PhysObj:AddAngleVelocity( VectorRand() )
 			end
@@ -169,7 +168,7 @@ function ENT:ExplodeVehicle()
 
 		simfphys.SetOwner( ply, bprop )
 
-		if IsValid( ply ) then
+		if ply and ply:IsVAlid() then
 			undo.Create( "Gib" )
 			undo.SetPlayer( ply )
 			undo.AddEntity( bprop )
@@ -180,9 +179,10 @@ function ENT:ExplodeVehicle()
 
 		if self.CustomWheels == true and not self.NoWheelGibs then
 			bprop.Wheels = {}
-			for i = 1, table.Count( self.GhostWheels ) do
-				local Wheel = self.GhostWheels[i]
-				if IsValid( Wheel ) then
+			local GhostWheels = self.GhostWheels
+			for i = 1, #GhostWheels do
+				local Wheel = GhostWheels[i]
+				if Wheel:IsValid() then
 					local prop = ents.Create( "gmod_sent_vehicle_fphysics_gib" )
 					prop:SetModel( Wheel:GetModel() )
 					prop:SetPos( Wheel:LocalToWorld( Vector(0,0,0) ) )
@@ -203,15 +203,15 @@ function ENT:ExplodeVehicle()
 	end
 
 	local Driver = self:GetDriver()
-	if IsValid( Driver ) and self.RemoteDriver ~= Driver then
+	if Driver:IsValid() and self.RemoteDriver ~= Driver then
 		Driver:ExitVehicle()
 		Driver:TakeDamage( Driver:Health() + Driver:Armor(), self.LastAttacker, self.LastInflictor )
 	end
 
 	if self.PassengerSeats then
-		for i = 1, table.Count( self.PassengerSeats ) do
+		for i = 1, #self.PassengerSeats do
 			local Passenger = self.pSeat[i]:GetDriver()
-			if IsValid( Passenger ) then
+			if Passenger:IsValid() then
 				Passenger:ExitVehicle()
 				Passenger:TakeDamage( Passenger:Health() + Passenger:Armor(), self.LastAttacker or Entity(0), self.LastInflictor or Entity(0) )
 			end
@@ -266,7 +266,7 @@ function ENT:PhysicsCollide( data, physobj )
 
 	if hook.Run( "simfphysPhysicsCollide", self, data, physobj ) then return end
 
-	if IsValid( data.HitEntity ) then
+	if data.HitEntity:IsValid() then
 		if data.HitEntity:IsNPC() or data.HitEntity:IsNextBot() or data.HitEntity:IsPlayer() then
 			Spark( data.HitPos , data.HitNormal , "MetalVehicle.ImpactSoft" )
 			return

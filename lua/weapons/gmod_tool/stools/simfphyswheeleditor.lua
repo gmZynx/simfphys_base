@@ -24,28 +24,29 @@ local function GetRight( ent, index, WheelPos )
     local Right = ent.Right
 
     if WheelPos.IsFrontWheel then
-        Right = (IsValid( ent.SteerMaster ) and Steer.Right or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
+        Right = (ent.SteerMaster and ent.SteerMaster:IsValid() and Steer.Right or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
     else
-        Right = (IsValid( ent.SteerMaster ) and Steer.Right2 or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
+        Right = (ent.SteerMaster and ent.SteerMaster:IsValid() and Steer.Right2 or ent.Right) * (WheelPos.IsRightWheel and 1 or -1)
     end
 
     return Right
 end
 
 local function SetWheelOffset( ent, offset_front, offset_rear )
-    if not IsValid( ent ) then return end
+    if not ent:IsValid() then return end
 
     ent.WheelTool_Foffset = offset_front
     ent.WheelTool_Roffset = offset_rear
 
-    if not istable( ent.Wheels ) or not istable( ent.GhostWheels ) then return end
+    local Wheels, GhostWheels = ent.Wheels, ent.GhostWheels
+    if not istable( Wheels ) or not istable( GhostWheels ) then return end
 
-    for i = 1, table.Count( ent.GhostWheels ) do
-        local Wheel = ent.Wheels[ i ]
-        local WheelModel = ent.GhostWheels[i]
+    for i = 1, #GhostWheels do
+        local Wheel = Wheels[ i ]
+        local WheelModel = GhostWheels[i]
         local WheelPos = ent:LogicWheelPos( i )
 
-        if IsValid( Wheel ) and IsValid( WheelModel ) then
+        if Wheel:IsValid() and WheelModel:IsValid() then
             local Pos = Wheel:GetPos()
             local Right = GetRight( ent, i, WheelPos )
             local offset = WheelPos.IsFrontWheel and offset_front or offset_rear
@@ -53,7 +54,7 @@ local function SetWheelOffset( ent, offset_front, offset_rear )
             WheelModel:SetParent( nil )
 
             local physObj = WheelModel:GetPhysicsObject()
-            if IsValid( physObj ) then
+            if physObj:IsValid() then
                 physObj:EnableMotion( false )
             end
 
@@ -69,12 +70,13 @@ local function ApplyWheel(ply, ent, data)
     ent.CustomWheelAngleOffset_R = data[4]
 
     timer.Simple( 0.05, function()
-        if not IsValid( ent ) then return end
+        if not ent:IsValid() then return end
 
-        for i = 1, table.Count( ent.GhostWheels ) do
-            local Wheel = ent.GhostWheels[i]
+        local GhostWheels = ent.GhostWheels
+        for i = 1, #GhostWheels do
+            local Wheel = GhostWheels[i]
 
-            if IsValid( Wheel ) then
+            if Wheel:IsValid() then
                 local isfrontwheel = (i == 1 or i == 2)
                 local swap_y = (i == 2 or i == 4 or i == 6)
 
@@ -104,7 +106,7 @@ local function ApplyWheel(ply, ent, data)
                 Wheel:SetAngles( ghostAng )
 
                 timer.Simple( 0.05, function()
-                    if not IsValid( Wheel ) or not IsValid( ent ) then return end
+                    if not Wheel:IsValid() or not ent:IsValid() then return end
                     local wheelsize = Wheel:OBBMaxs() - Wheel:OBBMins()
                     local radius = isfrontwheel and ent.FrontWheelRadius or ent.RearWheelRadius
                     local size = (radius * 2) / math.max(wheelsize.x,wheelsize.y,wheelsize.z)
@@ -189,7 +191,7 @@ function TOOL:LeftClick( trace )
         if not ent.CustomWheels then return end
 
         local PhysObj = ent:GetPhysicsObject()
-        if not IsValid( PhysObj ) then return end
+        if not PhysObj:IsValid() then return end
 
         local freezeWhenDone = PhysObj:IsMotionEnabled()
         local freezeWheels = {}
@@ -202,12 +204,13 @@ function TOOL:LeftClick( trace )
         ent:SetPos( ResetPos + Vector(0,0,30) )
         ent:SetAngles( Angle(0,ResetAng.y,0) )
 
-        for i = 1, table.Count( ent.Wheels ) do
-            local Wheel = ent.Wheels[ i ]
-            if IsValid( Wheel ) then
+        local Wheels = ent.Wheels
+        for i = 1, #Wheels do
+            local Wheel = Wheels[ i ]
+            if Wheel:IsValid() then
                 local wPObj = Wheel:GetPhysicsObject()
 
-                if IsValid( wPObj ) then
+                if wPObj:IsValid() then
                     freezeWheels[ i ] = {}
                     freezeWheels[ i ].dofreeze = wPObj:IsMotionEnabled()
                     freezeWheels[ i ].pos = Wheel:GetPos()
@@ -220,7 +223,7 @@ function TOOL:LeftClick( trace )
         end
 
         timer.Simple( 0.25, function()
-            if not IsValid( ent ) then return end
+            if not ent:IsValid() then return end
 
             local front_model = self:GetClientInfo("frontwheelmodel")
             local front_angle = GetAngleFromSpawnlist(front_model)
@@ -246,9 +249,10 @@ function TOOL:LeftClick( trace )
             if ent.CustomWheels and ent.GhostWheels then
                 ent:SteerVehicle( 0 )
 
-                for i = 1, table.Count( ent.Wheels ) do
-                    local Wheel = ent.Wheels[ i ]
-                    if IsValid( Wheel ) then
+                local Wheels = ent.Wheels
+                for i = 1, Wheels do
+                    local Wheel = Wheels[ i ]
+                    if Wheel:IsValid() then
                         local physobj = Wheel:GetPhysicsObject()
                         physobj:EnableMotion( true )
                         physobj:Wake()
@@ -261,22 +265,23 @@ function TOOL:LeftClick( trace )
             end
 
             timer.Simple( 0.25, function()
-                if not IsValid( ent ) then return end
-                if not IsValid( PhysObj ) then return end
+                if not ent:IsValid() then return end
+                if not PhysObj:IsValid() then return end
 
                 PhysObj:EnableMotion( freezeWhenDone )
                 ent:SetNotSolid( false )
                 ent:SetPos( ResetPos )
                 ent:SetAngles( ResetAng )
 
-                for i = 1, table.Count( freezeWheels ) do
-                    local Wheel = ent.Wheels[ i ]
-                    if IsValid( Wheel ) then
+                local Wheels = ent.Wheels
+                for i = 1, #freezeWheels do
+                    local Wheel = Wheels[ i ]
+                    if Wheel:IsValid() then
                         local wPObj = Wheel:GetPhysicsObject()
 
                         Wheel:SetNotSolid( false )
 
-                        if IsValid( wPObj ) then
+                        if wPObj:IsValid() then
                             wPObj:EnableMotion( freezeWheels[i].dofreeze )
                         end
 
@@ -301,7 +306,7 @@ function TOOL:Reload( trace )
 
     if SERVER then
         local PhysObj = ent:GetPhysicsObject()
-        if not IsValid( PhysObj ) then return end
+        if not PhysObj:IsValid() then return end
 
         local freezeWhenDone = PhysObj:IsMotionEnabled()
         local freezeWheels = {}
@@ -314,12 +319,13 @@ function TOOL:Reload( trace )
         ent:SetPos( ResetPos + Vector(0,0,30) )
         ent:SetAngles( Angle(0,ResetAng.y,0) )
 
-        for i = 1, table.Count( ent.Wheels ) do
-            local Wheel = ent.Wheels[ i ]
-            if IsValid( Wheel ) then
+        local Wheels = ent.Wheels
+        for i = 1, #ent.Wheels do
+            local Wheel = Wheels[ i ]
+            if Wheel:IsValid() then
                 local wPObj = Wheel:GetPhysicsObject()
 
-                if IsValid( wPObj ) then
+                if wPObj:IsValid() then
                     freezeWheels[ i ] = {}
                     freezeWheels[ i ].dofreeze = wPObj:IsMotionEnabled()
                     freezeWheels[ i ].pos = Wheel:GetPos()
@@ -332,7 +338,7 @@ function TOOL:Reload( trace )
         end
 
         timer.Simple( 0.25, function()
-            if not IsValid( ent ) then return end
+            if not ent:IsValid() then return end
 
             local vname = ent:GetSpawn_List()
             local VehicleList = list.Get( "simfphys_vehicles" )[vname]
@@ -340,12 +346,15 @@ function TOOL:Reload( trace )
             if ent.CustomWheels and ent.GhostWheels then
                 ent:SteerVehicle( 0 )
 
-                for i = 1, table.Count( ent.Wheels ) do
-                    local Wheel = ent.Wheels[ i ]
-                    if IsValid( Wheel ) then
+                local Wheels = ent.Wheels
+                for i = 1, #Wheels do
+                    local Wheel = Wheels[ i ]
+                    if Wheel:IsValid() then
                         local physobj = Wheel:GetPhysicsObject()
-                        physobj:EnableMotion( true )
-                        physobj:Wake()
+                        if physobj:IsValid() then
+                            physobj:EnableMotion( true )
+                            physobj:Wake()
+                        end
                     end
                 end
 
@@ -359,22 +368,23 @@ function TOOL:Reload( trace )
             end
 
             timer.Simple( 0.25, function()
-                if not IsValid( ent ) then return end
-                if not IsValid( PhysObj ) then return end
+                if not ent:IsValid() then return end
+                if not PhysObj:IsValid() then return end
 
                 PhysObj:EnableMotion( freezeWhenDone )
                 ent:SetNotSolid( false )
                 ent:SetPos( ResetPos )
                 ent:SetAngles( ResetAng )
 
-                for i = 1, table.Count( freezeWheels ) do
-                    local Wheel = ent.Wheels[ i ]
-                    if IsValid( Wheel ) then
+                local Wheels = ent.Wheels
+                for i = 1, #freezeWheels do
+                    local Wheel = Wheels[ i ]
+                    if Wheel:IsValid() then
                         local wPObj = Wheel:GetPhysicsObject()
 
                         Wheel:SetNotSolid( false )
 
-                        if IsValid( wPObj ) then
+                        if wPObj:IsValid() then
                             wPObj:EnableMotion( freezeWheels[i].dofreeze )
                         end
 
@@ -487,7 +497,7 @@ local LW_Wheels = {
     "models/lonewolfie/wheels/wheel_welddrag_big.mdl"
 }
 
-for i = 1, table.Count( LW_Wheels ) do
+for i = 1, #LW_Wheels do
     if file.Exists( LW_Wheels[i], "GAME" ) then
         list.Set( "simfphys_Wheels", LW_Wheels[i], { Angle = Angle( 0, 90, 0 ) } )
     end

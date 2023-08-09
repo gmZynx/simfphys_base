@@ -36,20 +36,20 @@ function TOOL:LeftClick( trace )
 	
 	local elastics = ent.Elastics
 	if (elastics) then
-		for i = 1, table.Count( elastics ) do
+		for i = 1, #elastics do
 			local elastic = elastics[i]
 			if (ent.StrengthenSuspension == true) then
-				if (IsValid(elastic)) then
+				if (elastic:IsValid()) then
 					elastic:Fire( "SetSpringConstant", data[i][1] * 0.5, 0 )
 					elastic:Fire( "SetSpringDamping", data[i][2] * 0.5, 0 )
 				end
 				local elastic2 = elastics[i * 10]
-				if (IsValid(elastic2)) then
+				if (elastic2:IsValid()) then
 					elastic2:Fire( "SetSpringConstant", data[i][1] * 0.5, 0 )
 					elastic2:Fire( "SetSpringDamping", data[i][2] * 0.5, 0 )
 				end
 			else
-				if (IsValid(elastic)) then
+				if (elastic:IsValid()) then
 					elastic:Fire( "SetSpringConstant", data[i][1], 0 )
 					elastic:Fire( "SetSpringDamping", data[i][2], 0 )
 				end
@@ -120,20 +120,20 @@ function TOOL:Reload( trace )
 		
 		local elastics = ent.Elastics
 		if (elastics) then
-			for i = 1, table.Count( elastics ) do
+			for i = 1, #elastics do
 				local elastic = elastics[i]
 				if (ent.StrengthenSuspension == true) then
-					if (IsValid(elastic)) then
+					if (elastic:IsValid()) then
 						elastic:Fire( "SetSpringConstant", data[i][1] * 0.5, 0 )
 						elastic:Fire( "SetSpringDamping", data[i][2] * 0.5, 0 )
 					end
 					local elastic2 = elastics[i * 10]
-					if (IsValid(elastic2)) then
+					if (elastic2:IsValid()) then
 						elastic2:Fire( "SetSpringConstant", data[i][1] * 0.5, 0 )
 						elastic2:Fire( "SetSpringDamping", data[i][2] * 0.5, 0 )
 					end
 				else
-					if (IsValid(elastic)) then
+					if (elastic:IsValid()) then
 						elastic:Fire( "SetSpringConstant", data[i][1], 0 )
 						elastic:Fire( "SetSpringDamping", data[i][2], 0 )
 					end

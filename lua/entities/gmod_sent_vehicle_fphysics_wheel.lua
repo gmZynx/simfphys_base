@@ -42,7 +42,7 @@ if SERVER then
 		self.OldColor = dot
 
 		timer.Simple( 0.01, function()
-			if not IsValid( self ) then return end
+			if not self:IsValid() then return end
 
 			self.WheelDust = ents.Create( "info_particle_system" )
 			self.WheelDust:SetKeyValue( "effect_name" , "WheelDust")
@@ -58,19 +58,6 @@ if SERVER then
 			simfphys.SetOwner( self.EntityOwner, self.WheelDust )
 
 			if not istable( StormFox ) and not istable( StormFox2 ) then return end
-
-			self.WheelSplash = ents.Create( "info_particle_system" )
-			self.WheelSplash:SetKeyValue( "effect_name" , "WheelSplashForward")
-			self.WheelSplash:SetKeyValue( "start_active" , 0)
-			self.WheelSplash:SetOwner( self )
-			self.WheelSplash:SetPos( self:GetPos() + Vector(0,0,-self:BoundingRadius() - 5) )
-			self.WheelSplash:SetAngles( self:GetAngles() )
-			self.WheelSplash:Spawn()
-			self.WheelSplash:Activate()
-			self.WheelSplash:SetParent( self )
-			self.WheelSplash.DoNotDuplicate = true
-
-			simfphys.SetOwner( self.EntityOwner, self.WheelSplash )
 		end)
 
 		self.snd_roll = "simulated_vehicles/sfx/concrete_roll.wav"
@@ -92,7 +79,7 @@ if SERVER then
 
 	function ENT:Use( ply )
 		local base = self:GetBaseEnt()
-		if not IsValid( base ) then return end
+		if not base:IsValid() then return end
 
 		if base:GetIsVehicleLocked() or base:HasPassengerEnemyTeam( ply ) then
 			base:EmitSound( "doors/default_locked.wav" )
@@ -108,7 +95,7 @@ if SERVER then
 			local Color = self:GetColor()
 			local dot = Color.r * Color.g * Color.b * Color.a
 			if dot ~= self.OldColor then
-				if IsValid( self.GhostEnt ) then
+				if self.GhostEnt:IsValid() then
 					self.GhostEnt:SetColor( Color )
 					self.GhostEnt:SetRenderMode( self:GetRenderMode() )
 				end
@@ -122,40 +109,8 @@ if SERVER then
 			self:WheelFx()
 		end
 
-		self:CheckWeather()
-
 		self:NextThink( CurTime() + 0.15 )
 		return true
-	end
-
-	function ENT:CheckWeather()
-		if not istable( StormFox ) and not istable( StormFox2 ) then return end
-
-		if istable( StormFox ) then
-			if isfunction( StormFox.IsRaining ) then
-				if StormFox.IsRaining() then
-					self.RainDetected = true
-					self.snd_roll = "simulated_vehicles/sfx/concrete_roll_wet.wav"
-					self.snd_skid = "simulated_vehicles/sfx/concrete_skid_wet.wav"
-				else
-					self.RainDetected = false
-					self.snd_roll = "simulated_vehicles/sfx/concrete_roll.wav"
-					self.snd_skid = "simulated_vehicles/sfx/concrete_skid.wav"
-				end
-			end
-		else
-			if istable( StormFox2.Weather ) and isfunction( StormFox2.Weather.IsRaining ) then
-				if StormFox2.Weather:IsRaining() then
-					self.RainDetected = true
-					self.snd_roll = "simulated_vehicles/sfx/concrete_roll_wet.wav"
-					self.snd_skid = "simulated_vehicles/sfx/concrete_skid_wet.wav"
-				else
-					self.RainDetected = false
-					self.snd_roll = "simulated_vehicles/sfx/concrete_roll.wav"
-					self.snd_skid = "simulated_vehicles/sfx/concrete_skid.wav"
-				end
-			end
-		end
 	end
 
 	function ENT:WheelFxBroken()
@@ -170,34 +125,18 @@ if SERVER then
 		if EnableDust ~= self.OldVar then
 			self.OldVar = EnableDust
 
-			if self.RainDetected then
-				if EnableDust then
-					if IsValid( self.WheelSplash ) then
-						self.WheelSplash:Fire( "Start" )
-					end
-				else
-					if IsValid( self.WheelSplash ) then
-						self.WheelSplash:Fire( "Stop" )
-					end
-				end
-			else
-				if IsValid( self.WheelSplash ) then
-					self.WheelSplash:Fire( "Stop" )
-				end
-			end
-
 			if EnableDust then
 				if Material == "grass" then
-					if IsValid( self.WheelDust ) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 				elseif Material == "dirt" or Material == "sand" then
-					if IsValid( self.WheelDust ) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 				end
 			else
-				if IsValid( self.WheelDust ) then
+				if self.WheelDust:IsValid() then
 					self.WheelDust:Fire( "Stop" )
 				end
 			end
@@ -206,15 +145,15 @@ if SERVER then
 		if EnableDust then
 			if Material ~= self.OldMaterial then
 				if Material == "grass" then
-					if IsValid( self.WheelDust ) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 				elseif Material == "dirt" or Material == "sand" then
-					if IsValid( self.WheelDust ) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 				else
-					if IsValid( self.WheelDust ) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Stop" )
 					end
 				end
@@ -254,25 +193,9 @@ if SERVER then
 		if EnableDust ~= self.OldVar then
 			self.OldVar = EnableDust
 
-			if self.RainDetected then
-				if EnableDust then
-					if IsValid( self.WheelSplash ) then
-						self.WheelSplash:Fire( "Start" )
-					end
-				else
-					if IsValid( self.WheelSplash ) then
-						self.WheelSplash:Fire( "Stop" )
-					end
-				end
-			else
-				if IsValid( self.WheelSplash ) then
-					self.WheelSplash:Fire( "Stop" )
-				end
-			end
-
 			if EnableDust then
 				if Material == "grass" then
-					if IsValid( self.WheelDust ) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 					self.RollSound_Grass = CreateSound(self, self.snd_roll_grass)
@@ -280,7 +203,7 @@ if SERVER then
 					self.RollSound_Dirt:Stop()
 					self.RollSound:Stop()
 				elseif Material == "dirt" or Material == "sand" then
-					if IsValid( self.WheelDust ) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 					self.RollSound_Dirt = CreateSound(self, self.snd_roll_dirt)
@@ -294,7 +217,7 @@ if SERVER then
 					self.RollSound:PlayEx(0,0)
 				end
 			else
-				if IsValid( self.WheelDust )then
+				if self.WheelDust:IsValid()then
 					self.WheelDust:Fire( "Stop" )
 				end
 				self.RollSound:Stop()
@@ -306,7 +229,7 @@ if SERVER then
 		if EnableDust then
 			if Material ~= self.OldMaterial then
 				if Material == "grass" then
-					if IsValid(self.WheelDust) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 					self.RollSound_Grass = CreateSound(self, self.snd_roll_grass)
@@ -315,7 +238,7 @@ if SERVER then
 					self.RollSound:Stop()
 
 				elseif Material == "dirt" or Material == "sand" then
-					if IsValid(self.WheelDust) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Start" )
 					end
 					self.RollSound_Grass:Stop()
@@ -323,7 +246,7 @@ if SERVER then
 					self.RollSound_Dirt:PlayEx(0,0)
 					self.RollSound:Stop()
 				else
-					if IsValid(self.WheelDust) then
+					if self.WheelDust:IsValid() then
 						self.WheelDust:Fire( "Stop" )
 					end
 					self.RollSound_Grass:Stop()
@@ -456,7 +379,7 @@ if SERVER then
 
 		if TYPE == DMG_BLAST then return end  -- no tirepopping on explosions
 
-		if IsValid(BaseEnt) then
+		if BaseEnt:IsValid() then
 			if BaseEnt:GetBulletProofTires() then return end
 
 			if Damage > 1 then
@@ -465,7 +388,7 @@ if SERVER then
 					self.PreBreak:PlayEx(0.5,100)
 
 					timer.Simple(math.Rand(0.5,5), function()
-						if IsValid(self) and not self:GetDamaged() then
+						if self:IsValid() and not self:GetDamaged() then
 							self:SetDamaged( true )
 							if self.PreBreak then
 								self.PreBreak:Stop()
@@ -490,7 +413,7 @@ if SERVER then
 
 			self:EmitSound( "simulated_vehicles/sfx/tire_break.ogg" )
 
-			if IsValid(self.GhostEnt) then
+			if self.GhostEnt:IsValid() then
 				self.GhostEnt:SetParent( nil )
 				self.GhostEnt:GetPhysicsObject():EnableMotion( false )
 				self.GhostEnt:SetPos( self:LocalToWorld( Vector(0,0,-self.dRadius) ) )
@@ -507,7 +430,7 @@ if SERVER then
 
 			self.RollSound_Broken = CreateSound(self, "simulated_vehicles/sfx/tire_damaged.wav")
 		else
-			if IsValid( self.GhostEnt ) then
+			if self.GhostEnt:IsValid() then
 				self.GhostEnt:SetParent( nil )
 				self.GhostEnt:GetPhysicsObject():EnableMotion( false )
 				self.GhostEnt:SetPos( self:LocalToWorld( Vector(0,0,0) ) )
@@ -520,7 +443,7 @@ if SERVER then
 		end
 
 		local BaseEnt = self:GetBaseEnt()
-		if IsValid( BaseEnt ) then
+		if BaseEnt:IsValid() then
 			BaseEnt:SetSuspension( self.Index , new )
 		end
 	end
@@ -531,7 +454,7 @@ if CLIENT then
 		self.FadeHeat = 0
 
 		timer.Simple( 0.01, function()
-			if not IsValid( self ) then return end
+			if not self:IsValid() then return end
 			self.Radius = self:BoundingRadius()
 		end)
 	end
@@ -553,7 +476,7 @@ if CLIENT then
 	function ENT:ManageSmoke()
 		local BaseEnt = self:GetBaseEnt()
 
-		if not IsValid( BaseEnt ) then return end
+		if not BaseEnt:IsValid() then return end
 		if LocalPlayer():GetPos():DistToSqr(self:GetPos()) > distance then return end
 		if not BaseEnt:GetActive() then return end
 
