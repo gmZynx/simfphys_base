@@ -7,17 +7,21 @@ ENT.AdminSpawnable  = false
 ENT.DoNotDuplicate = true
 
 function ENT:SetupDataTables()
-	self:NetworkVar( "Float", 1, "OnGround" )
-	self:NetworkVar( "String", 2, "SurfaceMaterial" )
-	self:NetworkVar( "Float", 3, "Speed" )
-	self:NetworkVar( "Float", 4, "SkidSound" )
-	self:NetworkVar( "Float", 5, "GripLoss" )
+	self:NetworkVar( "Bool", 0, "OnGround" )
+	self:NetworkVar( "String", 0, "SurfaceMaterial" )
+	self:NetworkVar( "Float", 0, "Speed" )
+	self:NetworkVar( "Float", 1, "SkidSound" )
+	self:NetworkVar( "Float", 2, "GripLoss" )
 	self:NetworkVar( "Bool", 1, "Damaged" )
-	self:NetworkVar( "Entity", 1, "BaseEnt" )
+	self:NetworkVar( "Entity", 0, "BaseEnt" )
 
 	if SERVER then
 		self:NetworkVarNotify( "Damaged", self.OnDamaged )
 	end
+end
+
+local function FastClamp( a, b, c )
+	return ( a > c and c ) or ( b > a and b ) or a
 end
 
 if SERVER then
@@ -113,12 +117,12 @@ if SERVER then
 		return true
 	end
 
+	local div_1500 = 1 / 1500
 	function ENT:WheelFxBroken()
 		local ForwardSpeed = math.abs( self:GetSpeed() )
-		local SkidSound = math.Clamp( self:GetSkidSound(),0,255)
-		local Speed = self:GetVelocity():Length()
+		local SkidSound = FastClamp( self:GetSkidSound(), 0, 255 )
 		local WheelOnGround = self:GetOnGround()
-		local EnableDust = (Speed * WheelOnGround > 200)
+		local EnableDust = WheelOnGround and self:GetVelocity():LengthSqr() > 40000
 		local Material = self:GetSurfaceMaterial()
 		local GripLoss = self:GetGripLoss()
 
@@ -162,7 +166,7 @@ if SERVER then
 		end
 
 		if self.RollSound_Broken then
-			local Volume = math.Clamp(SkidSound * 0.5 + ForwardSpeed / 1500,0,1) * WheelOnGround
+			local Volume = FastClamp( SkidSound * 0.5 + ForwardSpeed / div_1500, 0, 1 ) * WheelOnGround
 			local PlaySound = Volume > 0.1
 
 			self.OldPlaySound = self.OldPlaySound or false
@@ -177,16 +181,16 @@ if SERVER then
 
 
 			self.RollSound_Broken:ChangeVolume( Volume )
-			self.RollSound_Broken:ChangePitch(100 + math.Clamp((ForwardSpeed - 100) / 250 + (SkidSound * Speed / 800) + GripLoss * 22,0,155))
+			self.RollSound_Broken:ChangePitch( 100 + FastClamp( ( ForwardSpeed - 100 ) * 0.004 + ( SkidSound * self:GetVelocity():Length() * 0.00125 ) + GripLoss * 22, 0, 155 ) )
 		end
 	end
 
 	function ENT:WheelFx()
 		local ForwardSpeed = math.abs( self:GetSpeed() )
-		local SkidSound = math.Clamp( self:GetSkidSound(),0,255)
+		local SkidSound = FastClamp( self:GetSkidSound(), 0, 255 )
 		local Speed = self:GetVelocity():Length()
 		local WheelOnGround = self:GetOnGround()
-		local EnableDust = (Speed * WheelOnGround > 200)
+		local EnableDust = WheelOnGround and Speed > 200
 		local Material = self:GetSurfaceMaterial()
 		local GripLoss = self:GetGripLoss()
 
@@ -258,21 +262,21 @@ if SERVER then
 			end
 
 			if Material == "grass" then
-				self.RollSound_Grass:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1600,0,1), 0)
-				self.RollSound_Grass:ChangePitch(80 + math.Clamp((ForwardSpeed - 100) / 250,0,255), 0)
+				self.RollSound_Grass:ChangeVolume( FastClamp( ( ForwardSpeed - 100 ) * 0.000625, 0, 1 ), 0 )
+				self.RollSound_Grass:ChangePitch( 80 + FastClamp( ( ForwardSpeed - 100 ) * 0.004, 0, 255 ), 0 )
 			elseif Material == "dirt" or Material == "sand" then
-				self.RollSound_Dirt:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1600,0,1), 0)
-				self.RollSound_Dirt:ChangePitch(80 + math.Clamp((ForwardSpeed - 100) / 250,0,255), 0)
+				self.RollSound_Dirt:ChangeVolume( FastClamp( ( ForwardSpeed - 100 ) * 0.000625, 0, 1 ), 0 )
+				self.RollSound_Dirt:ChangePitch( 80 + FastClamp( ( ForwardSpeed - 100 ) * 250, 0, 255 ), 0 )
 			else
-				self.RollSound:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1500,0,1), 0)
-				self.RollSound:ChangePitch(100 + math.Clamp((ForwardSpeed - 400) / 200,0,255), 0)
+				self.RollSound:ChangeVolume( FastClamp( ( ForwardSpeed - 100 ) * div_1500, 0, 1 ), 0 )
+				self.RollSound:ChangePitch( 100 + FastClamp( ( ForwardSpeed - 400 ) * 0.005, 0, 255 ), 0 )
 			end
 		end
 
 
 		if WheelOnGround ~= self.OldVar2 then
 			self.OldVar2 = WheelOnGround
-			if WheelOnGround == 1 then
+			if WheelOnGround then
 				if Material == "grass" or Material == "snow" then
 					self.Skid:Stop()
 					self.Skid_Grass = CreateSound(self, self.snd_skid_grass)
@@ -300,7 +304,7 @@ if SERVER then
 			end
 		end
 
-		if WheelOnGround == 1 then
+		if WheelOnGround then
 			if Material ~= self.OldMaterial2 then
 				if Material == "grass" or Material == "snow" then
 					self.Skid:Stop()
@@ -327,14 +331,14 @@ if SERVER then
 			end
 
 			if Material == "grass" or Material == "snow" then
-				self.Skid_Grass:ChangeVolume( math.Clamp(SkidSound,0,1) )
+				self.Skid_Grass:ChangeVolume( FastClamp( SkidSound, 0, 1 ) )
 				self.Skid_Grass:ChangePitch(math.min(90 + (SkidSound * Speed / 500),150))
 			elseif Material == "dirt" or Material == "sand" then
-				self.Skid_Dirt:ChangeVolume( math.Clamp(SkidSound,0,1) * 0.8)
+				self.Skid_Dirt:ChangeVolume( FastClamp( SkidSound, 0, 1 ) * 0.8 )
 				self.Skid_Dirt:ChangePitch(math.min(120 + (SkidSound * Speed / 500),150))
 			else
-				self.Skid:ChangeVolume( math.Clamp(SkidSound * 0.5,0,1) )
-				self.Skid:ChangePitch(math.min(85 + (SkidSound * Speed / 800) + GripLoss * 22,150))
+				self.Skid:ChangeVolume( FastClamp( SkidSound * 0.5, 0, 1 ) )
+				self.Skid:ChangePitch( math.min( 85 + ( SkidSound * Speed / 800 ) + GripLoss * 22, 150 ) )
 			end
 		end
 	end
@@ -474,31 +478,34 @@ if CLIENT then
 
 	local distance = 6000 * 6000
 	function ENT:ManageSmoke()
-		local BaseEnt = self:GetBaseEnt()
+		if LocalPlayer():GetPos():DistToSqr( self:GetPos() ) > distance then return end
 
+		local BaseEnt = self:GetBaseEnt()
 		if not BaseEnt:IsValid() then return end
-		if LocalPlayer():GetPos():DistToSqr(self:GetPos()) > distance then return end
 		if not BaseEnt:GetActive() then return end
 
 		local WheelOnGround = self:GetOnGround()
 		local GripLoss = self:GetGripLoss()
 		local Material = self:GetSurfaceMaterial()
 
-		if WheelOnGround > 0 and (Material == "concrete" or Material == "rock" or Material == "tile") and GripLoss > 0 then
-			self.FadeHeat = math.Clamp( self.FadeHeat + GripLoss * 0.06,0,10)
+		if WheelOnGround and ( GripLoss > 0 ) and (Material == "concrete" or Material == "rock" or Material == "tile") then
+			self.FadeHeat = FastClamp( self.FadeHeat + GripLoss * .06, 0, 10 )
 		else
 			self.FadeHeat = self.FadeHeat * 0.995
 		end
 
 		local Scale = self.FadeHeat ^ 3 * 0.001
-		local SmokeOn = (self.FadeHeat >= 7)
-		local DirtOn = GripLoss > 0.05
-		local lcolor = BaseEnt:GetTireSmokeColor() * 255
-		local Speed = self:GetVelocity():Length()
+		local SmokeOn = ( self.FadeHeat >= 7 )
+
+		local lcolor = BaseEnt:GetTireSmokeColor()
+		lcolor:Mul( 255 )
+
 		local OnRim = self:GetDamaged()
 
-		local Forward = self:GetForward()
-		local Dir = (BaseEnt:GetGear() < 2) and Forward or -Forward
+		local Dir = self:GetForward()
+		if not ( BaseEnt:GetGear() < 2 ) then
+			Dir:Mul( -1 )
+		end
 
 		local WheelSize = self.Radius or 0
 		local Pos = self:GetPos()
@@ -509,25 +516,27 @@ if CLIENT then
 				effectdata:SetNormal( Dir )
 				effectdata:SetMagnitude( Scale )
 				effectdata:SetRadius( WheelSize )
-				effectdata:SetStart( Vector( lcolor.r, lcolor.g, lcolor.b ) )
+				effectdata:SetStart( lcolor )
 				effectdata:SetEntity( NULL )
 			util.Effect( "simfphys_tiresmoke", effectdata )
 		end
 
-		if WheelOnGround == 0 then return end
+		if WheelOnGround then
+			local DirtOn = GripLoss > 0.05
 
-		if DirtOn then
-			local effectdata = EffectData()
-				effectdata:SetOrigin( Pos )
-				effectdata:SetNormal( Dir )
-				effectdata:SetMagnitude( GripLoss )
-				effectdata:SetRadius( WheelSize )
-				effectdata:SetEntity( self )
-			util.Effect( "simfphys_tiresmoke", effectdata )
-		end
+			if DirtOn then
+				local effectdata = EffectData()
+					effectdata:SetOrigin( Pos )
+					effectdata:SetNormal( Dir )
+					effectdata:SetMagnitude( GripLoss )
+					effectdata:SetRadius( WheelSize )
+					effectdata:SetEntity( self )
+				util.Effect( "simfphys_tiresmoke", effectdata )
+			end
 
-		if (Speed > 150 or DirtOn) and OnRim then
-			self:MakeSparks( GripLoss, Dir, Pos, WheelSize )
+			if OnRim and ( DirtOn or self:GetVelocity():LengthSqr() > 22500 ) then
+				self:MakeSparks( GripLoss, Dir, Pos, WheelSize )
+			end
 		end
 
 	end

@@ -47,30 +47,43 @@ if CLIENT then
 		local digit6 = (decimal - digit4 - digit5) % 1000
 		
 		local digits = {
-			[1] = math.Round(digit1,0),
-			[2] = math.Round(digit2 / 10,0),
-			[3] = math.Round(digit3 / 100,0),
-			[4] = math.Round(digit5 / 10,0),
-			[5] = math.Round(digit6 / 100,0),
+			[1] = math.Round( digit1, 0 ),
+			[2] = math.Round( digit2 * .1, 0 ),
+			[3] = math.Round( digit3 * .01, 0 ),
+			[4] = math.Round( digit5 * .1, 0 ),
+			[5] = math.Round( digit6 * .01, 0 ),
 		}
 		return digits
 	end
 	
+	local color_reddiesel = Color( 255, 60, 0, 150 )
+	local color_darkgray = Color( 50, 50, 50, 255 )
+	local color_black = Color( 0, 0, 0, 255 )
+	local color_gray = Color( 100, 100, 100, 255 )
+	local color_lightgray = Color( 200, 200, 200, 255 )
+
+	local v1 = Vector( 10, 0, 45 )
+	local a1 = Angle( 0, 90, 90 )
+	local v2 = Vector( 0.06, -17.77, 55.48 )
+	local v3 = Vector( 8, -17.77, 30 )
+	local v4 = Vector( 0, -20, 30 )
+	local v5 = Vector( 0.06, -20.3, 37 )
+
 	function ENT:Draw()
 		self:DrawModel()
 		
 		if LocalPlayer():GetPos():DistToSqr(self:GetPos()) > 350000 then return end
 		
-		local pos = self:LocalToWorld( Vector(10,0,45) )
-		local ang = self:LocalToWorldAngles( Angle(0,90,90) )
+		local pos = self:LocalToWorld( v1 )
+		local ang = self:LocalToWorldAngles( a1 )
 		local ply = self:GetUser()
 		
-		local startPos = self:LocalToWorld( Vector(0.06,-17.77,55.48) )
-		local p2 = self:LocalToWorld( Vector(8,-17.77,30) )
-		local p3 = self:LocalToWorld( Vector(0,-20,30) )
-		local endPos = self:LocalToWorld( Vector(0.06,-20.3,37) )
+		local startPos = self:LocalToWorld( v2 )
+		local p2 = self:LocalToWorld( v3 )
+		local p3 = self:LocalToWorld( v4 )
+		local endPos = self:LocalToWorld( v5 )
 		
-		if ply then
+		if ply:IsValid() then
 			local id = ply:LookupAttachment("anim_attachment_rh")
 			local attachment = ply:GetAttachment( id )
 			
@@ -88,62 +101,62 @@ if CLIENT then
 			if (not active and i > 1) or active then
 				local sp = bezier(startPos, p2, p3, endPos, (i - de) / 15)
 				local ep = bezier(startPos, p2, p3, endPos, i / 15)
-				render.DrawBeam( sp, ep, 2, 1, 1, Color( 100, 100, 100, 255 ) ) 
+				render.DrawBeam( sp, ep, 2, 1, 1, color_gray ) 
 			end
 		end
 		
-		cam.Start3D2D( self:LocalToWorld( Vector(10,0,45) ), self:LocalToWorldAngles( Angle(0,90,90) ), 0.1 )
+		cam.Start3D2D( self:LocalToWorld( v1 ), self:LocalToWorldAngles( a1 ), 0.1 )
 			draw.NoTexture()
 			surface.SetDrawColor( 0, 0, 0, 255 )
 			surface.DrawRect( -150, -120, 300, 240 )
 			
-			draw.RoundedBox( 5, -130, -110, 260, 200, Color(255,60,0,150) ) 
-			draw.RoundedBox( 5, -129, -109, 258, 198, Color( 50, 50, 50, 255 ) ) 
+			draw.RoundedBox( 5, -130, -110, 260, 200, color_reddiesel ) 
+			draw.RoundedBox( 5, -129, -109, 258, 198, color_darkgray ) 
 			
-			draw.RoundedBox( 5, -91, -75, 182, 30, Color(255,60,0,150) ) 
-			draw.RoundedBox( 5, -90, -74, 180, 28, Color( 50, 50, 50, 255 ) ) 
-			draw.RoundedBox( 5, -88, -72, 19, 24, Color( 0, 0, 0, 255 ) )
-			draw.RoundedBox( 5, -68, -72, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, -48, -72, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, -28, -72, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, -8, -72, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, 12, -72, 76, 24, Color( 0, 0, 0, 255 ) ) 
+			draw.RoundedBox( 5, -91, -75, 182, 30, color_reddiesel ) 
+			draw.RoundedBox( 5, -90, -74, 180, 28, color_darkgray ) 
+			draw.RoundedBox( 5, -88, -72, 19, 24, color_black )
+			draw.RoundedBox( 5, -68, -72, 19, 24, color_black ) 
+			draw.RoundedBox( 5, -48, -72, 19, 24, color_black ) 
+			draw.RoundedBox( 5, -28, -72, 19, 24, color_black ) 
+			draw.RoundedBox( 5, -8, -72, 19, 24, color_black ) 
+			draw.RoundedBox( 5, 12, -72, 76, 24, color_black ) 
 			
-			draw.RoundedBox( 5, -91, -25, 182, 30, Color(255,60,0,150) ) 
-			draw.RoundedBox( 5, -90, -24, 180, 28, Color( 50, 50, 50, 255 ) ) 
-			draw.RoundedBox( 5, -88, -22, 19, 24, Color( 0, 0, 0, 255 ) )
-			draw.RoundedBox( 5, -68, -22, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, -48, -22, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, -28, -22, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, -8, -22, 19, 24, Color( 0, 0, 0, 255 ) ) 
-			draw.RoundedBox( 5, 12, -22, 76, 24, Color( 0, 0, 0, 255 ) ) 
+			draw.RoundedBox( 5, -91, -25, 182, 30, color_reddiesel ) 
+			draw.RoundedBox( 5, -90, -24, 180, 28, color_darkgray ) 
+			draw.RoundedBox( 5, -88, -22, 19, 24, color_black )
+			draw.RoundedBox( 5, -68, -22, 19, 24, color_black ) 
+			draw.RoundedBox( 5, -48, -22, 19, 24, color_black ) 
+			draw.RoundedBox( 5, -28, -22, 19, 24, color_black ) 
+			draw.RoundedBox( 5, -8, -22, 19, 24, color_black ) 
+			draw.RoundedBox( 5, 12, -22, 76, 24, color_black ) 
 			
-			draw.SimpleText( "LITER", "simfphys_gaspump", 50, -70, Color( 200, 200, 200, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-			draw.SimpleText( "GALLONS", "simfphys_gaspump", 50, -20, Color( 200, 200, 200, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+			draw.SimpleText( "LITER", "simfphys_gaspump", 50, -70, color_lightgray, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+			draw.SimpleText( "GALLONS", "simfphys_gaspump", 50, -20, color_lightgray, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 			
 			local liter = self:GetFuelUsed()
 			local gallon = liter * 0.264172
 			local l_digits = GetDigit( math.Round( liter, 2) )
 			local g_digits = GetDigit( math.Round( gallon, 2) )
 			
-			draw.SimpleText( l_digits[4], "simfphys_gaspump", 6, -70, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( l_digits[5], "simfphys_gaspump", -14, -70, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( ",", "simfphys_gaspump", -26, -65, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( l_digits[1], "simfphys_gaspump", -34, -70, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( l_digits[2], "simfphys_gaspump", -54, -70, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( l_digits[3], "simfphys_gaspump", -74, -70, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( l_digits[4], "simfphys_gaspump", 6, -70, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( l_digits[5], "simfphys_gaspump", -14, -70, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( ",", "simfphys_gaspump", -26, -65, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( l_digits[1], "simfphys_gaspump", -34, -70, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( l_digits[2], "simfphys_gaspump", -54, -70, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( l_digits[3], "simfphys_gaspump", -74, -70, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
 			
 			
-			draw.SimpleText( g_digits[4], "simfphys_gaspump", 6, -20, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( g_digits[5], "simfphys_gaspump", -14, -20, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( ",", "simfphys_gaspump", -26, -15, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( g_digits[1], "simfphys_gaspump", -34, -20, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( g_digits[2], "simfphys_gaspump", -54, -20, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-			draw.SimpleText( g_digits[3], "simfphys_gaspump", -74, -20, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( g_digits[4], "simfphys_gaspump", 6, -20, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( g_digits[5], "simfphys_gaspump", -14, -20, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( ",", "simfphys_gaspump", -26, -15, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( g_digits[1], "simfphys_gaspump", -34, -20, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( g_digits[2], "simfphys_gaspump", -54, -20, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( g_digits[3], "simfphys_gaspump", -74, -20, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
 			
-			draw.SimpleText( "Tropfmengen sind sofort aufzunehmen", "simfphys_gaspump_note", 85, 20, Color( 200, 200, 200, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( "Tropfmengen sind sofort aufzunehmen", "simfphys_gaspump_note", 85, 20, color_lightgray, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
 			
-			draw.SimpleText( "DIESEL", "simfphys_gaspump", 0, -100, Color(255,60,0,150), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+			draw.SimpleText( "DIESEL", "simfphys_gaspump", 0, -100, color_reddiesel, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 			
 		cam.End3D2D()
 	end

@@ -364,7 +364,7 @@ function ENT:OnActiveChanged( name, old, new)
 		for i = 1, #Wheels do
 			local Wheel = Wheels[ i ]
 			if Wheel:IsValid() then
-				Wheel:SetOnGround( 0 )
+				Wheel:SetOnGround( false )
 			end
 		end
 	end

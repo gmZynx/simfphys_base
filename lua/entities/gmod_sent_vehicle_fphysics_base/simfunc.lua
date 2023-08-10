@@ -31,10 +31,10 @@ function ENT:WheelOnGround()
 				Wheel:SetSpeed( Wheel.FX )
 				Wheel:SetSkidSound( Wheel.skid )
 				Wheel:SetSurfaceMaterial( util.GetSurfacePropName( tr.SurfaceProps ) )
-				Wheel:SetOnGround(1)
+				Wheel:SetOnGround( true )
 			else
 				self.VehicleData[ "onGround_" .. i ] = 0
-				Wheel:SetOnGround(0)
+				Wheel:SetOnGround( false )
 			end
 		end
 	end
