@@ -21,10 +21,8 @@ function ENT:ApplyDamage( damage, type )
 		end
 	end
 
-	if MaxHealth > 30 and NewHealth <= 31 then
-		if self:EngineActive() then
-			self:DamagedStall()
-		end
+	if MaxHealth > 30 and NewHealth <= 31 and self:EngineActive() then
+		self:DamagedStall()
 	end
 
 	if NewHealth <= 0 then
@@ -51,16 +49,15 @@ function ENT:HurtPlayers( damage )
 	if not simfphys.pDamageEnabled then return end
 
 	local Driver = self:GetDriver()
-	if Driver:IsValid() then
-		if self.RemoteDriver ~= Driver then
-			local dmginfo = DamageInfo()
-			dmginfo:SetDamage( damage )
-			dmginfo:SetAttacker( game.GetWorld() )
-			dmginfo:SetInflictor( self )
-			dmginfo:SetDamageType( DMG_DIRECT )
 
-			Driver:TakeDamageInfo( dmginfo )
-		end
+	if Driver:IsValid() and self.RemoteDriver ~= Driver then
+		local dmginfo = DamageInfo()
+		dmginfo:SetDamage( damage )
+		dmginfo:SetAttacker( game.GetWorld() )
+		dmginfo:SetInflictor( self )
+		dmginfo:SetDamageType( DMG_DIRECT )
+
+		Driver:TakeDamageInfo( dmginfo )
 	end
 
 	if not istable( self.PassengerSeats ) then return end
@@ -92,6 +89,32 @@ function ENT:ExplodeVehicle()
 	Col.g = Col.g * 0.8
 	Col.b = Col.b * 0.8
 
+	local Driver = self:GetDriver()
+	if Driver:IsValid() and self.RemoteDriver ~= Driver then
+		local dmginfo = DamageInfo()
+		dmginfo:SetDamage( Driver:Health() + Driver:Armor() )
+		dmginfo:SetAttacker( self.LastAttacker or game.GetWorld() )
+		dmginfo:SetInflictor( self.LastInflictor or game.GetWorld() )
+		dmginfo:SetDamageType( DMG_DIRECT )
+
+		Driver:TakeDamageInfo( dmginfo )
+	end
+
+	if self.PassengerSeats then
+		for i = 1, table.Count( self.PassengerSeats ) do
+			local Passenger = self.pSeat[i]:GetDriver()
+			if Passenger:IsValid() then
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage( Passenger:Health() + Passenger:Armor() )
+				dmginfo:SetAttacker( self.LastAttacker or game.GetWorld() )
+				dmginfo:SetInflictor( self.LastInflictor or game.GetWorld() )
+				dmginfo:SetDamageType( DMG_DIRECT )
+
+				Passenger:TakeDamageInfo( dmginfo )
+			end
+		end
+	end
+
 	if self.GibModels then
 		local bprop = ents.Create( "gmod_sent_vehicle_fphysics_gib" )
 		bprop:SetModel( self.GibModels[1] )
@@ -102,7 +125,7 @@ function ENT:ExplodeVehicle()
 		bprop:Activate()
 		local bprop_phys = bprop:GetPhysicsObject()
 		if bprop_phys:IsValid() then
-			bprop_phys:SetVelocity( self:GetVelocity() + Vector(math.random(-5,5),math.random(-5,5),math.random(150,250)) )
+			bprop_phys:SetVelocity( self:GetVelocity() + Vector( math.random( -5, 5 ), math.random( -5, 5 ), math.random( 150, 250 ) ) )
 			bprop_phys:SetMass( self.Mass * 0.75 )
 		end
 
@@ -144,7 +167,7 @@ function ENT:ExplodeVehicle()
 			end
 
 
-			simfphys.SetOwner( ply , prop )
+			simfphys.SetOwner( ply, prop )
 		end
 	else
 
@@ -161,7 +184,7 @@ function ENT:ExplodeVehicle()
 		bprop:SetColor( Col )
 		bprop:SetSkin( skin )
 		for i = 0, self:GetNumBodyGroups() do
-			bprop:SetBodygroup(i, self:GetBodygroup(i))
+			bprop:SetBodygroup( i, self:GetBodygroup( i ) )
 		end
 
 		self.Gib = bprop
@@ -196,24 +219,8 @@ function ENT:ExplodeVehicle()
 					bprop:DeleteOnRemove( prop )
 					bprop.Wheels[i] = prop
 
-					simfphys.SetOwner( ply , prop )
+					simfphys.SetOwner( ply, prop )
 				end
-			end
-		end
-	end
-
-	local Driver = self:GetDriver()
-	if Driver:IsValid() and self.RemoteDriver ~= Driver then
-		Driver:ExitVehicle()
-		Driver:TakeDamage( Driver:Health() + Driver:Armor(), self.LastAttacker, self.LastInflictor )
-	end
-
-	if self.PassengerSeats then
-		for i = 1, #self.PassengerSeats do
-			local Passenger = self.pSeat[i]:GetDriver()
-			if Passenger:IsValid() then
-				Passenger:ExitVehicle()
-				Passenger:TakeDamage( Passenger:Health() + Passenger:Armor(), self.LastAttacker or Entity(0), self.LastInflictor or Entity(0) )
 			end
 		end
 	end
