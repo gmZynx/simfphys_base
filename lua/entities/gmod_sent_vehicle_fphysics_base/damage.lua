@@ -168,7 +168,7 @@ function ENT:ExplodeVehicle()
 
 		simfphys.SetOwner( ply, bprop )
 
-		if ply and ply:IsVAlid() then
+		if ply and ply:IsValid() then
 			undo.Create( "Gib" )
 			undo.SetPlayer( ply )
 			undo.AddEntity( bprop )
