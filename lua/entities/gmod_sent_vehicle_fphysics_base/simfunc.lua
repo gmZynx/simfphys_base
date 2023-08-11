@@ -425,10 +425,10 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 			end
 
 			if not self.PhysicsEnabled then
-                local phys = Wheel:GetPhysicsObject()
+				local phys = Wheel:GetPhysicsObject()
 				if IsValid( phys ) then
-                    phys:ApplyForceCenter( Force * 185 * OnGround )
-                end
+					phys:ApplyForceCenter( Force * 185 * OnGround )
+				end
 			end
 		end
 	end
