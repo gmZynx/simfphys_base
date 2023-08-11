@@ -35,18 +35,18 @@ if (CLIENT) then
 	SWEP.Author			= "Blu"
 	SWEP.Slot				= 1
 	SWEP.SlotPos			= 10
-	
+
 	hook.Add( "PreDrawHalos", "s_remote_halos", function()
 		local ply = LocalPlayer()
 		local weapon = ply:GetActiveWeapon()
-		
+
 		if IsValid( ply ) and IsValid( weapon ) then
 			if ply:InVehicle() then return end
-			
+
 			if weapon:GetClass() == "weapon_simremote" then
 				if not weapon:GetActive() then
 					local car = weapon:GetCar()
-					
+
 					if IsValid( car ) then
 						halo.Add( {car}, Color( 0, 127, 255 ) )
 					end
@@ -54,29 +54,29 @@ if (CLIENT) then
 			end
 		end
 	end )
-	
-	
+
+
 	function SWEP:PrimaryAttack()
 		if self:GetActive() then return false end
-		
+
 		local trace = self:GetOwner():GetEyeTrace()
 		local ent = trace.Entity
-		
+
 		if not simfphys.IsCar( ent ) then return false end
-		
+
 		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
-		
+
 		return true
 	end
 
 	function SWEP:SecondaryAttack()
 		if self:GetActive() then return false end
-		
+
 		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
-		
+
 		return true
 	end
-	
+
 	return
 end
 
@@ -99,38 +99,38 @@ end
 
 function SWEP:PrimaryAttack()
 	if self:GetActive() then return false end
-	
+
 	local ply = self:GetOwner()
 	local trace = ply:GetEyeTrace()
 	local ent = trace.Entity
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	self:SetCar( ent )
-	
+
 	ply:ChatPrint("Remote Controller linked.")
-	
+
 	return true
 end
 
 function SWEP:SecondaryAttack()
 	if self:GetActive() then return false end
-	
+
 	if IsValid( self:GetCar() ) then
 		self:SetCar( NULL )
 		self:GetOwner():ChatPrint("Remote Controller unlinked.")
-		
+
 		return true
 	end
-	
+
 	return false
 end
 
 function SWEP:Enable()
 	local car = self:GetCar()
-	
+
 	if IsValid( car ) then
-	
+
 		local ply = self:GetOwner()
 		if IsValid( car:GetDriver() ) then
 			ply:ChatPrint("vehicle is already in use")
@@ -140,10 +140,10 @@ function SWEP:Enable()
 			else
 				self:SetActive( true )
 				self.OldMoveType = ply:GetMoveType()
-				
+
 				ply:SetMoveType( MOVETYPE_NONE )
 				ply:DrawViewModel( false )
-				
+
 				car.RemoteDriver = ply
 			end
 		end
@@ -154,7 +154,7 @@ function SWEP:Disable()
 
 	local ply = self:GetOwner()
 	local car = self:GetCar()
-	
+
 	if self:GetActive() then
 		if self.OldMoveType then
 	    		ply:SetMoveType( self.OldMoveType )
@@ -162,11 +162,11 @@ function SWEP:Disable()
 	    		ply:SetMoveType( MOVETYPE_WALK )
 		end
 	end
-	
+
 	self:SetActive( false )
 	self.OldMoveType = nil
 	ply:DrawViewModel( true )
-	
+
 	if IsValid( car ) then
 		car.RemoteDriver = nil
 	end

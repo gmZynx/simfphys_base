@@ -6,13 +6,13 @@ if SERVER then
 	AddCSLuaFile("simfphys/client/lighting.lua")
 	AddCSLuaFile("simfphys/client/damage.lua")
 	AddCSLuaFile("simfphys/client/poseparameter.lua")
-	
+
 	AddCSLuaFile("simfphys/anim.lua")
 	AddCSLuaFile("simfphys/base_functions.lua")
 	AddCSLuaFile("simfphys/base_lights.lua")
 	AddCSLuaFile("simfphys/base_vehicles.lua")
 	AddCSLuaFile("simfphys/view.lua")
-	
+
 	include("simfphys/base_functions.lua")
 	include("simfphys/server/exitpoints.lua")
 	include("simfphys/server/spawner.lua")
@@ -21,7 +21,7 @@ if SERVER then
 	include("simfphys/server/joystick.lua")
 	include("simfphys/server/damage.lua")
 end
-	
+
 if CLIENT then
 	killicon.Add( "gmod_sent_vehicle_fphysics_base", "HUD/killicons/simfphys_car", Color( 255, 80, 0, 255 ) )
 

@@ -21,19 +21,19 @@ local Materials = {
 function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
 	local Ent = data:GetEntity()
-	
+
 	if not IsValid( Ent ) then return end
-	
+
 	local Vel = Ent:GetVelocity():Length()
-	
+
 	local emitter = ParticleEmitter( Pos, false )
 
 	local particle = emitter:Add( Materials[math.Round(math.Rand(1,table.Count( Materials )),0)], Pos )
-	
+
 	if particle then
 		particle:SetVelocity( VectorRand() * 100 + Vector(0,0,math.min(Vel,600) ) )
 		particle:SetDieTime( 1.25 )
-		particle:SetAirResistance( 600 ) 
+		particle:SetAirResistance( 600 )
 		particle:SetStartAlpha( math.max(80 - Vel / 100,0) )
 		particle:SetStartSize( math.Rand(0,15) )
 		particle:SetEndSize( math.Rand(50,65) )
@@ -42,7 +42,7 @@ function EFFECT:Init( data )
 		particle:SetGravity( Vector( 0, 0, 500 ) )
 		particle:SetCollide( false )
 	end
-	
+
 	emitter:Finish()
 end
 

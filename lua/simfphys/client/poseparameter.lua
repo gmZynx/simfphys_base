@@ -1,28 +1,28 @@
 local function receiveppdata( length )
 	local ent = net.ReadEntity()
-	
+
 	if IsValid( ent ) then
 		ent.CustomWheels = net.ReadBool()
-		
+
 		if not ent.CustomWheels then
 			local wheelFL = net.ReadEntity()
 			local posFL = net.ReadFloat()
 			local travelFL = net.ReadFloat()
-			
+
 			local wheelFR = net.ReadEntity()
 			local posFR = net.ReadFloat()
 			local travelFR = net.ReadFloat()
-			
+
 			local wheelRL = net.ReadEntity()
 			local posRL = net.ReadFloat()
 			local travelRL = net.ReadFloat()
-			
+
 			local wheelRR = net.ReadEntity()
 			local posRR = net.ReadFloat()
 			local travelRR = net.ReadFloat()
-			
+
 			if not IsValid( wheelFL ) or not IsValid( wheelFR ) or not IsValid( wheelRL ) or not IsValid( wheelRR ) then return end
-			
+
 			ent.pp_data = {
 				[1] = {
 					name = "vehicle_wheel_fl_height",
@@ -57,4 +57,4 @@ local function receiveppdata( length )
 	end
 end
 --net.Receive("simfphys_send_ppdata", receiveppdata)
--- Disabled as it causes unnecessary netspam while seemingly not doing anything 
+-- Disabled as it causes unnecessary netspam while seemingly not doing anything

@@ -3,49 +3,49 @@ local light_table = {
 	L_HeadLampAng = Angle(15,90,0),
 	R_HeadLampPos = Vector(26,106,30.3),
 	R_HeadLampAng = Angle(15,90,0),
-	
+
 	L_RearLampPos = Vector(-28.5,-109.63,49.5),
 	L_RearLampAng = Angle(40,-90,0),
 	R_RearLampPos = Vector(28.5,-109.63,49.5),
 	R_RearLampAng = Angle(40,-90,0),
-	
-	Headlight_sprites = { 
+
+	Headlight_sprites = {
 		{pos = Vector(-23,106,30.23),size = 60, color = Color( 220,220,220,50)},
 		{pos = Vector(-30,106,30.36),size = 60, color = Color( 220,220,220,50)},
 		{pos = Vector(23,106,30.23),size = 60, color = Color( 220,220,220,50)},
 		{pos = Vector(30,106,30.36),size = 60, color = Color( 220,220,220,50)},
 	},
-	
-	Headlamp_sprites = { 
+
+	Headlamp_sprites = {
 		{pos = Vector(-26,106,30.23),material = "sprites/light_ignorez",size = 80, color = Color( 220,220,220,120)},
 		{pos = Vector(26,106,30.23),material = "sprites/light_ignorez",size = 80, color = Color( 220,220,220,120)},
 	},
-	
+
 	Rearlight_sprites = {
 		{pos = Vector(-35.5,-109.63,40.75),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(-35.5,-109.63,38),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
-		
+
 		{pos = Vector(-24.5,-109.63,40.75),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(-24.5,-109.63,38),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
-		
-		
+
+
 		{pos = Vector(35.5,-109.63,40.75),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(35.5,-109.63,38),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
-		
+
 		{pos = Vector(24.5,-109.63,40.75),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(24.5,-109.63,38),material = "sprites/light_ignorez",size = 30,color = Color( 255, 0, 0,  50)},
 	},
 	Brakelight_sprites = {
 		{pos = Vector(-35.5,-109.63,40.75),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(-35.5,-109.63,38),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
-		
+
 		{pos = Vector(-24.5,-109.63,40.75),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(-24.5,-109.63,38),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
-		
-		
+
+
 		{pos = Vector(35.5,-109.63,40.75),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(35.5,-109.63,38),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
-		
+
 		{pos = Vector(24.5,-109.63,40.75),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
 		{pos = Vector(24.5,-109.63,38),material = "sprites/light_ignorez",size = 33,color = Color( 255, 0, 0,  50)},
 	},
@@ -62,7 +62,7 @@ local light_table = {
 		{pos = Vector(-30.06,109.39,15.74),material = "sprites/light_ignorez",size = 12, color = Color( 220,220,220,100)},
 		{pos = Vector(-31.06,109.39,15.74),material = "sprites/light_ignorez",size = 12, color = Color( 220,220,220,100)},
 		{pos = Vector(-32.06,109.39,15.74),material = "sprites/light_ignorez",size = 12, color = Color( 220,220,220,100)},
-		
+
 		{pos = Vector(26.06,109.39,15.74),material = "sprites/light_ignorez",size = 12, color = Color( 220,220,220,100)},
 		{pos = Vector(27.06,109.39,15.74),material = "sprites/light_ignorez",size = 12, color = Color( 220,220,220,100)},
 		{pos = Vector(28.06,109.39,15.74),material = "sprites/light_ignorez",size = 12, color = Color( 220,220,220,100)},
@@ -72,12 +72,12 @@ local light_table = {
 		{pos = Vector(32.06,109.39,15.74),material = "sprites/light_ignorez",size = 12, color = Color( 220,220,220,100)},
 	},
 	]]--
-	
+
 	Turnsignal_sprites = {
 		Left = {
 			Vector(-30,-109.16,40.87),
 			Vector(-30,-109.31,38.06),
-			
+
 			{pos = Vector(-26.06,109.39,15.74),material = "sprites/light_ignorez",size = 20},
 			{pos = Vector(-27.06,109.39,15.74),material = "sprites/light_ignorez",size = 20},
 			{pos = Vector(-28.06,109.39,15.74),material = "sprites/light_ignorez",size = 20},
@@ -89,7 +89,7 @@ local light_table = {
 		Right = {
 			Vector(29.5,-109.16,40.87),
 			Vector(29.5,-109.31,38.06),
-			
+
 			{pos = Vector(26.06,109.39,15.74),material = "sprites/light_ignorez",size = 20},
 			{pos = Vector(27.06,109.39,15.74),material = "sprites/light_ignorez",size = 20},
 			{pos = Vector(28.06,109.39,15.74),material = "sprites/light_ignorez",size = 20},
@@ -100,7 +100,7 @@ local light_table = {
 		},
 	},
 
-	
+
 	ems_sounds = {"simulated_vehicles/police/siren_madmax.wav","common/null.wav"},
 	ems_sprites = {
 		{
@@ -111,7 +111,7 @@ local light_table = {
 			Speed = 0.05,
 		}
 	},
-	
+
 	SubMaterials = {
 		off = {
 			Base = {
@@ -152,18 +152,18 @@ local light_table = {
 	L_HeadLampAng = Angle(10,5,0),
 	R_HeadLampPos = Vector( 115, -20, 0 ),
 	R_HeadLampAng = Angle(10,-5,0),
-	
+
 	L_RearLampPos = Vector(-115,20,5),
 	L_RearLampAng = Angle(25,180,0),
 	R_RearLampPos = Vector(-115,-20,5),
 	R_RearLampAng = Angle(25,180,0),
-	
+
 	Headlight_sprites = {
 		{pos = Vector(102,27.5,-1),material = "sprites/light_ignorez",size = 20, color = Color( 220,205,160,120)},
 		{pos = Vector(102,-27.5,-1),material = "sprites/light_ignorez",size = 20, color = Color( 220,205,160,120)},
 		{pos = Vector(102,21,-1),material = "sprites/light_ignorez",size = 20, color = Color( 220,205,160,120)},
 		{pos = Vector(102,-21,-1),material = "sprites/light_ignorez",size = 20, color = Color( 220,205,160,120)},
-		
+
 		{pos = Vector(102,27.5,-1),size = 60, color = Color( 220,205,160,50)},
 		{pos = Vector(102,-27.5,-1),size = 60, color = Color( 220,205,160,50)},
 		{pos = Vector(102,21,-1),size = 60, color = Color( 220,205,160,50)},
@@ -187,14 +187,14 @@ local light_table = {
 		{pos = Vector(-121,19.5,5),material = "sprites/light_ignorez",size = 25,color = Color( 255, 255, 255, 100)},
 		{pos = Vector(-121,-19.5,5),material = "sprites/light_ignorez",size = 25,color = Color( 255, 255, 255, 100)},
 	},
-	
+
 	DelayOn = 0.5,
 	DelayOff = 0.25,
 	BodyGroups = {
 		On = {8,0},
 		Off = {8,1}
 	},
-	
+
 	Turnsignal_sprites = {
 		Left = {
 			Vector(103.28,27,-9.54),
@@ -207,7 +207,7 @@ local light_table = {
 			{pos = Vector(-121,-25.5,5),material = "sprites/light_ignorez",size = 55,color = Color( 255, 0, 0,  165)},
 		},
 	},
-	
+
 	SubMaterials = {
 		off = {
 			Base = {
@@ -260,23 +260,23 @@ local light_table = {
 	L_HeadLampAng = Angle(15,90,0),
 	R_HeadLampPos = Vector( -28.5, 120, 31.5 ),
 	R_HeadLampAng = Angle(15,90,0),
-	
+
 	L_RearLampPos = Vector(23,-120,36),
 	L_RearLampAng = Angle(25,-90,0),
 	R_RearLampPos = Vector(-23,-120,36),
 	R_RearLampAng = Angle(25,-90,0),
 
-	Headlight_sprites = { 
+	Headlight_sprites = {
 		{pos = Vector(-33,121.5,31.5),material = "sprites/light_ignorez",size = 28, color = Color( 220,205,160,255)},
 		{pos = Vector(-33,121.5,31.5),size = 64, color = Color( 220,205,160,100)},
-		
+
 		{pos = Vector(33,121.5,31.5),material = "sprites/light_ignorez",size = 28, color = Color( 220,205,160,255)},
 		{pos = Vector(33,121.5,31.5),size = 64, color = Color( 220,205,160,100)},
 	},
-	Headlamp_sprites = { 
+	Headlamp_sprites = {
 		{pos = Vector(-24,121.5,31.5),material = "sprites/light_ignorez",size = 28, color = Color( 220,205,160,255)},
 		{pos = Vector(-24,121.5,31.5),size = 64, color = Color( 220,205,160,100)},
-		
+
 		{pos = Vector(24,121.5,31.5),material = "sprites/light_ignorez",size = 28, color = Color( 220,205,160,255)},
 		{pos = Vector(24,121.5,31.5),size = 64, color = Color( 220,205,160,100)},
 	},
@@ -298,7 +298,7 @@ local light_table = {
 		Vector(-41.5,-113,28),
 		Vector(41.5,-113,28)
 	},
-	
+
 	Turnsignal_sprites = {
 		Left = {
 			Vector(-30,120.5,18),
@@ -308,16 +308,16 @@ local light_table = {
 			Vector(30,120.5,18),
 			Vector(42.5,110.3,24.4)
 		},
-		
+
 		TurnBrakeLeft = {
 			Vector(-33.5,-120,36),Vector(-31.9,-120,36),Vector(-30.3,-120,36),Vector(-28.7,-120,36),Vector(-27.1,-120,36),Vector(-25.5,-120,36),Vector(-23.9,-120,36),Vector(-22.3,-120,36),Vector(-20.7,-120,36),Vector(-19.1,-120,36),Vector(-17.5,-120,36),Vector(-15.9,-120,36),
 		},
-		
+
 		TurnBrakeRight = {
 			Vector(33.5,-120,36),Vector(31.9,-120,36),Vector(30.3,-120,36),Vector(28.7,-120,36),Vector(27.1,-120,36),Vector(25.5,-120,36),Vector(23.9,-120,36),Vector(22.3,-120,36),Vector(20.7,-120,36),Vector(19.1,-120,36),Vector(17.5,-120,36),Vector(15.9,-120,36),
 		},
 	},
-	
+
 	DelayOn = 2.1,
 	DelayOff = 2.1,
 	Animation = {
@@ -330,35 +330,35 @@ list.Set( "simfphys_lights", "charger", light_table)
 
 local light_table = {
 	ModernLights = true,
-	
+
 	L_HeadLampPos = Vector(87.8,24.1,22.7),
 	L_HeadLampAng = Angle(15,0,0),
 	R_HeadLampPos = Vector(87.8,-24.1,22.7),
 	R_HeadLampAng = Angle(15,0,0),
-	
+
 	L_RearLampPos = Vector(-88,24.5,31.2),
 	L_RearLampAng = Angle(25,180,0),
 	R_RearLampPos = Vector(-88,-24.5,31.2),
 	R_RearLampAng = Angle(25,180,0),
-	
-	Headlight_sprites = { 
+
+	Headlight_sprites = {
 		{pos = Vector(84.2,29.4,22.3),material = "sprites/light_ignorez",size = 18, color = Color(215,240,255,255)},
 		{pos = Vector(84.2,29.4,22.3),size = 64, color = Color( 215,240,255,50)},
-		
+
 		{pos = Vector(84.2,-29.4,22.3),material = "sprites/light_ignorez",size = 18, color = Color(215,240,255,255)},
 		{pos = Vector(84.2,-29.4,22.3),size = 64, color = Color( 215,240,255,50)},
-		
+
 		{pos = Vector(87.8,24.1,22.3),material = "sprites/light_ignorez",size = 18, color = Color(215,240,255,255)},
 		{pos = Vector(87.8,24.1,22.3),size = 64, color = Color( 215,240,255,50)},
-		
+
 		{pos = Vector(87.8,-24.1,22.3),material = "sprites/light_ignorez",size = 18, color = Color(215,240,255,255)},
 		{pos = Vector(87.8,-24.1,22.3),size = 64, color = Color( 215,240,255,50)},
 
 	},
-	Headlamp_sprites = { 
+	Headlamp_sprites = {
 		{pos = Vector(90,-19,21.9),material = "sprites/light_ignorez",size = 18, color = Color(215,240,255,255)},
 		{pos = Vector(90,-19,21.9),size = 64, color = Color( 215,240,255,50)},
-		
+
 		{pos = Vector(90,19,21.9),material = "sprites/light_ignorez",size = 18, color = Color(215,240,255,255)},
 		{pos = Vector(90,19,21.9),size = 64, color = Color( 215,240,255,50)},
 	},
@@ -369,7 +369,7 @@ local light_table = {
 	Brakelight_sprites = {
 		Vector(-88,22.2,31.2),Vector(-86.2,26.9,30.9),
 		Vector(-88,-22.2,31.2),Vector(-86.2,-26.9,30.9),
-		
+
 		Vector(-70,5.9,49.8),Vector(-70,4.425,49.85),Vector(-70,2.95,49.9),Vector(-70,1.475,49.95),Vector(-70,0,50),Vector(-70,-5.9,49.8),Vector(-70,-4.425,49.85),Vector(-70,-2.95,49.9),Vector(-70,-1.475,49.95),
 	},
 	Reverselight_sprites = {
@@ -379,7 +379,7 @@ local light_table = {
 	FogLight_sprites = {
 		{pos = Vector(87.79,26.65,9.62),material = "sprites/light_ignorez",size = 16, color = Color(215,240,255,255)},
 		{pos = Vector(87.79,26.65,9.62),size = 32, color = Color( 215,240,255,50)},
-		
+
 		{pos = Vector(87.79,-26.65,9.62),material = "sprites/light_ignorez",size = 16, color = Color(215,240,255,255)},
 		{pos = Vector(87.79,-26.65,9.62),size = 32, color = Color( 215,240,255,50)},
 	}
@@ -389,20 +389,20 @@ list.Set( "simfphys_lights", "alfons", light_table)
 local light_table = {
 	L_HeadLampPos = Vector(0,66.3,21.84),
 	L_HeadLampAng = Angle(20,90,0),
-	
+
 	R_HeadLampPos = Vector(0,-58.01,70.71),
 	R_HeadLampAng = Angle(0,90,0),
 
 	L_RearLampPos = Vector(-14.9,-99.9,39.13),
 	L_RearLampAng = Angle(40,-90,0),
-	
-	Headlight_sprites = { 
+
+	Headlight_sprites = {
 		Vector(-12.25,67.23,22.33),
 		Vector(-3.91,67.03,22.14),
 		Vector(4.63,66.33,21.96),
 		Vector(13.4,66.72,22.16)
 	},
-	Headlamp_sprites = { 
+	Headlamp_sprites = {
 		Vector(14.3,-59.87,70.12),
 		Vector(7.34,-58.62,70.32),
 		Vector(-7.79,-58.55,70.09),
@@ -426,22 +426,22 @@ local V = {
 
 	Members = {
 		Mass = 1700,
-		
+
 		LightsTable = "elitejeep",
-		
+
 		FrontWheelRadius = 18,
 		RearWheelRadius = 20,
-		
+
 		SeatOffset = Vector(0,0,-3),
 		SeatPitch = 0,
-		
+
 		PassengerSeats = {
 			{
 			pos = Vector(16,-35,21),
 			ang = Angle(0,0,9)
 			}
 		},
-		
+
 		Backfire = true,
 		ExhaustPositions = {
 			{
@@ -453,29 +453,29 @@ local V = {
 				ang = Angle(90,-90,0)
 			}
 		},
-		
+
 		StrengthenSuspension = true,
-		
+
 		FrontHeight = 13.5,
 		FrontConstant = 27000,
 		FrontDamping = 2200,
-		FrontRelativeDamping = 1500, 
-		
+		FrontRelativeDamping = 1500,
+
 		RearHeight = 13.5,
 		RearConstant = 32000,
 		RearDamping = 2200,
 		RearRelativeDamping = 1500,
-		
+
 		FastSteeringAngle = 10,
 		SteeringFadeFastSpeed = 535,
-		
+
 		TurnSpeed = 8,
-		
+
 		MaxGrip = 44,
 		Efficiency = 1.4,
 		GripOffset = 0,
 		BrakePower = 40,
-		
+
 		IdleRPM = 750,
 		LimitRPM = 7500,
 		PeakTorque = 100,
@@ -483,28 +483,28 @@ local V = {
 		PowerbandEnd = 7300,
 		Turbocharged = false,
 		Supercharged = false,
-		
+
 		FuelFillPos = Vector(20.92,6.95,26.83),
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 65,
-		
+
 		PowerBias = 0.6,
-		
+
 		EngineSoundPreset = -1,
-		
+
 		snd_pitch = 1,
 		snd_idle = "simulated_vehicles/v8elite/v8elite_idle.wav",
-		
+
 		snd_low = "simulated_vehicles/v8elite/v8elite_low.wav",
 		snd_low_revdown = "simulated_vehicles/v8elite/v8elite_revdown.wav",
 		snd_low_pitch = 0.8,
-		
+
 		snd_mid = "simulated_vehicles/v8elite/v8elite_mid.wav",
 		snd_mid_gearup = "simulated_vehicles/v8elite/v8elite_second.wav",
 		snd_mid_pitch = 1,
-		
+
 		snd_horn = "simulated_vehicles/horn_4.wav",
-		
+
 		DifferentialGear = 0.38,
 		Gears = {-0.1,0,0.1,0.18,0.25,0.31,0.40}
 	}
@@ -519,13 +519,13 @@ local V = {
 
 	Members = {
 		Mass = 2500,
-		
+
 		FrontWheelRadius = 15.5,
 		RearWheelRadius = 15.5,
-		
+
 		SeatOffset = Vector(0,0,-5),
 		SeatPitch = 6,
-		
+
 		PassengerSeats = {
 			{
 				pos = Vector(27,60,33),
@@ -552,27 +552,27 @@ local V = {
 				ang = Angle(0,90,0)
 			}
 		},
-		
+
 		FrontHeight = 12,
 		FrontConstant = 45000,
 		FrontDamping = 2500,
 		FrontRelativeDamping = 2500,
-		
+
 		RearHeight = 12,
 		RearConstant = 45000,
 		RearDamping = 2500,
 		RearRelativeDamping = 2500,
-		
+
 		FastSteeringAngle = 10,
 		SteeringFadeFastSpeed = 350,
-		
+
 		TurnSpeed = 8,
-		
+
 		MaxGrip = 45,
 		Efficiency = 1.8,
 		GripOffset = 0,
 		BrakePower = 55,
-		
+
 		IdleRPM = 750,
 		LimitRPM = 6000,
 		PeakTorque = 80,
@@ -580,25 +580,25 @@ local V = {
 		PowerbandEnd = 5500,
 		Turbocharged = false,
 		Supercharged = false,
-		
+
 		FuelFillPos = Vector(-47.65,-76.59,47.43),
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 65,
-		
+
 		PowerBias = 1,
-		
+
 		EngineSoundPreset = -1,
-		
+
 		snd_pitch = 1,
 		snd_idle = "simulated_vehicles/4banger/4banger_idle.wav",
-		
+
 		snd_low = "simulated_vehicles/4banger/4banger_low.wav",
 		snd_low_pitch = 0.9,
-		
+
 		snd_mid = "simulated_vehicles/4banger/4banger_mid.wav",
 		snd_mid_gearup = "simulated_vehicles/4banger/4banger_second.wav",
 		snd_mid_pitch = 0.8,
-		
+
 		DifferentialGear = 0.52,
 		Gears = {-0.1,0,0.1,0.2,0.3,0.4}
 	}
@@ -613,15 +613,15 @@ local V = {
 	Category = "Base",
 	Members = {
 		Mass = 1700,
-		
+
 		LightsTable = "charger",
-		
+
 		FrontWheelRadius = 15,
 		RearWheelRadius = 15,
-		
+
 		SeatOffset = Vector(0,0,-2.5),
 		SeatPitch = 0,
-		
+
 		PassengerSeats = {
 			{
 				pos = Vector(20,0,20),
@@ -636,7 +636,7 @@ local V = {
 				ang = Angle(0,0,9)
 			}
 		},
-		
+
 		ExhaustPositions = {
 			{
 				pos = Vector(17.7,-121,17.5),
@@ -647,27 +647,27 @@ local V = {
 				ang = Angle(90,-90,0)
 			}
 		},
-		
-		FrontHeight = 13,	
+
+		FrontHeight = 13,
 		FrontConstant = 28000,
 		FrontDamping = 2800,
 		FrontRelativeDamping = 2800,
-		
+
 		RearHeight = 12,
 		RearConstant = 32000,
 		RearDamping = 2900,
 		RearRelativeDamping = 2900,
-		
+
 		FastSteeringAngle = 10,
 		SteeringFadeFastSpeed = 535,
-		
+
 		TurnSpeed = 8,
-		
+
 		MaxGrip = 43,
 		Efficiency = 1.45,
 		GripOffset = -2,
 		BrakePower = 50,
-		
+
 		IdleRPM = 750,
 		LimitRPM = 5600,
 		PeakTorque = 230,
@@ -675,30 +675,30 @@ local V = {
 		PowerbandEnd = 5400,
 		Turbocharged = false,
 		Supercharged = false,
-		
+
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 80,
 		FuelFillPos = Vector(-37.29,-92.65,46.53),
-		
+
 		PowerBias = 1,
-		
+
 		EngineSoundPreset = -1,
-		
+
 		snd_pitch = 0.95,
 		snd_idle = "simulated_vehicles/master_chris_charger69/charger_idle.wav",
-		
+
 		snd_low = "simulated_vehicles/master_chris_charger69/charger_low.wav",
 		snd_low_revdown = "simulated_vehicles/master_chris_charger69/charger_revdown.wav",
 		snd_low_pitch = 0.9,
-		
+
 		snd_mid = "simulated_vehicles/master_chris_charger69/charger_mid.wav",
 		snd_mid_gearup = "simulated_vehicles/master_chris_charger69/charger_second.wav",
 		snd_mid_geardown = "simulated_vehicles/master_chris_charger69/charger_shiftdown.wav",
 		snd_mid_pitch = 1.15,
-		
+
 		snd_horn = "simulated_vehicles/horn_3.wav",
-		
-		DifferentialGear = 0.7, 
+
+		DifferentialGear = 0.7,
 		Gears = {-0.12,0,0.12,0.21,0.32,0.42}
 	}
 }
@@ -717,15 +717,15 @@ local V = {
 	Members = {
 		Mass = 1385,
 		AirFriction = -1500,
-		
+
 		LightsTable = "madmax",
-		
+
 		FrontWheelRadius = 14.6,
 		RearWheelRadius = 15.6,
-		
+
 		SeatOffset = Vector(-4,0,-4),
 		SeatPitch = 0,
-		
+
 		PassengerSeats = {
 			{
 				pos = Vector(21,0,20),
@@ -740,8 +740,8 @@ local V = {
 				ang = Angle(0,0,9)
 			}
 		},
-		
-				
+
+
 		ExhaustPositions = {
 			{
 				pos = Vector(49,-38,23.5),
@@ -776,7 +776,7 @@ local V = {
 				ang = Angle(-30,0,0)
 			}
 		},
-		
+
 		ModelInfo = {
 			LinkDoorAnims = {
 				["enter2"] = {
@@ -789,27 +789,27 @@ local V = {
 				}
 			}
 		},
-		
+
 		FrontHeight = 10,
 		FrontConstant = 28000,
 		FrontDamping = 2800,
 		FrontRelativeDamping = 2800,
-		
+
 		RearHeight = 8,
 		RearConstant = 32000,
 		RearDamping = 2900,
 		RearRelativeDamping = 2900,
-		
+
 		FastSteeringAngle = 10,
 		SteeringFadeFastSpeed = 535,
-		
+
 		TurnSpeed = 8,
-		
+
 		MaxGrip = 44,
 		Efficiency = 1.2,
 		GripOffset = -3.8,
 		BrakePower = 60,
-		
+
 		IdleRPM = 800,
 		LimitRPM = 7000,
 		PeakTorque = 200,
@@ -817,29 +817,29 @@ local V = {
 		PowerbandEnd = 6500,
 		Turbocharged = false,
 		Supercharged = true,
-		
+
 		FuelFillPos = Vector(-43.17,-72.93,49),
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 100,
-		
+
 		PowerBias = 1,
-		
+
 		EngineSoundPreset = -1,
-		
+
 		snd_pitch = 0.85,
 		snd_idle = "simulated_vehicles/shelby/shelby_idle.wav",
-		
+
 		snd_low = "simulated_vehicles/shelby/shelby_low.wav",
 		snd_low_revdown = "simulated_vehicles/shelby/shelby_revdown.wav",
 		snd_low_pitch = 0.8,
-		
+
 		snd_mid = "simulated_vehicles/shelby/shelby_mid.wav",
 		snd_mid_gearup = "simulated_vehicles/shelby/shelby_second.wav",
 		snd_mid_geardown = "simulated_vehicles/shelby/shelby_shiftdown.wav",
 		snd_mid_pitch = 1,
-		
+
 		snd_horn = "simulated_vehicles/horn_7.wav",
-		
+
 		DifferentialGear = 0.58,
 		Gears = {-0.12,0,0.12,0.21,0.32,0.40,0.48}
 	}
@@ -858,29 +858,29 @@ local V = {
 
 	Members = {
 		Mass = 1700,
-		
+
 		EnginePos = Vector(65.01,0,35),
-		
+
 		LightsTable = "alfons",
-		
+
 		CustomWheels = true,
 		CustomSuspensionTravel = 15,
-		
+
 		CustomWheelModel = "models/red_hd_brera/red_hd_brera_wheel.mdl",
 		CustomWheelPosFL = Vector(54,34.5,9),
 		CustomWheelPosFR = Vector(54,-34.5,9),
-		CustomWheelPosRL = Vector(-59,34.5,9),	
+		CustomWheelPosRL = Vector(-59,34.5,9),
 		CustomWheelPosRR = Vector(-59,-34.5,9),
 		CustomWheelAngleOffset = Angle(0,90,0),
-		
+
 		CustomMassCenter = Vector(0,0,5),
-		
+
 		CustomSteerAngle = 35,
-		
+
 		SeatOffset = Vector(-11,-19,42),
 		SeatPitch = 0,
 		SeatYaw = 90,
-		
+
 		PassengerSeats = {
 			{
 				pos = Vector(-3,-18,10),
@@ -895,7 +895,7 @@ local V = {
 				ang = Angle(0,-90,10)
 			}
 		},
-		
+
 		Backfire = true,
 		ExhaustPositions = {
 			{
@@ -915,27 +915,27 @@ local V = {
 				ang = Angle(90,180,0)
 			}
 		},
-		
+
 		FrontHeight = 8,
 		FrontConstant = 29000,
 		FrontDamping = 2500,
 		FrontRelativeDamping = 2500,
-		
+
 		RearHeight = 8,
 		RearConstant = 29000,
 		RearDamping = 2500,
 		RearRelativeDamping = 2500,
-		
+
 		FastSteeringAngle = 10,
 		SteeringFadeFastSpeed = 535,
-		
+
 		TurnSpeed = 8,
-		
+
 		MaxGrip = 43,
 		Efficiency = 1.6,
 		GripOffset = 0,
 		BrakePower = 50,
-		
+
 		IdleRPM = 750,
 		LimitRPM = 7500,
 		Revlimiter = true,
@@ -944,26 +944,26 @@ local V = {
 		PowerbandEnd = 7000,
 		Turbocharged = true,
 		Supercharged = false,
-		
+
 		FuelType = FUELTYPE_DIESEL,
 		FuelTankSize = 65,
-		
+
 		PowerBias = 0,
-		
+
 		EngineSoundPreset = -1,
-		
+
 		snd_pitch = 1,
 		snd_idle = "simulated_vehicles/alfaromeo/alfons_idle.wav",
-		
+
 		snd_low ="simulated_vehicles/alfaromeo/alfons_low.wav",
 		snd_low_revdown = "simulated_vehicles/alfaromeo/alfons_revdown.wav",
 		snd_low_pitch = 0.8,
-		
+
 		snd_mid = "simulated_vehicles/alfaromeo/alfons_mid.wav",
 		snd_mid_gearup = "simulated_vehicles/alfaromeo/alfons_gear.wav",
 		snd_mid_geardown = "simulated_vehicles/alfaromeo/alfons_shiftdown.wav",
 		snd_mid_pitch = 1,
-		
+
 		DifferentialGear = 0.5,
 		Gears = {-0.12,0,0.12,0.21,0.32,0.42,0.5}
 	}
@@ -983,101 +983,101 @@ local V = {
 
 	Members = {
 		Mass = 1700,
-		
+
 		EnginePos = Vector(69.61,0,15),
-		
+
 		LightsTable = "dukes",
-		
+
 		CustomWheels = true,
 		CustomSuspensionTravel = 15,
-		
+
 		CustomWheelModel = "models/winningrook/gtav/dukes/dukes_wheel.mdl",
 		CustomWheelPosFL = Vector(63.5,36,-13),
 		CustomWheelPosFR = Vector(63.5,-36,-13),
 		CustomWheelPosRL = Vector(-64,36.5,-9),
 		CustomWheelPosRR = Vector(-64,-36.5,-9),
 		CustomWheelAngleOffset = Angle(0,-90,0),
-		
+
 		CustomMassCenter = Vector(0,0,5),
-		
+
 		CustomSteerAngle = 35,
-		
+
 		SeatOffset = Vector(-18,-18,19),
 		SeatPitch = 0,
 		SeatYaw = 90,
-		
+
 		PassengerSeats = {
 			{
 				pos = Vector(-3,-19,-13),
 				ang = Angle(0,-90,17)
 			}
 		},
-		
+
 		ExhaustPositions = {
 			{
 				pos = Vector(-122.25,20.93,-7.28),
 				ang = Angle(90,165,0),
-				OnBodyGroups = { 
+				OnBodyGroups = {
 					[6] = {0},
 				}
 			},
 			{
 				pos = Vector(-122.1,-20.95,-7.42),
 				ang = Angle(90,195,0),
-				OnBodyGroups = { 
+				OnBodyGroups = {
 					[6] = {0},
 				}
 			},
 			{
 				pos = Vector(-43.43,-38.07,-12.96),
 				ang = Angle(90,-125,0),
-				OnBodyGroups = { 
+				OnBodyGroups = {
 					[6] = {1},
 				}
 			},
 			{
 				pos = Vector(-35.28,-40.72,-13.18),
 				ang = Angle(90,-125,0),
-				OnBodyGroups = { 
+				OnBodyGroups = {
 					[6] = {1},
 				}
 			},
 			{
 				pos = Vector(-43.43,38.07,-12.96),
 				ang = Angle(90,125,0),
-				OnBodyGroups = { 
+				OnBodyGroups = {
 					[6] = {1},
 				}
 			},
 			{
 				pos = Vector(-35.28,40.72,-13.18),
 				ang = Angle(90,125,0),
-				OnBodyGroups = { 
+				OnBodyGroups = {
 					[6] = {1},
 				}
 			}
 		},
-		
+
 		FrontHeight = 8,
 		FrontConstant = 29000,
 		FrontDamping = 2500,
 		FrontRelativeDamping = 2500,
-		
+
 		RearHeight = 9,
 		RearConstant = 29000,
 		RearDamping = 2500,
 		RearRelativeDamping = 2500,
-		
+
 		FastSteeringAngle = 10,
 		SteeringFadeFastSpeed = 535,
-		
+
 		TurnSpeed = 8,
-		
+
 		MaxGrip = 43,
 		Efficiency = 1.2,
 		GripOffset = -2,
 		BrakePower = 40,
-		
+
 		IdleRPM = 600,
 		LimitRPM = 7700,
 		PeakTorque = 200,
@@ -1085,28 +1085,28 @@ local V = {
 		PowerbandEnd = 7400,
 		Turbocharged = false,
 		Supercharged = false,
-		
+
 		FuelFillPos = Vector(-92.72,39.75,8.31),
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 80,
-		
+
 		PowerBias = 1,
-		
+
 		EngineSoundPreset = -1,
-		
+
 		snd_pitch = 0.8,
 		snd_idle = "simulated_vehicles/gta5_dukes/dukes_idle.wav",
-		
+
 		snd_low = "simulated_vehicles/gta5_dukes/dukes_low.wav",
 		snd_low_revdown = "simulated_vehicles/gta5_dukes/dukes_revdown.wav",
 		snd_low_pitch = 0.8,
-		
+
 		snd_mid = "simulated_vehicles/gta5_dukes/dukes_mid.wav",
 		snd_mid_gearup = "simulated_vehicles/gta5_dukes/dukes_second.wav",
 		snd_mid_pitch = 1,
-		
+
 		snd_horn = "simulated_vehicles/horn_3.wav",
-		
+
 		DifferentialGear = 0.6,
 		Gears = {-0.12,0,0.12,0.21,0.32,0.42,0.5}
 	}

@@ -22,9 +22,9 @@ end
 
 function TOOL:LeftClick( trace )
 	local ent = trace.Entity
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	local data = {
 		[1] = {self:GetClientNumber( "constant_f" ),self:GetClientNumber( "damping_f" )},
 		[2] = {self:GetClientNumber( "constant_f" ),self:GetClientNumber( "damping_f" )},
@@ -33,7 +33,7 @@ function TOOL:LeftClick( trace )
 		[5] = {self:GetClientNumber( "constant_r" ),self:GetClientNumber( "damping_r" )},
 		[6] = {self:GetClientNumber( "constant_r" ),self:GetClientNumber( "damping_r" )}
 	}
-	
+
 	local elastics = ent.Elastics
 	if (elastics) then
 		for i = 1, table.Count( elastics ) do
@@ -54,14 +54,14 @@ function TOOL:LeftClick( trace )
 					elastic:Fire( "SetSpringDamping", data[i][2], 0 )
 				end
 			end
-			
+
 			ent.FrontDampingOverride = data[1][2]
 			ent.FrontConstantOverride = data[1][1]
 			ent.RearDampingOverride = data[4][2]
 			ent.RearConstantOverride = data[4][1]
 		end
 	end
-	
+
 	ent:SetFrontSuspensionHeight( self:GetClientNumber( "height_f" ) )
 	ent:SetRearSuspensionHeight( self:GetClientNumber( "height_r" ) )
 
@@ -71,27 +71,27 @@ end
 function TOOL:RightClick( trace )
 	local ent = trace.Entity
 	local ply = self:GetOwner()
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	if (SERVER) then
 		local vname = ent:GetSpawn_List()
 		local VehicleList = list.Get( "simfphys_vehicles" )[vname]
-		
+
 		if ent.FrontDampingOverride and ent.FrontConstantOverride and ent.RearDampingOverride and ent.RearConstantOverride then
 			ply:ConCommand( "simfphyssuspensioneditor_constant_f " ..ent.FrontConstantOverride )
 			ply:ConCommand( "simfphyssuspensioneditor_constant_r " ..ent.RearConstantOverride )
-			
+
 			ply:ConCommand( "simfphyssuspensioneditor_damping_f " ..ent.FrontDampingOverride )
 			ply:ConCommand( "simfphyssuspensioneditor_damping_r " ..ent.RearDampingOverride )
 		else
 			ply:ConCommand( "simfphyssuspensioneditor_constant_f " ..VehicleList.Members.FrontConstant )
 			ply:ConCommand( "simfphyssuspensioneditor_constant_r " ..VehicleList.Members.RearConstant )
-			
+
 			ply:ConCommand( "simfphyssuspensioneditor_damping_f " ..VehicleList.Members.FrontDamping )
 			ply:ConCommand( "simfphyssuspensioneditor_damping_r " ..VehicleList.Members.RearDamping )
 		end
-		
+
 		ply:ConCommand( "simfphyssuspensioneditor_height_f " ..ent:GetFrontSuspensionHeight() )
 		ply:ConCommand( "simfphyssuspensioneditor_height_r " ..ent:GetRearSuspensionHeight() )
 	end
@@ -102,13 +102,13 @@ end
 function TOOL:Reload( trace )
 	local ent = trace.Entity
 	local ply = self:GetOwner()
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	if (SERVER) then
 		local vname = ent:GetSpawn_List()
 		local VehicleList = list.Get( "simfphys_vehicles" )[vname]
-		
+
 		local data = {
 			[1] = {VehicleList.Members.FrontConstant,VehicleList.Members.FrontDamping,VehicleList.Members.FrontHeight},
 			[2] = {VehicleList.Members.FrontConstant,VehicleList.Members.FrontDamping,VehicleList.Members.FrontHeight},
@@ -117,7 +117,7 @@ function TOOL:Reload( trace )
 			[5] = {VehicleList.Members.RearConstant,VehicleList.Members.RearDamping,VehicleList.Members.RearHeight},
 			[6] = {VehicleList.Members.RearConstant,VehicleList.Members.RearDamping,VehicleList.Members.RearHeight},
 		}
-		
+
 		local elastics = ent.Elastics
 		if (elastics) then
 			for i = 1, table.Count( elastics ) do
@@ -143,7 +143,7 @@ function TOOL:Reload( trace )
 		ent:SetFrontSuspensionHeight( 0 )
 		ent:SetRearSuspensionHeight( 0 )
 	end
-	
+
 	return true
 end
 
@@ -152,10 +152,10 @@ local ConVarsDefault = TOOL:BuildConVarList()
 function TOOL.BuildCPanel( panel )
 	panel:AddControl( "Header", { Text = "#tool.simfphyssuspensioneditor.name", Description = "#tool.simfphyssuspensioneditor.desc" } )
 	panel:AddControl( "ComboBox", { MenuButton = 1, Folder = "suspensionedtior", Options = { [ "#preset.default" ] = ConVarsDefault }, CVars = table.GetKeys( ConVarsDefault ) } )
-	
+
 	panel:AddControl( "Label",  { Text = "" } )
 	panel:AddControl( "Label",  { Text = "--- Front ---" } )
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Front Height",
 		Type 	= "Float",
@@ -163,7 +163,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "1",
 		Command = "simfphyssuspensioneditor_height_f"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Front Constant",
 		Type 	= "Float",
@@ -171,7 +171,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "50000",
 		Command = "simfphyssuspensioneditor_constant_f"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Front Damping",
 		Type 	= "Float",
@@ -181,7 +181,7 @@ function TOOL.BuildCPanel( panel )
 	})
 	panel:AddControl( "Label",  { Text = "" } )
 	panel:AddControl( "Label",  { Text = "--- Rear ---" } )
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Rear Height",
 		Type 	= "Float",
@@ -189,7 +189,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "1",
 		Command = "simfphyssuspensioneditor_height_r"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Rear Constant",
 		Type 	= "Float",
@@ -197,7 +197,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "50000",
 		Command = "simfphyssuspensioneditor_constant_r"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Rear Damping",
 		Type 	= "Float",

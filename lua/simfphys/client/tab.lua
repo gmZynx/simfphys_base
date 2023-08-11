@@ -83,17 +83,17 @@ local k_list = {
 local function simplebinder( x, y, tbl, num, parent)
 	local sizex = 500
 	local sizey = 40
-	
+
 	local kentry = tbl[num]
 	local key = kentry[1]
 	local setdefault = key:GetInt()
-	
+
 	local Shape = vgui.Create( "DShape", parent)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( x, y )
 	Shape:SetSize( 175, sizey )
 	Shape:SetColor( Color( 0, 0, 0, 255 ) )
-	
+
 	local Shape = vgui.Create( "DShape", parent)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( x + 1, y + 1 )
@@ -106,17 +106,17 @@ local function simplebinder( x, y, tbl, num, parent)
 	binder:SetValue( setdefault )
 	function binder:SetSelectedNumber( num )
 		self.m_iSelectedNumber = num
-		self:ConVarChanged( num ) 
-		self:UpdateText() 
-		self:OnChange( num ) 
+		self:ConVarChanged( num )
+		self:UpdateText()
+		self:OnChange( num )
 		key:SetInt( num )
 	end
-	
+
 	local TextLabel = vgui.Create( "DPanel", parent)
 	TextLabel:SetPos( x, y )
 	TextLabel:SetSize( 175, sizey )
 	TextLabel.Paint = function()
-		draw.SimpleText( kentry[3], "DSimfphysFont", 175 * 0.5, sizey * 0.5, Color( 100, 100, 100, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER ) 
+		draw.SimpleText( kentry[3], "DSimfphysFont", 175 * 0.5, sizey * 0.5, Color( 100, 100, 100, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
 	return binder
 end
@@ -125,16 +125,16 @@ local function simplebinder_old( x, y, tbl, num, parent, sizex, sizey)
 	local kentry = tbl[num]
 	local key = kentry[1]
 	local setdefault = key:GetInt()
-	
+
 	local sizex = sizex or 400
 	local sizey = sizey or 40
-	
+
 	local Shape = vgui.Create( "DShape", parent)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( x, y )
 	Shape:SetSize( sizex, sizey )
 	Shape:SetColor( Color( 0, 0, 0, 255 ) )
-	
+
 	local Shape = vgui.Create( "DShape", parent)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( x + 1, y + 1 )
@@ -147,18 +147,18 @@ local function simplebinder_old( x, y, tbl, num, parent, sizex, sizey)
 	binder:SetValue( setdefault )
 	function binder:SetSelectedNumber( num )
 		self.m_iSelectedNumber = num
-		self:ConVarChanged( num ) 
-		self:UpdateText() 
-		self:OnChange( num ) 
-		
+		self:ConVarChanged( num )
+		self:UpdateText()
+		self:OnChange( num )
+
 		key:SetInt( num )
 	end
-	
+
 	local TextLabel = vgui.Create( "DPanel", parent)
 	TextLabel:SetPos( x, y )
 	TextLabel:SetSize( sizex * 0.5, sizey )
 	TextLabel.Paint = function()
-		draw.SimpleText( kentry[3], "DSimfphysFont", sizex * 0.25, 20, Color( 100, 100, 100, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER ) 
+		draw.SimpleText( kentry[3], "DSimfphysFont", sizex * 0.25, 20, Color( 100, 100, 100, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
 	return binder
 end
@@ -201,7 +201,7 @@ local function buildclientsettingsmenu( self )
 	createcheckbox(25,110,"Fuel consumption \nin MPG instead \nof L/100KM","cl_simfphys_hudmpg",self.PropPanel,hud_mpg:GetInt())
 	createslider(30,155,345,20,"Hud offset X","cl_simfphys_hud_offset_x",self.PropPanel,-1,1,hud_x:GetFloat())
 	createslider(30,175,345,20,"Hud offset Y","cl_simfphys_hud_offset_y",self.PropPanel,-1,1,hud_y:GetFloat())
-	
+
 	local Shape = vgui.Create( "DShape", self.PropPanel)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( 20, 210 )
@@ -211,7 +211,7 @@ local function buildclientsettingsmenu( self )
 	createcheckbox(25,235,"Front Projected Textures","cl_simfphys_frontlamps",self.PropPanel,0)
 	createcheckbox(25,255,"Rear Projected Textures","cl_simfphys_rearlamps",self.PropPanel,0)
 	createcheckbox(25,275,"Enable Shadows","cl_simfphys_shadows",self.PropPanel,0)
-	
+
 	local Shape = vgui.Create( "DShape", self.PropPanel)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( 20, 305 )
@@ -221,20 +221,20 @@ local function buildclientsettingsmenu( self )
 	createcheckbox(25,330,"Engine Auto Start/Stop","cl_simfphys_autostart",self.PropPanel,autostart:GetInt())
 	createcheckbox(25,350,"Automatic Transmission","cl_simfphys_auto",self.PropPanel,auto:GetInt())
 	createcheckbox(25,370,"Automatic Sportmode (late up and downshifts)","cl_simfphys_sport",self.PropPanel,sport:GetInt())
-	
+
 	local Shape = vgui.Create( "DShape", self.PropPanel)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( 20, 400 )
 	Shape:SetSize( 350, 115 )
 	Shape:SetColor( Color( 0, 0, 0, 200 ) )
-	
+
 	local ctitem_1 = createcheckbox(25,405,"Enable Countersteer","cl_simfphys_ctenable",self.PropPanel,ctenable:GetInt())
 	local ctitem_2 = createslider(30,425,345,40,"Countersteer Mul","cl_simfphys_ctmul",self.PropPanel,0.1,2,ctmul:GetFloat())
 	local ctitem_3 = createslider(30,445,345,40,"Countersteer MaxAng","cl_simfphys_ctang",self.PropPanel,1,90,ctang:GetFloat())
-	
+
 	local Reset = vgui.Create( "DButton" )
 	Reset:SetParent( self.PropPanel )
-	Reset:SetText( "Reset" )	
+	Reset:SetText( "Reset" )
 	Reset:SetPos( 25, 485 )
 	Reset:SetSize( 340, 25 )
 	Reset.DoClick = function()
@@ -245,22 +245,22 @@ local function buildclientsettingsmenu( self )
 		ctmul:SetFloat( 0.7 )
 		ctang:SetFloat( 15 )
 	end
-	
+
 	local Shape = vgui.Create( "DShape", self.PropPanel)
 	Shape:SetType( "Rect" )
 	Shape:SetPos( 20, 525 )
 	Shape:SetSize( 350, 165 )
 	Shape:SetColor( Color( 0, 0, 0, 200 ) )
-	
+
 	local st_item_1 = createcheckbox(25,530,"Use these settings\n(you need to re-enter the vehicle)","cl_simfphys_overwrite",self.PropPanel,overwrite:GetInt())
 	local st_item_2 = createslider(30,550,345,40,"steer speed","cl_simfphys_steerspeed",self.PropPanel,1,16,steerspeed:GetFloat())
 	local st_item_3 = createslider(30,570,345,40,"fast speed steer angle","cl_simfphys_steerangfast",self.PropPanel,0,90,faststeerang:GetFloat())
 	local st_item_4 = createslider(30,595,345,40,"fade speed(units/seconds)\nfor fast speed steer angle","cl_simfphys_fadespeed",self.PropPanel,1,5000,fadespeed:GetFloat())
 	local st_item_5 = createcheckbox(25,635,"extra smooth steering","cl_simfphys_smoothsteer",self.PropPanel,smoothsteer:GetInt())
-	
+
 	local Reset = vgui.Create( "DButton" )
 	Reset:SetParent( self.PropPanel )
-	Reset:SetText( "Reset" )	
+	Reset:SetText( "Reset" )
 	Reset:SetPos( 25, 660 )
 	Reset:SetSize( 340, 25 )
 	Reset.DoClick = function()
@@ -269,7 +269,7 @@ local function buildclientsettingsmenu( self )
 		st_item_3:SetValue( 10 )
 		st_item_4:SetValue( 535 )
 		st_item_5:SetValue( 0 )
-		
+
 		overwrite:SetInt( 0 )
 		steerspeed:SetFloat( 8 )
 		faststeerang:SetFloat( 10 )
@@ -284,24 +284,24 @@ local function buildcontrolsmenu( self )
 	Background:SetType( "Rect" )
 	Background:SetPos( 20, 40 )
 	Background:SetColor( Color( 0, 0, 0, 200 ) )
-	
+
 	local TextLabel = vgui.Create( "DPanel", self.PropPanel)
 	TextLabel:SetPos( 0, 0 )
 	TextLabel:SetSize( 600, 40 )
 	TextLabel.Paint = function()
-		draw.SimpleTextOutlined( "You need to re-enter the vehicle in order for the changes to take effect!", "DSimfphysFont_hint", 300, 20, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER , 1,Color( 0, 0, 0, 255 ) ) 
+		draw.SimpleTextOutlined( "You need to re-enter the vehicle in order for the changes to take effect!", "DSimfphysFont_hint", 300, 20, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER , 1,Color( 0, 0, 0, 255 ) )
 	end
-	
+
 	local yy = 45
 	local binders = {}
 	for i = 1, table.Count( k_list ) do
 		binders[i] = simplebinder(25,yy,k_list,i,self.PropPanel)
 		yy = yy + 45
 	end
-	
+
 	local ResetButton = vgui.Create( "DButton" )
 	ResetButton:SetParent( self.PropPanel )
-	ResetButton:SetText( "Reset" )	
+	ResetButton:SetText( "Reset" )
 	ResetButton:SetPos( 25, yy + 10 )
 	ResetButton:SetSize( 500, 25 )
 	ResetButton.DoClick = function()
@@ -309,12 +309,12 @@ local function buildcontrolsmenu( self )
 			local kentry = k_list[i]
 			local key = kentry[1]
 			local default = kentry[2]
-			
+
 			key:SetInt( default )
 			binders[i]:SetValue( default )
 		end
 	end
-	
+
 	Background:SetSize( 510, yy )
 end
 
@@ -325,24 +325,24 @@ local function buildmsmenu( self )
 	Shape:SetPos( 20, 20 )
 	Shape:SetSize( 350, 310 )
 	Shape:SetColor( Color( 0, 0, 0, 200 ) )
-	
+
 	local msitem_1 = createcheckbox(25,25,"Enable Mouse Steering","cl_simfphys_mousesteer",self.PropPanel,mousesteer:GetInt())
 	local msitem_2 = createcheckbox(25,55,"Lock Pitch View","cl_simfphys_ms_lockpitch",self.PropPanel,mslockpitch:GetInt())
 	local msitem_8 = createcheckbox(25,85,"Show Hud","cl_simfphys_ms_hud",self.PropPanel,mshud:GetInt())
-	
-	
+
+
 	local msitem_9 = createslider(60,50,315,40,"","cl_simfphys_ms_lockedpitch",self.PropPanel,-90,90,mslockedpitch:GetFloat())
-	
+
 	local msitem_4 = createslider(30,110,345,40,"Deadzone","cl_simfphys_ms_deadzone",self.PropPanel,0,16,msdeadzone:GetFloat())
 	local msitem_5 = createslider(30,140,345,40,"Exponent","cl_simfphys_ms_exponent",self.PropPanel,1,4,msexponent:GetFloat())
 	local msitem_6 = createslider(30,170,345,40,"Sensitivity","cl_simfphys_ms_sensitivity",self.PropPanel,0.01,10,mssensitivity:GetFloat())
 	local msitem_7 = createslider(30,200,345,40,"Return Speed","cl_simfphys_ms_return",self.PropPanel,0,10,msretract:GetFloat())
-	
+
 	local msitem_3 = simplebinder_old(25,240,{{k_msfreelook,KEY_Y,"Unlock View"}},1,self.PropPanel,340, 40)
-	
+
 	local DermaButton = vgui.Create( "DButton" )
 	DermaButton:SetParent( self.PropPanel )
-	DermaButton:SetText( "Reset" )	
+	DermaButton:SetText( "Reset" )
 	DermaButton:SetPos( 25, 300 )
 	DermaButton:SetSize( 340, 25 )
 	DermaButton.DoClick = function()
@@ -355,7 +355,7 @@ local function buildmsmenu( self )
 		msitem_7:SetValue( 1 )
 		msitem_8:SetValue( 1 )
 		msitem_9:SetValue( 5 )
-		
+
 		mshud:SetInt( 1 )
 		mousesteer:SetInt( 0 )
 		mssensitivity:SetInt( 1 )
@@ -374,7 +374,7 @@ local function buildserversettingsmenu( self )
 	Background:SetPos( 20, 20 )
 	Background:SetColor( Color( 0, 0, 0, 200 ) )
 	local y = 0
-	
+
 	if LocalPlayer():IsSuperAdmin() then
 		y = y + 25
 		local CheckBoxTeam = vgui.Create( "DCheckBoxLabel", self.PropPanel)
@@ -382,14 +382,14 @@ local function buildserversettingsmenu( self )
 		CheckBoxTeam:SetText( "Disallow players of different teams to enter the same vehicle" )
 		CheckBoxTeam:SetValue( GetConVar( "sv_simfphys_teampassenger" ) :GetInt() )
 		CheckBoxTeam:SizeToContents()
-	
+
 		y = y + 25
 		local CheckBoxDamage = vgui.Create( "DCheckBoxLabel", self.PropPanel)
 		CheckBoxDamage:SetPos( 25, y )
 		CheckBoxDamage:SetText( "Enable Damage" )
 		CheckBoxDamage:SetValue( GetConVar( "sv_simfphys_enabledamage" ) :GetInt() )
 		CheckBoxDamage:SizeToContents()
-		
+
 		y = y + 18
 		local DamageMul = vgui.Create( "DNumSlider", self.PropPanel)
 		DamageMul:SetPos( 30, y )
@@ -399,14 +399,14 @@ local function buildserversettingsmenu( self )
 		DamageMul:SetMax( 10 )
 		DamageMul:SetDecimals( 3 )
 		DamageMul:SetValue( GetConVar( "sv_simfphys_damagemultiplicator" ):GetFloat() )
-		
+
 		y = y + 32
 		local CheckBoxpDamage = vgui.Create( "DCheckBoxLabel", self.PropPanel)
 		CheckBoxpDamage:SetPos( 25, y )
 		CheckBoxpDamage:SetText( "Enable Player Damage (On Collision)" )
 		CheckBoxpDamage:SetValue( GetConVar( "sv_simfphys_playerdamage" ) :GetInt() )
 		CheckBoxpDamage:SizeToContents()
-		
+
 		y = y + 25
 		local GibRemoveTimer = vgui.Create( "DNumSlider", self.PropPanel)
 		GibRemoveTimer:SetPos( 30, y )
@@ -416,14 +416,14 @@ local function buildserversettingsmenu( self )
 		GibRemoveTimer:SetMax( 3600 )
 		GibRemoveTimer:SetDecimals( 0 )
 		GibRemoveTimer:SetValue( GetConVar( "sv_simfphys_gib_lifetime" ):GetInt() )
-		
+
 		y = y + 45
 		local CheckBoxFuel = vgui.Create( "DCheckBoxLabel", self.PropPanel)
 		CheckBoxFuel:SetPos( 25, y )
 		CheckBoxFuel:SetText( "Enable Fuelsystem" )
 		CheckBoxFuel:SetValue( GetConVar( "sv_simfphys_fuel" ) :GetInt() )
 		CheckBoxFuel:SizeToContents()
-		
+
 		y = y + 18
 		local ScaleFuel = vgui.Create( "DNumSlider", self.PropPanel)
 		ScaleFuel:SetPos( 30, y )
@@ -433,13 +433,13 @@ local function buildserversettingsmenu( self )
 		ScaleFuel:SetMax( 1 )
 		ScaleFuel:SetDecimals( 2 )
 		ScaleFuel:SetValue( GetConVar( "sv_simfphys_fuelscale" ):GetFloat() )
-		
+
 		y = y + 45
 		local tractionLabel = vgui.Create( "DLabel", self.PropPanel )
 		tractionLabel:SetPos( 25, y )
 		tractionLabel:SetText( "Traction Multiplicator for:" )
 		tractionLabel:SizeToContents()
-		
+
 		local NewTractionData = {}
 		local DemSliders = {}
 		y = y + 15
@@ -457,11 +457,11 @@ local function buildserversettingsmenu( self )
 			end
 			y = y + 25
 		end
-		
+
 		y = y + 30
 		local DermaButton = vgui.Create( "DButton" )
 		DermaButton:SetParent( self.PropPanel )
-		DermaButton:SetText( "Apply" )	
+		DermaButton:SetText( "Apply" )
 		DermaButton:SetPos( 25, y - 10 )
 		DermaButton:SetSize( 340, 25 )
 		DermaButton.DoClick = function()
@@ -472,19 +472,19 @@ local function buildserversettingsmenu( self )
 				net.WriteBool( CheckBoxpDamage:GetChecked() )
 				net.WriteBool( CheckBoxFuel:GetChecked() )
 				net.WriteFloat( ScaleFuel:GetValue() )
-				net.WriteTable( NewTractionData ) 
+				net.WriteTable( NewTractionData )
 				net.WriteBool( CheckBoxTeam:GetChecked() )
 			net.SendToServer()
 		end
-		
+
 		y = y + 30
 		local DermaButton = vgui.Create( "DButton" )
 		DermaButton:SetParent( self.PropPanel )
-		DermaButton:SetText( "Reset" )	
+		DermaButton:SetText( "Reset" )
 		DermaButton:SetPos( 25, y - 10 )
 		DermaButton:SetSize( 340, 25 )
 		DermaButton.DoClick = function()
-			
+
 			NewTractionData["ice"] = 0.35
 			NewTractionData["gmod_ice"] = 0.1
 			NewTractionData["slipperyslime"] = 0.2
@@ -498,11 +498,11 @@ local function buildserversettingsmenu( self )
 			NewTractionData["gravel"] = 1
 			NewTractionData["rock"] = 1
 			NewTractionData["wood"] = 1
-			
+
 			for k, v in pairs( NewTractionData ) do
 				DemSliders[k]:SetValue( v )
 			end
-			
+
 			CheckBoxDamage:SetValue( 1 )
 			GibRemoveTimer:SetValue( 120 )
 			DamageMul:SetValue( 1 )
@@ -510,7 +510,7 @@ local function buildserversettingsmenu( self )
 			CheckBoxFuel:SetValue( 1 )
 			ScaleFuel:SetValue( 0.1 )
 			CheckBoxTeam:SetValue( 0 )
-			
+
 			net.Start("simfphys_settings")
 				net.WriteBool( true )
 				net.WriteFloat( 120 )
@@ -518,7 +518,7 @@ local function buildserversettingsmenu( self )
 				net.WriteBool( true )
 				net.WriteBool( true )
 				net.WriteFloat( 0.1 )
-				net.WriteTable( NewTractionData ) 
+				net.WriteTable( NewTractionData )
 				net.WriteBool( false )
 			net.SendToServer()
 		end
@@ -534,7 +534,7 @@ local function buildserversettingsmenu( self )
 		Label:SetPos( 30, y )
 		Label:SetText( "Damage Multiplicator is: "..GetConVar( "sv_simfphys_damagemultiplicator" ):GetFloat() )
 		Label:SizeToContents()
-		
+
 		y = y + 25
 		local yes = "Players can take damage from collisions"
 		local no = "Players can't take damage from collisions"
@@ -542,27 +542,27 @@ local function buildserversettingsmenu( self )
 		Label:SetPos( 30, y )
 		Label:SetText( GetConVar( "sv_simfphys_playerdamage" ):GetBool() and yes or no )
 		Label:SizeToContents()
-		
+
 		y = y + 25
 		local Label = vgui.Create( "DLabel", self.PropPanel )
 		local lifetime = GetConVar( "sv_simfphys_gib_lifetime" ):GetInt()
 		Label:SetPos( 30, y )
 		Label:SetText( (lifetime > 0) and ("Gib Lifetime = "..lifetime.." seconds") or "Gibs never despawn" )
 		Label:SizeToContents()
-		
+
 		y = y + 25
 		local Label = vgui.Create( "DLabel", self.PropPanel )
 		Label:SetPos( 30, y )
 		Label:SetText( "Vehicles "..(GetConVar( "sv_simfphys_fuel" ):GetBool() and "are running on fuel" or "don't use fuel") )
 		Label:SizeToContents()
-		
+
 		y = y + 25
 		local Label = vgui.Create( "DLabel", self.PropPanel )
 		local fuelscale = math.Round( GetConVar( "sv_simfphys_fuelscale" ):GetFloat() , 3 )
 		Label:SetPos( 30, y )
 		Label:SetText( "Fuel tank size multiplier is: "..fuelscale )
 		Label:SizeToContents()
-		
+
 		if GetConVar( "sv_simfphys_teampassenger" ):GetBool() then
 			y = y + 25
 			local Label = vgui.Create( "DLabel", self.PropPanel )
@@ -583,22 +583,22 @@ local function buildserversettingsmenu( self )
 			tractionLabel:SetPos( 105, y )
 			tractionLabel:SetText( k )
 			tractionLabel:SizeToContents()
-			
+
 			local tractionLabel = vgui.Create( "DLabel", self.PropPanel )
 			tractionLabel:SetPos( 170, y )
 			tractionLabel:SetText( "=" )
 			tractionLabel:SizeToContents()
-			
+
 			local tractionLabel = vgui.Create( "DLabel", self.PropPanel )
 			tractionLabel:SetPos( 185, y )
 			tractionLabel:SetText( math.Round(v,2) )
 			tractionLabel:SizeToContents()
-			
+
 			y = y + 25
 		end
 		y = y - 25
 	end
-	
+
 	Background:SetSize( 350, y )
 end
 
@@ -637,43 +637,43 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 
 		-- When we click on the node - populate it using this function
 		node.DoPopulate = function( self )
-			
+
 			-- If we've already populated it - forget it.
 			if self.PropPanel then return end
-			
+
 			-- Create the container panel
 			self.PropPanel = vgui.Create( "ContentContainer", pnlContent )
 			self.PropPanel:SetVisible( false )
 			self.PropPanel:SetTriggerSpawnlistChange( false )
-			
+
 			for k, ent in SortedPairsByMemberValue( v, "PrintName" ) do
-				
+
 				spawnmenu.CreateContentIcon( "simfphys_vehicles", self.PropPanel, {
 					nicename	= ent.PrintName or ent.ClassName,
 					spawnname	= ent.ClassName,
 					material	= "entities/"..ent.ClassName..".png",
 					admin		= ent.AdminOnly
 				} )
-				
+
 			end
-			
+
 		end
-		
+
 		-- If we click on the node populate it and switch to it.
 		node.DoClick = function( self )
-			
+
 			self:DoPopulate()
 			pnlContent:SwitchPanel( self.PropPanel )
-			
+
 		end
 
 	end
-	
+
 	-- KEYBOARD
 	local node = tree:AddNode( "Controls", "icon16/keyboard.png" )
 	node.DoPopulate = function( self )
 		if self.PropPanel then return end
-		
+
 		self.PropPanel = vgui.Create( "ContentContainer", pnlContent )
 		self.PropPanel:SetVisible( false )
 		self.PropPanel:SetTriggerSpawnlistChange( false )
@@ -684,12 +684,12 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 		self:DoPopulate()
 		pnlContent:SwitchPanel( self.PropPanel )
 	end
-	
+
 	-- MOUSE STEERING
 	local node = tree:AddNode( "Mouse Steering", "icon16/mouse.png" )
 	node.DoPopulate = function( self )
 		if self.PropPanel then return end
-		
+
 		self.PropPanel = vgui.Create( "ContentContainer", pnlContent )
 		self.PropPanel:SetVisible( false )
 		self.PropPanel:SetTriggerSpawnlistChange( false )
@@ -700,21 +700,21 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 		self:DoPopulate()
 		pnlContent:SwitchPanel( self.PropPanel )
 	end
-	
+
 	-- JOYSTICK
 	if istable( jcon ) and file.Exists("lua/bin/gmcl_joystick_win32.dll", "GAME") then
-		
+
 		local node = tree:AddNode( "Joystick Configuration", "icon16/joystick.png" )
 		node.DoClick = function( self )
-			RunConsoleCommand("joyconfig") 
+			RunConsoleCommand("joyconfig")
 		end
 	end
-	
+
 	-- CLIENT SETTINGS
 	local node = tree:AddNode( "Client Settings", "icon16/wrench.png" )
 	node.DoPopulate = function( self )
 		if self.PropPanel then return end
-		
+
 		self.PropPanel = vgui.Create( "ContentContainer", pnlContent )
 		self.PropPanel:SetVisible( false )
 		self.PropPanel:SetTriggerSpawnlistChange( false )
@@ -725,7 +725,7 @@ hook.Add( "PopulateVehicles", "!!!add_simfphys_to_vehicles", function( pnlConten
 		self:DoPopulate()
 		pnlContent:SwitchPanel( self.PropPanel )
 	end
-	
+
 	-- SERVER SETTINGS
 	local node = tree:AddNode( "Server Settings", "icon16/wrench_orange.png" )
 	node.DoPopulate = function( self )
@@ -769,7 +769,7 @@ spawnmenu.AddContentType( "simfphys_vehicles", function( container, obj )
 		menu:Open()
 
 	end
-	
+
 	if IsValid( container ) then
 		container:Add( icon )
 	end
