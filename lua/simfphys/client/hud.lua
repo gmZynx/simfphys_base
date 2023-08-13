@@ -56,7 +56,6 @@ cvars.AddChangeCallback( "cl_simfphys_althud_arcs", function( convar, oldValue, 
 cvars.AddChangeCallback( "cl_simfphys_hudmph", function( convar, oldValue, newValue ) Hudmph = tonumber( newValue )~=0 end)
 cvars.AddChangeCallback( "cl_simfphys_hudmpg", function( convar, oldValue, newValue ) Hudmpg = tonumber( newValue )~=0 end)
 cvars.AddChangeCallback( "cl_simfphys_hudrealspeed", function( convar, oldValue, newValue ) Hudreal = tonumber( newValue )~=0 end)
-cvars.AddChangeCallback( "cl_simfphys_mousesteer", function( convar, oldValue, newValue ) isMouseSteer = tonumber( newValue )~=0 end)
 cvars.AddChangeCallback( "cl_simfphys_ctenable", function( convar, oldValue, newValue ) hasCounterSteerEnabled = tonumber( newValue )~=0 end)
 cvars.AddChangeCallback( "cl_simfphys_auto", function( convar, oldValue, newValue ) slushbox = tonumber( newValue )~=0 end)
 cvars.AddChangeCallback( "cl_simfphys_ms_sensitivity", function( convar, oldValue, newValue )  ms_sensitivity = tonumber( newValue ) end)
@@ -65,6 +64,19 @@ cvars.AddChangeCallback( "cl_simfphys_ms_deadzone", function( convar, oldValue, 
 cvars.AddChangeCallback( "cl_simfphys_ms_exponent", function( convar, oldValue, newValue ) ms_exponent = tonumber( newValue ) end)
 cvars.AddChangeCallback( "cl_simfphys_ms_keyfreelook", function( convar, oldValue, newValue ) ms_key_freelook = tonumber( newValue ) end)
 cvars.AddChangeCallback( "cl_simfphys_key_turnmenu", function( convar, oldValue, newValue ) turnmenu = tonumber( newValue ) end)
+cvars.AddChangeCallback( "cl_simfphys_mousesteer", function( convar, oldValue, newValue )
+	local new = tonumber( newValue )
+	isMouseSteer = new ~= 0
+	if new ~= 0 then return end
+
+	local veh = LocalPlayer():GetVehicle()
+	if not IsValid( veh ) then return end
+
+	net.Start( "simfphys_mousesteer" )
+	net.WriteEntity( veh )
+	net.WriteFloat( 0 )
+net.SendToServer()
+end )
 
 ShowHud = GetConVar( "cl_simfphys_hud" ):GetBool()
 hudoffset_x = GetConVar( "cl_simfphys_hud_offset_x" ):GetFloat()
@@ -100,28 +112,25 @@ end
 
 hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 	if ply ~= LocalPlayer() then return end
+	if not isMouseSteer then return end
 
 	local vehicle = ply:GetVehicle()
 	if not IsValid(vehicle) then return end
 
-	if isMouseSteer then
-		local freelook = input.IsButtonDown( ms_key_freelook )
-		ply.Freelook = freelook
-		if not freelook then
-			local frametime = FrameTime()
+	local freelook = input.IsButtonDown( ms_key_freelook )
+	ply.Freelook = freelook
+	if not freelook then
+		local frametime = FrameTime()
 
-			local ms_delta_x = cmd:GetMouseX()
-			local ms_return = ms_fade * frametime
+		local ms_delta_x = cmd:GetMouseX()
+		local ms_return = ms_fade * frametime
 
-			local Moving = math.abs(ms_delta_x) > 0
+		local Moving = math.abs(ms_delta_x) > 0
 
-			ms_pos_x = Moving and math.Clamp(ms_pos_x + ms_delta_x * frametime * 0.05 * ms_sensitivity,-1,1) or (ms_pos_x + math.Clamp(-ms_pos_x,-ms_return,ms_return))
+		ms_pos_x = Moving and math.Clamp(ms_pos_x + ms_delta_x * frametime * 0.05 * ms_sensitivity,-1,1) or (ms_pos_x + math.Clamp(-ms_pos_x,-ms_return,ms_return))
 
-			SteerVehicle = ((math.max( math.abs(ms_pos_x) - ms_deadzone / 16, 0) ^ ms_exponent) / (1 - ms_deadzone / 16))  * ((ms_pos_x > 0) and 1 or -1)
+		SteerVehicle = ((math.max( math.abs(ms_pos_x) - ms_deadzone / 16, 0) ^ ms_exponent) / (1 - ms_deadzone / 16))  * ((ms_pos_x > 0) and 1 or -1)
 
-		end
-	else
-		SteerVehicle = 0
 	end
 
 	net.Start( "simfphys_mousesteer" )
