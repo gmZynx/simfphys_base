@@ -222,20 +222,50 @@ local function drawArcColored(cx,cy,radius,thickness,startang,endang,roughness,c
 	drawArc(PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness,bClockwise))
 end
 
+local color_yellow = Color( 255, 235, 0, 255 )
+local color_yellow2 = Color( 240, 200, 0, 255 )
+
+local color_yellowhite = Color( 240, 230, 200, 255 )
+local color_yellowhite_trans = Color( 230, 230, 200, 180 )
+
+local color_electric = Color( 0, 127, 255, 150 )
+local color_petrol = Color( 240, 200, 0, 150 )
+local color_diesel = Color( 255, 60, 0, 150 )
+
+local color_white = Color( 255, 255, 255, 255 )
+local color_white_trans = Color( 255, 255, 255, 150 )
+local color_white_trans2 = Color( 255, 255, 255, 50 )
+
+local color_red = Color( 255, 0, 0, 255 )
+local color_red_trans = Color( 255, 0, 0, 140 )
+local color_dark_red_trans = Color( 150, 0, 0, 150 )
+local color_darker_red_trans =  Color( 120, 0, 0, 230 )
+
+local color_gray = Color( 50, 50, 50, 255 )
+local color_gray_trans = Color( 150, 150, 150, 150 )
+local color_gray_trans2 = Color( 150, 150, 150, 50 )
+
+local color_teal_trans = Color( 0, 254, 235, 200 )
+
+local color_orange = Color( 255, 127, 0, 255 )
+
+local color_black_trans = Color( 0, 0, 0, 100 )
+local color_black_trans2 = Color( 0, 0, 0, 80 )
+
 local function drawsimfphysHUD(vehicle,SeatCount)
 	if isMouseSteer and ShowHud_ms then
 		local MousePos = ms_pos_x
 		local m_size = sizex * 0.15
 
-		draw.SimpleText( "V", "simfphysfont", sizex * 0.5 + MousePos * m_size - 1, sizey * 0.45, Color( 240, 230, 200, 255 ), 1, 1 )
-		draw.SimpleText( "[", "simfphysfont", sizex * 0.5 - m_size * 1.05, sizey * 0.45, Color( 240, 230, 200, 180 ), 1, 1 )
-		draw.SimpleText( "]", "simfphysfont", sizex * 0.5 + m_size * 1.05, sizey * 0.45, Color( 240, 230, 200, 180 ), 1, 1 )
+		draw.SimpleText( "V", "simfphysfont", sizex * 0.5 + MousePos * m_size - 1, sizey * 0.45, color_yellowhite, 1, 1 )
+		draw.SimpleText( "[", "simfphysfont", sizex * 0.5 - m_size * 1.05, sizey * 0.45, color_yellowhite_trans, 1, 1 )
+		draw.SimpleText( "]", "simfphysfont", sizex * 0.5 + m_size * 1.05, sizey * 0.45, color_yellowhite_trans, 1, 1 )
 
 		if (ms_deadzone > 0) then
-			draw.SimpleText( "^", "simfphysfont", sizex * 0.5 - (ms_deadzone / 16) * m_size, sizey * 0.453, Color( 240, 230, 200, 180 ), 1, 2 )
-			draw.SimpleText( "^", "simfphysfont", sizex * 0.5 + (ms_deadzone / 16) * m_size, sizey * 0.453, Color( 240, 230, 200, 180 ), 1, 2 )
+			draw.SimpleText( "^", "simfphysfont", sizex * 0.5 - (ms_deadzone / 16) * m_size, sizey * 0.453, color_yellowhite_trans, 1, 2 )
+			draw.SimpleText( "^", "simfphysfont", sizex * 0.5 + (ms_deadzone / 16) * m_size, sizey * 0.453, color_yellowhite_trans, 1, 2 )
 		else
-			draw.SimpleText( "^", "simfphysfont", sizex * 0.5, sizey * 0.453, Color( 240, 230, 200, 180 ), 1, 2 )
+			draw.SimpleText( "^", "simfphysfont", sizex * 0.5, sizey * 0.453, color_yellowhite_trans, 1, 2 )
 		end
 	end
 
@@ -268,11 +298,11 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 
 	local fuel = vehicle:GetFuel() / vehicle:GetMaxFuel()
 	local fueltype = vehicle:GetFuelType()
-	local fueltype_color = Color(0,127,255,150)
+	local fueltype_color = color_electric
 	if fueltype == 1 then
-		fueltype_color = Color(240,200,0,150)
+		fueltype_color = color_petrol
 	elseif fueltype == 2 then
-		fueltype_color = Color(255,60,0,150)
+		fueltype_color = color_diesel
 	end
 
 	if AltHud and not ForceSimpleHud and not SimpleHudIsForced then
@@ -321,12 +351,9 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 		draw.NoTexture()
 
 		if AltHudarcs then
-			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,startang,math.min(endang,ang_pend),1,Color(255,255,255,150),true)
-			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,ang_pend,360,1,Color(120,0,0,230),true)
-			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,math.Round(ang_pend - 1,0),startang + (s_smoothrpm / maxrpm) * 255,1,Color(255,0,0,140),true)
-			--drawArc(x + o_x,y + o_y,radius / 3.5,radius / 66,startang,360,15,Color(255,255,255,50),true)
-			--drawArc(x + o_x,y + o_y,radius,radius / 6.66,startang,ang_pend,1,Color(150,150,150,50),true)
-			--drawArc(x + o_x,y + o_y,radius / 5,radius / 70,0,360,15,center_ncol,true)
+			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,startang,math.min(endang,ang_pend),1,color_white_trans,true)
+			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,ang_pend,360,1,color_darker_red_trans,true)
+			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,math.Round(ang_pend - 1,0),startang + (s_smoothrpm / maxrpm) * 255,1,color_red_trans,true)
 		else
 			if HUD_5 then
 				surface.SetMaterial( HUD_5 )
@@ -358,11 +385,11 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 			local n_col_on
 			local n_col_off
 			if (i < powerbandend) then
-				n_col_off = Color(150, 150, 150, 150)
-				n_col_on = Color(255, 255, 255, 255)
+				n_col_off = color_gray_trans
+				n_col_on = color_white
 			else
-				n_col_off = Color( 150, 0, 0, 150)
-				n_col_on = Color( 255, 0, 0, 255 )
+				n_col_off = color_dark_red_trans
+				n_col_on = color_red
 			end
 			local u_col = (s_smoothrpm > i) and n_col_on or n_col_off
 			surface.SetDrawColor( u_col )
@@ -380,16 +407,21 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 			end
 		end
 
-		local center_ncol = in_red and Color(0,254,235,200) or Color( 255, 0, 0, 255 )
+		local center_ncol = in_red and color_teal_trans or color_red
 
-		surface.SetDrawColor( in_red and Color(255,255,255,255) or Color( 255, 0, 0, 255 ) )
+		if in_red then
+			surface.SetDrawColor( 255, 255, 255, 255 )
+		else
+			surface.SetDrawColor( 255, 0, 0, 255 )
+		end
+
 		surface.DrawLine( x + c_ang * radius / 3.5 + o_x, y + s_ang * radius / 3.5 + o_y, x + c_ang * radius + o_x, y + s_ang * radius + o_y)
 		surface.SetDrawColor( 255, 255, 255, 255 )
 
 		draw.SimpleText( (gear == 1 and "R" or gear == 2 and "N" or (gear - 2)), "simfphysfont2", x * 0.999 + o_x, y * 0.996 + o_y, center_ncol, 1, 1 )
 
 		local print_text = Hudmph and "MPH" or "KM/H"
-		draw.SimpleText( print_text, "simfphysfont3", x + radius * 0.82 + o_x, y + radius * 0.16 + o_y, Color(255,255,255,50), 1, 1 )
+		draw.SimpleText( print_text, "simfphysfont3", x + radius * 0.82 + o_x, y + radius * 0.16 + o_y, color_white_trans2, 1, 1 )
 
 		local printspeed = Hudmph and (Hudreal and mph or wiremph) or (Hudreal and kmh or wirekmh)
 
@@ -397,8 +429,8 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 		local digit_2 =  (printspeed - digit_1) % 100
 		local digit_3  = (printspeed - digit_1 - digit_2) % 1000
 
-		local col_on = Color(150,150,150,50)
-		local col_off = Color(255,255,255,150)
+		local col_on = color_gray_trans2
+		local col_off = color_white_trans
 		local col1 = (printspeed > 0) and col_off or col_on
 		local col2 = (printspeed >= 10) and col_off or col_on
 		local col3 = (printspeed >= 100) and col_off or col_on
@@ -409,16 +441,16 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 
 		sm_throttle = sm_throttle + (throttle - sm_throttle) * 0.1
 		local t_size = (sizey * 0.1)
-		surface.SetDrawColor( Color(150,150,150,50) )
+		surface.SetDrawColor( 150, 150, 150, 50 )
 		surface.DrawRect( x + radius * 1.22 + o_x, y + radius * 0.36 + o_y, radius * 0.08, sizey * 0.1 )
-		surface.SetDrawColor( Color(255,255,255,150) )
+		surface.SetDrawColor( 255, 255, 255, 150 )
 		surface.DrawRect( x + radius * 1.22 + o_x, y + radius * 0.36 + t_size - t_size * math.min(sm_throttle / 100,1) + o_y, radius * 0.08, t_size * math.min(sm_throttle / 100,1) )
 
 		local fueluse = vehicle:GetFuelUse()
 		if fueluse == -1 then return end
 
 		local r = math.Round( radius, 0)
-		surface.SetDrawColor( Color(150,150,150,50) )
+		surface.SetDrawColor( 15, 150, 150, 50 )
 		surface.DrawRect( x + o_x + r * fuel, y + o_y + r, r * (1 - fuel), r * 0.04 )
 		surface.DrawLine( x + o_x - r * 0.85, y + o_y + r * 1.04 - 2, x + o_x, y + o_y + r * 1.04 - 2)
 
@@ -433,9 +465,8 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 			calc_fueluse = 235.214 / calc_fueluse
 		end
 		local print_fueluse = (ecospeed > 0 and vehicle:GetFuel() > 0) and tostring( math.Round( calc_fueluse,0) ) or "N/A"
-		--draw.SimpleText( tostring( math.Round( fueluse,2) ).." L/min", "simfphysfont3", x + o_x + radius, y + o_y + radius * 1.04, Color(150,150,150,150), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-		draw.SimpleText( print_fueluse, "simfphysfont3", x + o_x - radius * 0.85, y + o_y + radius * 0.85, Color(150,150,150,150), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-		draw.SimpleText( Hudmpg and "MPG" or "L/100KM", "simfphysfont3", x + o_x - radius * 0.85, y + o_y + radius * 1.02, Color(150,150,150,150), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+		draw.SimpleText( print_fueluse, "simfphysfont3", x + o_x - radius * 0.85, y + o_y + radius * 0.85, color_gray_trans, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+		draw.SimpleText( Hudmpg and "MPG" or "L/100KM", "simfphysfont3", x + o_x - radius * 0.85, y + o_y + radius * 1.02, color_gray_trans, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
 		return
 	end
@@ -449,30 +480,30 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 		s_xpos = screenw * 0.5 - sizex * 0.115 - sizex * 0.032
 		s_ypos = screenh - sizey * 0.092 - sizey * 0.02
 	else
-		draw.RoundedBox( 8, s_xpos + o_x, s_ypos + o_y, sizex * 0.118, sizey * 0.075, Color( 0, 0, 0, 80 ) )
+		draw.RoundedBox( 8, s_xpos + o_x, s_ypos + o_y, sizex * 0.118, sizey * 0.075, color_black_trans2 )
 	end
 
 	if cruisecontrol then
-		draw.SimpleText( "cruise", "simfphysfont", s_xpos + sizex * 0.115 + o_x, s_ypos + sizey * 0.035 + o_y, Color( 255, 127, 0, 255 ), 2, 1 )
+		draw.SimpleText( "cruise", "simfphysfont", s_xpos + sizex * 0.115 + o_x, s_ypos + sizey * 0.035 + o_y, color_orange, 2, 1 )
 	end
 
-	draw.SimpleText( "Throttle: "..throttle.." %", "simfphysfont", s_xpos + sizex * 0.005 + o_x, s_ypos + sizey * 0.035 + o_y, Color( 255, 235, 0, 255 ), 0, 1)
+	draw.SimpleText( "Throttle: "..throttle.." %", "simfphysfont", s_xpos + sizex * 0.005 + o_x, s_ypos + sizey * 0.035 + o_y, color_yellow, 0, 1)
 
 	draw.SimpleText( "RPM: "..math.Round(rpm,0)..Active, "simfphysfont", s_xpos + sizex * 0.005 + o_x, s_ypos + sizey * 0.012 + o_y, Color( 255, 235 * (1 - redline), 0, 255 ), 0, 1 )
 
-	draw.SimpleText( "GEAR:", "simfphysfont", s_xpos + sizex * 0.062 + o_x, s_ypos + sizey * 0.012 + o_y, Color( 255, 235, 0, 255 ), 0, 1 )
-	draw.SimpleText( DrawGear, "simfphysfont", s_xpos + sizex * 0.11 + o_x, s_ypos + sizey * 0.012 + o_y, Color( 255, 235, 0, 255 ), 2, 1 )
+	draw.SimpleText( "GEAR:", "simfphysfont", s_xpos + sizex * 0.062 + o_x, s_ypos + sizey * 0.012 + o_y, color_yellow, 0, 1 )
+	draw.SimpleText( DrawGear, "simfphysfont", s_xpos + sizex * 0.11 + o_x, s_ypos + sizey * 0.012 + o_y, color_yellow, 2, 1 )
 
-	draw.SimpleText( (Hudreal and mph or wiremph).." mph", "simfphysfont", s_xpos + sizex * 0.005 + o_x, s_ypos + sizey * 0.062 + o_y, Color( 255, 235, 0, 255 ), 0, 1 )
+	draw.SimpleText( (Hudreal and mph or wiremph).." mph", "simfphysfont", s_xpos + sizex * 0.005 + o_x, s_ypos + sizey * 0.062 + o_y, color_yellow, 0, 1 )
 
-	draw.SimpleText( (Hudreal and kmh or wirekmh).." kmh", "simfphysfont", s_xpos + sizex * 0.11 + o_x, s_ypos + sizey * 0.062 + o_y, Color( 255, 235, 0, 255 ), 2, 1 )
+	draw.SimpleText( (Hudreal and kmh or wirekmh).." kmh", "simfphysfont", s_xpos + sizex * 0.11 + o_x, s_ypos + sizey * 0.062 + o_y, color_yellow, 2, 1 )
 
 
 	local fueluse = vehicle:GetFuelUse()
 	if fueluse == -1 then return end
 
 	local r = math.Round(sizey * 0.075,0)
-	surface.SetDrawColor( Color(0,0,0,80) )
+	surface.SetDrawColor( 0, 0, 0, 80 )
 	surface.DrawRect( s_xpos + o_x - sizex * 0.007, s_ypos + o_y, sizex * 0.0025, r * (1 - fuel) )
 	surface.SetDrawColor( fueltype_color )
 	surface.DrawRect( s_xpos + o_x - sizex * 0.007, s_ypos + o_y + r * (1 - fuel), sizex * 0.0025, r * fuel )
@@ -499,8 +530,8 @@ local function drawTurnMenu( vehicle )
 		turnmode = 1
 	end
 
-	local cX = ScrW() / 2
-	local cY = ScrH() / 2
+	local cX = ScrW() * 0.5
+	local cY = ScrH() * 0.5
 
 	local sx = sizex * 0.065
 	local sy = sizex * 0.065
@@ -508,13 +539,13 @@ local function drawTurnMenu( vehicle )
 	local selectorX = (turnmode == 2 and (-sx - 1) or 0) + (turnmode == 3 and (sx + 1) or 0)
 	local selectorY = (turnmode == 0 and (-sy - 1) or 0)
 
-	draw.RoundedBox( 8, cX - sx * 0.5 - 1 + selectorX, cY - sy * 0.5 - 1 + selectorY, sx + 2, sy + 2, Color( 240, 200, 0, 255 ) )
-	draw.RoundedBox( 8, cX - sx * 0.5 + selectorX, cY - sy * 0.5 + selectorY, sx, sy, Color( 50, 50, 50, 255 ) )
+	draw.RoundedBox( 8, cX - sx * 0.5 - 1 + selectorX, cY - sy * 0.5 - 1 + selectorY, sx + 2, sy + 2, color_yellow2 )
+	draw.RoundedBox( 8, cX - sx * 0.5 + selectorX, cY - sy * 0.5 + selectorY, sx, sy, color_gray )
 
-	draw.RoundedBox( 8, cX - sx * 0.5, cY - sy * 0.5, sx, sy, Color( 0, 0, 0, 100 ) )
-	draw.RoundedBox( 8, cX - sx * 0.5, cY - sy * 1.5 - 1, sx, sy, Color( 0, 0, 0, 100 ) )
-	draw.RoundedBox( 8, cX - sx * 1.5 - 1, cY - sy * 0.5, sx, sy, Color( 0, 0, 0, 100 ) )
-	draw.RoundedBox( 8, cX + sx * 0.5 + 1, cY - sy * 0.5, sx, sy, Color( 0, 0, 0, 100 ) )
+	draw.RoundedBox( 8, cX - sx * 0.5, cY - sy * 0.5, sx, sy, color_black_trans )
+	draw.RoundedBox( 8, cX - sx * 0.5, cY - sy * 1.5 - 1, sx, sy, color_black_trans )
+	draw.RoundedBox( 8, cX - sx * 1.5 - 1, cY - sy * 0.5, sx, sy, color_black_trans )
+	draw.RoundedBox( 8, cX + sx * 0.5 + 1, cY - sy * 0.5, sx, sy, color_black_trans )
 
 	surface.SetDrawColor( 240, 200, 0, 100 )
 	--X
@@ -743,7 +774,7 @@ hook.Add("HUDPaint", "simfphys_vehicleditorinfo", function()
 
 	local pos = Ent:LocalToWorld( Ent:OBBCenter() ):ToScreen()
 
-	local black = Color( 255, 255, 255, 255 )
+	local black = color_white
 	local tipcol = Color( TipColor.r, TipColor.g, TipColor.b, 255 )
 
 	local x = 0
