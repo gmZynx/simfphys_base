@@ -1,4 +1,7 @@
 local function lockControls( bLock )
+	if not LocalPlayer():InVehicle() then return end
+	if not LocalPlayer():IsDrivingSimfphys() then return end
+
 	net.Start( "simfphys_blockcontrols" )
 		net.WriteBool( bLock )
 	net.SendToServer()
