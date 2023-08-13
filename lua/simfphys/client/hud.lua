@@ -75,7 +75,7 @@ cvars.AddChangeCallback( "cl_simfphys_mousesteer", function( convar, oldValue, n
 	net.Start( "simfphys_mousesteer" )
 	net.WriteEntity( veh )
 	net.WriteFloat( 0 )
-net.SendToServer()
+	net.SendToServer()
 end )
 
 ShowHud = GetConVar( "cl_simfphys_hud" ):GetBool()
@@ -102,20 +102,12 @@ local ms_pos_x = 0
 local sm_throttle = 0
 local s_smoothrpm = 0
 
-local function DrawCircle( X, Y, radius )
-	local segmentdist = 360 / ( 2 * math.pi * radius / 2 )
-
-	for a = 0, 360 - segmentdist, segmentdist do
-		surface.DrawLine( X + math.cos( math.rad( a ) ) * radius, Y - math.sin( math.rad( a ) ) * radius, X + math.cos( math.rad( a + segmentdist ) ) * radius, Y - math.sin( math.rad( a + segmentdist ) ) * radius )
-	end
-end
-
 hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 	if ply ~= LocalPlayer() then return end
 	if not isMouseSteer then return end
 
 	local vehicle = ply:GetVehicle()
-	if not IsValid(vehicle) then return end
+	if not IsValid( vehicle ) then return end
 
 	local freelook = input.IsButtonDown( ms_key_freelook )
 	ply.Freelook = freelook
@@ -137,7 +129,7 @@ hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 		net.WriteEntity( vehicle )
 		net.WriteFloat( SteerVehicle )
 	net.SendToServer()
-end)
+end )
 
 -- draw.arc function by bobbleheadbob
 -- https://dl.dropboxusercontent.com/u/104427432/Scripts/drawarc.lua
@@ -635,12 +627,10 @@ local function PaintSeatSwitcher( ent, pSeats, SeatCount )
 			else
 				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * smHider) )
 			end
-			if I == SeatCount then
-				if ent:GetIsVehicleLocked() then
-					surface.SetDrawColor( 255, 255, 255, 255 )
-					surface.SetMaterial( LockText  )
-					surface.DrawTexturedRect( X + Offset - HiderOffset - 25, yPos + I * 30, 25, 25 )
-				end
+			if I == SeatCount and ent:GetIsVehicleLocked() then
+				surface.SetDrawColor( 255, 255, 255, 255 )
+				surface.SetMaterial( LockText  )
+				surface.DrawTexturedRect( X + Offset - HiderOffset - 25, yPos + I * 30, 25, 25 )
 			end
 			if Hide then
 				if Passengers[I] then
