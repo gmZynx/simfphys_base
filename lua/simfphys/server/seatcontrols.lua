@@ -5,7 +5,9 @@ net.Receive( "simfphys_mousesteer", function( _, ply )
 	if not ply:IsDrivingSimfphys() then return end
 
 	local vehicle = net.ReadEntity()
-	local Steer = net.ReadFloat()
+	local Steer = net.ReadInt( 9 )
+
+	Steer = Steer / 255
 
 	if not IsValid( vehicle ) or ply:GetSimfphys() ~= vehicle:GetParent() then return end
 
