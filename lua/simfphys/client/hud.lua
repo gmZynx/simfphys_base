@@ -436,15 +436,15 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 		local col3 = (printspeed >= 100) and col_off or col_on
 
 		draw.SimpleText( digit_1, "simfphysfont4", x + radius * 0.84 + o_x, y + radius * 0.65 + o_y, col1, 1, 1 )
-		draw.SimpleText( digit_2/ 10, "simfphysfont4", x + radius * 0.48 + o_x, y + radius * 0.65 + o_y, col2, 1, 1 )
-		draw.SimpleText( digit_3 / 100, "simfphysfont4", x + radius * 0.12 + o_x, y + radius * 0.65 +  o_y, col3, 1, 1 )
+		draw.SimpleText( digit_2 * 0.1, "simfphysfont4", x + radius * 0.48 + o_x, y + radius * 0.65 + o_y, col2, 1, 1 )
+		draw.SimpleText( digit_3 * 0.01, "simfphysfont4", x + radius * 0.12 + o_x, y + radius * 0.65 +  o_y, col3, 1, 1 )
 
 		sm_throttle = sm_throttle + (throttle - sm_throttle) * 0.1
 		local t_size = (sizey * 0.1)
 		surface.SetDrawColor( 150, 150, 150, 50 )
 		surface.DrawRect( x + radius * 1.22 + o_x, y + radius * 0.36 + o_y, radius * 0.08, sizey * 0.1 )
 		surface.SetDrawColor( 255, 255, 255, 150 )
-		surface.DrawRect( x + radius * 1.22 + o_x, y + radius * 0.36 + t_size - t_size * math.min(sm_throttle / 100,1) + o_y, radius * 0.08, t_size * math.min(sm_throttle / 100,1) )
+		surface.DrawRect( x + radius * 1.22 + o_x, y + radius * 0.36 + t_size - t_size * math.min(sm_throttle * 0.01,1) + o_y, radius * 0.08, t_size * math.min(sm_throttle * 0.01,1) )
 
 		local fueluse = vehicle:GetFuelUse()
 		if fueluse == -1 then return end
@@ -808,13 +808,13 @@ hook.Add("HUDPaint", "simfphys_vehicleditorinfo", function()
 
 	local verts = {}
 	verts[1] = { x=x+w/1.5, y=y+h }
-	verts[2] = { x=x+w, y=y+h/2 }
-	verts[3] = { x=pos.x-offset/2, y=pos.y-offset/2 }
+	verts[2] = { x=x+w, y=y+h * 0.5 }
+	verts[3] = { x=pos.x-offset * 0.5, y=pos.y-offset * 0.5 }
 
 	draw.NoTexture()
 	surface.SetDrawColor( tipcol.r, tipcol.g, tipcol.b, tipcol.a )
 	surface.DrawPoly( verts )
 
 
-	draw.DrawText( text, "simfphysworldtip", x + w/2, y, black, TEXT_ALIGN_CENTER )
+	draw.DrawText( text, "simfphysworldtip", x + w * 0.5, y, black, TEXT_ALIGN_CENTER )
 end)
