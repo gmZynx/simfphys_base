@@ -20,7 +20,7 @@ local Materials = {
 
 function EFFECT:Init( data )
 	local Entity = data:GetEntity()
-	local Mul = data:GetMagnitude() 
+	local Mul = data:GetMagnitude()
 	local Pos = data:GetOrigin()
 	local Dir = data:GetNormal()
 	local WheelSize = data:GetRadius()
@@ -28,27 +28,27 @@ function EFFECT:Init( data )
 
 	local Ran = Vector( math.Rand( -WheelSize, WheelSize ), math.Rand( -WheelSize, WheelSize ),math.Rand( -WheelSize, WheelSize ) ) * 0.3
 	local OffsetPos = Pos + Ran + Vector(0,0,WheelSize * 0.2)
-	
+
 	local emitter = ParticleEmitter(Pos, false )
-	
+
 	if emitter then
 		if Entity:IsValid() then
 				local Vel = Entity:GetVelocity() / 3
-				
+
 				local OffsetPos = OffsetPos + Ran * 0.4 + Vector(0,0,-WheelSize * 0.8)
 				
-				local particle = emitter:Add( Materials[math.Round(math.Rand(1, #Materials ),0)], OffsetPos )
+				local particle = emitter:Add( Materials[ math.Round( math.Rand( 1, #Materials ), 0 ) ], OffsetPos )
 				
 				local Mul = 0.3 + Mul * 0.05
-				
+
 				local Color = render.ComputeLighting( Pos, Vector( 0, 0, 1 ) )
 
 				Color.x = 55 + ( math.Clamp( Color.x, 0, 1 ) ) * 200
 				Color.y = 55 + ( math.Clamp( Color.y, 0, 1 ) ) * 200
 				Color.z = 55 + ( math.Clamp( Color.z, 0, 1 ) ) * 200
-				
+
 				if particle then
-					particle:SetGravity( Vector(0,0,12) + Ran * 0.2 ) 
+					particle:SetGravity( Vector(0,0,12) + Ran * 0.2 )
 					particle:SetVelocity( Dir * 10 * (3 - Mul) + Vector(0,0,15) + Ran * Mul + Vel  )
 					particle:SetDieTime( 0.5 )
 					particle:SetStartAlpha( 20 )
@@ -74,9 +74,9 @@ function EFFECT:Init( data )
 				particle1:SetColor( Color.x * 0.9,Color.y * 0.9,Color.z * 0.9 )
 				particle1:SetCollide( true )
 			end
-			
+
 			if particle2 then
-				particle2:SetGravity( Vector(0,0,12) + Ran * 0.2 ) 
+				particle2:SetGravity( Vector(0,0,12) + Ran * 0.2 )
 				particle2:SetVelocity( Dir * 30 * (3 - Mul) + Vector(0,0,15) + Ran * Mul  )
 				particle2:SetDieTime( math.Rand( 2, 4 ) * Mul )
 				particle2:SetStartAlpha( 100 * Mul )
@@ -87,7 +87,7 @@ function EFFECT:Init( data )
 				particle2:SetCollide( false )
 			end
 		end
-		
+
 		emitter:Finish()
 	end
 end

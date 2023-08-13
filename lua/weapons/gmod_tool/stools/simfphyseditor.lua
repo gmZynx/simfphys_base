@@ -28,7 +28,7 @@ if CLIENT then
 	language.Add( "tool.simfphyseditor.desc", "A tool used to edit simfphys vehicles" )
 	language.Add( "tool.simfphyseditor.0", "Left click apply settings. Right click copy settings. Reload to reset" )
 	language.Add( "tool.simfphyseditor.1", "Left click apply settings. Right click copy settings. Reload to reset" )
-	
+
 	language.Add( "tool.simfphyseditor.steerspeed", "Steer Speed" )
 	language.Add( "tool.simfphyseditor.steerspeed.help", "How fast the steering will move to its target angle" )
 	language.Add( "tool.simfphyseditor.fastspeed", "Fast Steercone Fadespeed" )
@@ -51,11 +51,11 @@ end
 
 function TOOL:LeftClick( trace )
 	local ent = trace.Entity
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	if CLIENT then return true end
-	
+
 	ent:SetSteerSpeed( math.Clamp( self:GetClientNumber( "steerspeed" ), 1, 16 ) )
 	ent:SetFastSteerConeFadeSpeed( math.Clamp( self:GetClientNumber( "fadespeed" ), 1, 5000 ) )
 	ent:SetFastSteerAngle( math.Clamp( self:GetClientNumber( "faststeerangle" ),0,1) )
@@ -74,18 +74,18 @@ function TOOL:LeftClick( trace )
 	ent:SetBrakePower( math.Clamp( self:GetClientNumber( "brakepower" ),0.1,500) )
 	ent:SetPowerDistribution( math.Clamp( self:GetClientNumber( "powerdistribution" ) ,-1,1) )
 	ent:SetEfficiency( math.Clamp( self:GetClientNumber( "efficiency" ) ,0.2,4) )
-	
+
 	return true
 end
 
 function TOOL:RightClick( trace )
 	local ent = trace.Entity
 	local ply = self:GetOwner()
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	if CLIENT then return true end
-	
+
 	ply:ConCommand( "simfphyseditor_steerspeed " ..ent:GetSteerSpeed() )
 	ply:ConCommand( "simfphyseditor_fadespeed " ..ent:GetFastSteerConeFadeSpeed() )
 	ply:ConCommand( "simfphyseditor_faststeerangle " ..ent:GetFastSteerAngle() )
@@ -104,7 +104,7 @@ function TOOL:RightClick( trace )
 	ply:ConCommand( "simfphyseditor_brakepower " ..ent:GetBrakePower() )
 	ply:ConCommand( "simfphyseditor_powerdistribution " ..ent:GetPowerDistribution() )
 	ply:ConCommand( "simfphyseditor_efficiency " ..ent:GetEfficiency() )
-	
+
 	return true
 end
 
@@ -114,16 +114,16 @@ function TOOL:Think()
 		if not ply:IsValid() then return end
 		
 		ply.simeditor_nextrequest = isnumber( ply.simeditor_nextrequest ) and ply.simeditor_nextrequest or 0
-		
+
 		local ent = ply:GetEyeTrace().Entity
-		
+
 		if not simfphys.IsCar( ent ) then return end
-		
+
 		if ply.simeditor_nextrequest < CurTime() then
 			net.Start( "simfphys_plyrequestinfo" )
 				net.WriteEntity( ent )
 			net.SendToServer()
-			
+
 			ply.simeditor_nextrequest = CurTime() + 0.6
 		end
 	end
@@ -132,13 +132,13 @@ end
 function TOOL:Reload( trace )
 	local ent = trace.Entity
 	local ply = self:GetOwner()
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	if (SERVER) then
 		local vname = ent:GetSpawn_List()
 		local VehicleList = list.Get( "simfphys_vehicles" )[vname]
-		
+
 		ent:SetSteerSpeed( VehicleList.Members.TurnSpeed )
 		ent:SetFastSteerConeFadeSpeed( VehicleList.Members.SteeringFadeFastSpeed )
 		ent:SetFastSteerAngle( VehicleList.Members.FastSteeringAngle / ent.VehicleData["steerangle"] )
@@ -158,7 +158,7 @@ function TOOL:Reload( trace )
 		ent:SetPowerDistribution( VehicleList.Members.PowerBias )
 		ent:SetEfficiency( VehicleList.Members.Efficiency )
 	end
-	
+
 	return true
 end
 
@@ -166,11 +166,11 @@ local ConVarsDefault = TOOL:BuildConVarList()
 
 function TOOL.BuildCPanel( panel )
 	panel:AddControl( "Header", { Text = "#tool.simfphyseditor.name", Description = "#tool.simfphyseditor.desc" } )
-	
+
 	panel:AddControl( "ComboBox", { MenuButton = 1, Folder = "simfphys", Options = { [ "#preset.default" ] = ConVarsDefault }, CVars = table.GetKeys( ConVarsDefault ) } )
 	panel:AddControl( "Label",  { Text = "" } )
 	panel:AddControl( "Label",  { Text = "--- Steering ---" } )
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "#tool.simfphyseditor.steerspeed",
 		Type 	= "Float",
@@ -179,7 +179,7 @@ function TOOL.BuildCPanel( panel )
 		Command = "simfphyseditor_steerspeed",
 		Help = true
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "#tool.simfphyseditor.fastspeed",
 		Type 	= "Float",
@@ -188,7 +188,7 @@ function TOOL.BuildCPanel( panel )
 		Command = "simfphyseditor_fadespeed",
 		Help = true
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "#tool.simfphyseditor.faststeerang",
 		Type 	= "Float",
@@ -200,7 +200,7 @@ function TOOL.BuildCPanel( panel )
 
 	panel:AddControl( "Label",  { Text = "" } )
 	panel:AddControl( "Label",  { Text = "--- Engine ---" } )
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Engine Sound Preset",
 		Type 	= "Int",
@@ -208,7 +208,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "14",
 		Command = "simfphyseditor_soundpreset"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Idle RPM",
 		Type 	= "Int",
@@ -216,7 +216,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "25000",
 		Command = "simfphyseditor_idlerpm"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Limit RPM",
 		Type 	= "Int",
@@ -224,7 +224,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "25000",
 		Command = "simfphyseditor_maxrpm"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Powerband Start",
 		Type 	= "Int",
@@ -232,7 +232,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "25000",
 		Command = "simfphyseditor_powerbandstart"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Powerband End",
 		Type 	= "Int",
@@ -240,7 +240,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "25000",
 		Command = "simfphyseditor_powerbandend"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Max Torque",
 		Type 	= "Float",
@@ -248,19 +248,19 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "1000",
 		Command = "simfphyseditor_maxtorque"
 	})
-	panel:AddControl( "Checkbox", 
+	panel:AddControl( "Checkbox",
 	{
 		Label 	= "#tool.simfphyseditor.revlimiter",
 		Command = "simfphyseditor_revlimiter",
 		Help = true
-	})	
-	panel:AddControl( "Checkbox", 
+	})
+	panel:AddControl( "Checkbox",
 	{
 		Label 	= "#tool.simfphyseditor.turbo",
 		Command = "simfphyseditor_turbocharged",
 		Help = true
-	})	
-	panel:AddControl( "Checkbox", 
+	})
+	panel:AddControl( "Checkbox",
 	{
 		Label 	= "#tool.simfphyseditor.blower",
 		Command = "simfphyseditor_supercharged",
@@ -268,7 +268,7 @@ function TOOL.BuildCPanel( panel )
 	})
 	panel:AddControl( "Label",  { Text = "" } )
 	panel:AddControl( "Label",  { Text = "--- Transmission ---" } )
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "DifferentialGear",
 		Type 	= "Float",
@@ -278,7 +278,7 @@ function TOOL.BuildCPanel( panel )
 	})
 	panel:AddControl( "Label",  { Text = "" } )
 	panel:AddControl( "Label",  { Text = "--- Wheels ---" } )
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Max Traction",
 		Type 	= "Float",
@@ -295,7 +295,7 @@ function TOOL.BuildCPanel( panel )
 		Command = "simfphyseditor_tractionbias",
 		Help = true
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "Brakepower",
 		Type 	= "Float",
@@ -303,7 +303,7 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "500",
 		Command = "simfphyseditor_brakepower"
 	})
-	panel:AddControl( "Slider", 
+	panel:AddControl( "Slider",
 	{
 		Label 	= "#tool.simfphyseditor.powerdist",
 		Type 	= "Float",
@@ -311,8 +311,8 @@ function TOOL.BuildCPanel( panel )
 		Max 	= "1",
 		Command = "simfphyseditor_powerdistribution",
 		Help = true
-	})	
-	panel:AddControl( "Slider", 
+	})
+	panel:AddControl( "Slider",
 	{
 		Label 	= "#tool.simfphyseditor.efficiency",
 		Type 	= "Float",

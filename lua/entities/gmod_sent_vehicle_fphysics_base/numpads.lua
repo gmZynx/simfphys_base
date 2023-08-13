@@ -4,7 +4,7 @@ numpad.Register( "k_forward", function( pl, ent, keydown )
 	if ent.PressedKeys then
 		ent.PressedKeys["W"] = keydown
 	end
-	
+
 	if keydown and ent:GetIsCruiseModeOn() then
 		ent:SetIsCruiseModeOn( false )
 	end
@@ -16,7 +16,7 @@ numpad.Register( "k_reverse", function( pl, ent, keydown )
 	if ent.PressedKeys then
 		ent.PressedKeys["S"] = keydown
 	end
-	
+
 	if keydown and ent:GetIsCruiseModeOn() then
 		ent:SetIsCruiseModeOn( false )
 	end
@@ -73,11 +73,11 @@ end )
 numpad.Register( "k_gup", function( pl, ent, keydown )
 	if not pl:IsValid() or not ent:IsValid() then return false end
 	if pl.blockcontrols then keydown = false end
-	
+
 	if ent.PressedKeys then
 		ent.PressedKeys["M1"] = keydown
 	end
-	
+
 	if keydown and ent:GetIsCruiseModeOn() then
 		ent:SetIsCruiseModeOn( false )
 	end
@@ -86,11 +86,11 @@ end )
 numpad.Register( "k_gdn", function( pl, ent, keydown )
 	if not pl:IsValid() or not ent:IsValid() then return false end
 	if pl.blockcontrols then keydown = false end
-	
+
 	if ent.PressedKeys then
 		ent.PressedKeys["M2"] = keydown
 	end
-	
+
 	if keydown and ent:GetIsCruiseModeOn() then
 		ent:SetIsCruiseModeOn( false )
 	end
@@ -117,7 +117,7 @@ numpad.Register( "k_hbrk", function( pl, ent, keydown )
 	if ent.PressedKeys then
 		ent.PressedKeys["Space"] = keydown
 	end
-	
+
 	if keydown and ent:GetIsCruiseModeOn() then
 		ent:SetIsCruiseModeOn( false )
 	end
@@ -141,15 +141,15 @@ numpad.Register( "k_hrn", function( pl, ent, keydown )
 	ent.KeyPressedTime = isnumber( ent.KeyPressedTime ) and ent.KeyPressedTime or 0
 
 	local v_list = list.Get( "simfphys_lights" )[ent.LightsTable] or false
-	
+
 	if keydown then
 		ent.HornKeyIsDown = true
-		
+
 		if v_list and v_list.ems_sounds then
 			if not ent.emson then
 				timer.Simple( 0.1, function()
 					if not ent:IsValid() or not ent.HornKeyIsDown then return end
-					
+
 					if not ent.horn then
 						ent.horn = CreateSound(ent, ent.snd_horn or "simulated_vehicles/horn_1.wav")
 						ent.horn:PlayEx(0,100)
@@ -165,11 +165,11 @@ numpad.Register( "k_hrn", function( pl, ent, keydown )
 	else
 		ent.HornKeyIsDown = false
 	end
-	
+
 	if not v_list then return end
-	
+
 	if v_list.ems_sounds then
-		
+
 		local Time = CurTime()
 
 		if keydown then
@@ -181,7 +181,7 @@ numpad.Register( "k_hrn", function( pl, ent, keydown )
 					ent.cursound = 0
 				end
 			end
-			
+
 			if (Time - ent.KeyPressedTime) >= 0.22 then
 				if ent.emson then
 					ent.emson = false
@@ -201,12 +201,12 @@ numpad.Register( "k_hrn", function( pl, ent, keydown )
 						ent:SetEMSEnabled( false )
 						return
 					end
-					
+
 					ent.cursound = ent.cursound + 1
 					if ent.cursound > #sounds then
 						ent.cursound = 1
 					end
-					
+
 					ent.ems = CreateSound(ent, sounds[ent.cursound])
 					ent.ems:Play()
 				end
@@ -245,7 +245,7 @@ numpad.Register( "k_flgts", function( pl, ent, keydown )
 	
 	if keydown then
 		ent:EmitSound( "buttons/lightswitch2.wav" )
-		
+
 		if ent:GetFogLightsEnabled() then
 			ent:SetFogLightsEnabled( false )
 		else
@@ -258,16 +258,16 @@ numpad.Register( "k_lgts", function( pl, ent, keydown )
 	if not pl:IsValid() or not ent:IsValid() or not ent.LightsTable then return false end
 	
 	local Time = CurTime()
-	
+
 	if keydown then
 		ent.KeyPressedTime = Time
 	else
 		if ent.KeyPressedTime and (Time - ent.KeyPressedTime) >= (ent.LightsActivated and 0.22 or 0) then
 			if (ent.NextLightCheck or 0) > Time then return end
-			
+
 			local vehiclelist = list.Get( "simfphys_lights" )[ent.LightsTable] or false
 			if not vehiclelist then return end
-			
+
 			if ent.LightsActivated then
 				ent.NextLightCheck = Time + (vehiclelist.DelayOff or 0)
 				ent.LightsActivated = false
@@ -280,7 +280,7 @@ numpad.Register( "k_lgts", function( pl, ent, keydown )
 				ent.LightsActivated = true
 				ent:EmitSound( "buttons/lightswitch2.wav" )
 			end
-			
+
 			if ent.LightsActivated then
 				if vehiclelist.BodyGroups then
 					ent:SetBodygroup(vehiclelist.BodyGroups.On[1], vehiclelist.BodyGroups.On[2] )
@@ -304,15 +304,15 @@ numpad.Register( "k_lgts", function( pl, ent, keydown )
 			end
 		else
 			if (ent.NextLightCheck or 0) > Time then return end
-			
+
 			if ent.LampsActivated then
 				ent.LampsActivated = false
 			else
 				ent.LampsActivated = true
 			end
-			
+
 			ent:SetLampsEnabled( ent.LampsActivated )
-			
+
 			ent:EmitSound( "items/flashlight1.wav" )
 		end
 	end

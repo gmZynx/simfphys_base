@@ -20,11 +20,11 @@ local Materials = {
 
 function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
-	
+
 	self:Explosion( Pos )
-	
+
 	local random = math.random(1,3)
-	
+
 	if random == 1 then
 		sound.Play( "ambient/explosions/explode_3.wav", Pos, 95, 100, 1 )
 	elseif random == 2 then
@@ -36,15 +36,15 @@ end
 
 function EFFECT:Explosion( pos )
 	local emitter = ParticleEmitter( pos, false )
-	
+
 	if emitter then
 		for i = 0,60 do
-			local particle = emitter:Add( Materials[math.random(1,#Materials)], pos )
+			local particle = emitter:Add( Materials[ math.random( 1, #Materials ) ], pos )
 			
 			if particle then
 				particle:SetVelocity( VectorRand() * 800 )
 				particle:SetDieTime( math.Rand(0.8,1.6) )
-				particle:SetAirResistance( math.Rand(200,600) ) 
+				particle:SetAirResistance( math.Rand(200,600) )
 				particle:SetStartAlpha( 255 )
 				particle:SetStartSize( math.Rand(20,60) )
 				particle:SetEndSize( math.Rand(80,140) )
@@ -54,10 +54,10 @@ function EFFECT:Explosion( pos )
 				particle:SetCollide( false )
 			end
 		end
-		
+
 		for i = 0, 40 do
 			local particle = emitter:Add( "sprites/flamelet"..math.random(1,5), pos )
-			
+
 			if particle then
 				particle:SetVelocity( VectorRand() * 1000 )
 				particle:SetDieTime( 0.14 )
@@ -70,18 +70,18 @@ function EFFECT:Explosion( pos )
 				particle:SetCollide( false )
 			end
 		end
-		
+
 		for i = 0,36 do
-			local particle = emitter:Add( Materials[math.Round(math.Rand(1,#Materials),0)], pos )
+			local particle = emitter:Add( Materials[ math.Round( math.Rand( 1, #Materials ), 0 ) ], pos )
 			
 			if particle then
 				local ang = i * 10
 				local X = math.cos( math.rad(ang) )
 				local Y = math.sin( math.rad(ang) )
-				
+
 				particle:SetVelocity( Vector(X,Y,0) * math.Rand(4000,5000) )
 				particle:SetDieTime( 1 )
-				particle:SetAirResistance( 800 ) 
+				particle:SetAirResistance( 800 )
 				particle:SetStartAlpha( 200 )
 				particle:SetStartSize( 0 )
 				particle:SetEndSize( math.Rand(40,100) )
@@ -91,7 +91,7 @@ function EFFECT:Explosion( pos )
 				particle:SetCollide( false )
 			end
 		end
-		
+
 		for i = 0,60 do
 			local particle = emitter:Add( "effects/fleck_tile"..math.random(1,2), pos )
 			local vel = VectorRand() * 300
@@ -99,7 +99,7 @@ function EFFECT:Explosion( pos )
 			if particle then
 				particle:SetVelocity( vel )
 				particle:SetDieTime( math.Rand(3,5) )
-				particle:SetAirResistance( 10 ) 
+				particle:SetAirResistance( 10 )
 				particle:SetStartAlpha( 150 )
 				particle:SetStartSize( 5 )
 				particle:SetEndSize( 5 )
@@ -110,10 +110,10 @@ function EFFECT:Explosion( pos )
 				particle:SetBounce( 0.3 )
 			end
 		end
-		
+
 		emitter:Finish()
 	end
-	
+
 	local dlight = DynamicLight( math.random(0,9999) )
 	if dlight then
 		dlight.pos = pos

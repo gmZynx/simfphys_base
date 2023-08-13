@@ -7,14 +7,14 @@ ENT.AdminSpawnable  = false
 
 if CLIENT then
 	local Mat = CreateMaterial("simfphysdamage", "VertexLitGeneric", {["$basetexture"] = "models/player/player_chrome1"})
-	
+
 	function ENT:Draw()
 		self:DrawModel()
-		
+
 		render.ModelMaterialOverride( Mat )
 		render.SetBlend( 0.8 )
 		self:DrawModel()
-		
+
 		render.ModelMaterialOverride()
 		render.SetBlend(1)
 	end
@@ -30,7 +30,7 @@ end
 
 if SERVER then
 	util.AddNetworkString( "simfphys_explosion_fx" )
-	
+
 	function ENT:Initialize()
 		self:PhysicsInit( SOLID_VPHYSICS )
 		self:SetMoveType( MOVETYPE_VPHYSICS )
@@ -38,24 +38,24 @@ if SERVER then
 		
 		if not self:GetPhysicsObject():IsValid() then
 			self.RemoveTimer = 0
-			
+
 			self:Remove()
 			return
 		end
-		
+
 		self:GetPhysicsObject():EnableMotion(true)
 		self:GetPhysicsObject():Wake()
-		self:SetCollisionGroup( COLLISION_GROUP_DEBRIS ) 
+		self:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
 		self:SetRenderMode( RENDERMODE_TRANSALPHA )
-		
-		
+
+
 		timer.Simple( 0.05, function()
 			if not self:IsValid() then return end
 			if self.MakeSound == true then
 				net.Start( "simfphys_explosion_fx" )
 					net.WriteEntity( self )
 				net.Broadcast()
-				
+
 				util.ScreenShake( self:GetPos(), 50, 50, 1.5, 700 )
 				
 				local Light = ents.Create( "light_dynamic" )
@@ -69,7 +69,7 @@ if SERVER then
 				Light:SetParent( self )
 				Light:Spawn()
 				Light:Fire( "TurnOn", "", "0" )
-				
+
 				timer.Simple( 0.7, function()
 					if not self:IsValid() then return end
 					
@@ -82,11 +82,11 @@ if SERVER then
 					self.particleeffect:Spawn()
 					self.particleeffect:Activate()
 					self.particleeffect:SetParent( self )
-					
+
 					self.FireSound = CreateSound(self, "ambient/fire/firebig.wav")
 					self.FireSound:Play()
 				end)
-				
+
 				timer.Simple( 120, function()
 					if not self:IsValid() then return end
 					
@@ -97,7 +97,7 @@ if SERVER then
 					if self.particleeffect:IsValid() then
 						self.particleeffect:Remove()
 					end
-					
+
 					if self.FireSound then
 						self.FireSound:Stop()
 					end
@@ -114,7 +114,7 @@ if SERVER then
 				self.particleeffect:SetParent( self )
 				self.particleeffect:Fire( "Stop", "", math.random(0.5,3) )
 			end
-			
+
 		end)
 
 		self.RemoveDis = GetConVar("sv_simfphys_gib_lifetime"):GetFloat()
@@ -122,13 +122,13 @@ if SERVER then
 		self.RemoveTimer = CurTime() + self.RemoveDis
 	end
 
-	function ENT:Think()	
+	function ENT:Think()
 		if self.RemoveTimer < CurTime() then
 			if self.RemoveDis > 0 then
 				self:Remove()
 			end
 		end
-		
+
 		self:NextThink( CurTime() + 0.2 )
 		return true
 	end

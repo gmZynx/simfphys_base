@@ -11,65 +11,66 @@ local function GetViewOverride( ent )
 	
 	if not ent.customview then
 		local vehiclelist = list.Get( "simfphys_vehicles" )[ ent:GetSpawn_List() ]
-		
+
 		if vehiclelist then
 			ent.customview = vehiclelist.Members.FirstPersonViewPos or static_vec
 		else
 			ent.customview = static_vec
 		end
 	end
-	
+
 	return ent.customview
 end
 
+local WallOffset_Min = -Vector( 4, 4, 4 )
+local WallOffset_Max = Vector( 4, 4, 4 )
 hook.Add("CalcVehicleView", "simfphysViewOverride", function(Vehicle, ply, view)
 
 	local vehiclebase = ply:GetSimfphys()
 	if not vehiclebase:IsValid() then return end
 
 	local IsDriverSeat = ply:IsDrivingSimfphys()
-	
+
 	if Vehicle.GetThirdPersonMode == nil or ply:GetViewEntity() ~= ply  then
 		return
 	end
-	
+
 	ply.simfphys_smooth_out = 0
-	
+
 	if not Vehicle:GetThirdPersonMode() then
 		local viewoverride = GetViewOverride( vehiclebase )
-		
+
 		local X = viewoverride.X
 		local Y = viewoverride.Y
 		local Z = viewoverride.Z
-		
+
 		view.origin = IsDriverSeat and view.origin + Vehicle:GetForward() * X + Vehicle:GetRight() * Y + Vehicle:GetUp() * Z or view.origin + Vehicle:GetUp() * 5
-		
+
 		return view
 	end
-	
+
 	local mn, mx = vehiclebase:GetRenderBounds()
 	local radius = ( mn - mx ):Length()
 	local radius = radius + radius * Vehicle:GetCameraDistance()
 
 	local TargetOrigin = view.origin + ( view.angles:Forward() * -radius )
-	local WallOffset = 4
 
 	local tr = util.TraceHull( {
 		start = view.origin,
 		endpos = TargetOrigin,
 		filter = vehiclebase,
 		collisiongroup = COLLISION_GROUP_WORLD,
-		mins = Vector( -WallOffset, -WallOffset, -WallOffset ),
-		maxs = Vector( WallOffset, WallOffset, WallOffset ),
+		mins = WallOffset_Min,
+		maxs = WallOffset_Max,
 	} )
 
 	view.origin = tr.HitPos
 	view.drawviewer = true
 
 	if tr.Hit and not tr.StartSolid then
-		view.origin = view.origin + tr.HitNormal * WallOffset
+		view.origin = view.origin + tr.HitNormal * 4
 	end
-	
+
 	return view
 end)
 
@@ -83,9 +84,9 @@ hook.Add("StartCommand", "simfphys_lockview", function(ply, ucmd)
 	if not vehiclebase:IsValid() then return end
 	
 	if not (ply:GetInfoNum( "cl_simfphys_mousesteer", 0 ) == 1) then return end
-	
+
 	local ang = ucmd:GetViewAngles()
-	
+
 	if ply.Freelook then
 		vehicle.lockedpitch = ang.p
 		vehicle.lockedyaw = ang.y
@@ -94,7 +95,7 @@ hook.Add("StartCommand", "simfphys_lockview", function(ply, ucmd)
 
 	vehicle.lockedpitch = vehicle.lockedpitch or 0
 	vehicle.lockedyaw = vehicle.lockedyaw or 90
-	
+
 	local dir = 0
 	if vehicle.lockedyaw < 90 and vehicle.lockedyaw > -90 then
 		dir = math.abs(vehicle.lockedyaw - 90)
@@ -105,15 +106,15 @@ hook.Add("StartCommand", "simfphys_lockview", function(ply, ucmd)
 	if vehicle.lockedyaw < -90 and vehicle.lockedyaw >= -270 then
 		dir = -math.abs(vehicle.lockedyaw + 270)
 	end
-	
+
 	vehicle.lockedyaw = vehicle.lockedyaw + dir * 0.05
 	vehicle.lockedpitch = vehicle.lockedpitch + (LockedPitch - vehicle.lockedpitch) * 0.05
-	
+
 	if ply:GetInfoNum( "cl_simfphys_ms_lockpitch", 0 ) == 1 then
 		ang.p = vehicle.lockedpitch
 	end
-	
+
 	ang.y = vehicle.lockedyaw
-	
+
 	ucmd:SetViewAngles( ang )
 end)

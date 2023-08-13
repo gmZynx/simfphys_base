@@ -43,33 +43,33 @@ if (CLIENT) then
 			local weapon = ply:GetActiveWeapon()
 			if weapon:IsValid() and weapon:GetClass() == "weapon_simremote" and not weapon:GetActive() then	
 				local car = weapon:GetCar()
-				if car:IsValid() then halo.Add( {car}, color_blue ) end
+				if car:IsValid() then halo.Add( { car }, color_blue ) end
 			end
 		end
 	end )
-	
-	
+
+
 	function SWEP:PrimaryAttack()
 		if self:GetActive() then return false end
-		
+
 		local trace = self:GetOwner():GetEyeTrace()
 		local ent = trace.Entity
-		
+
 		if not simfphys.IsCar( ent ) then return false end
-		
+
 		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
-		
+
 		return true
 	end
 
 	function SWEP:SecondaryAttack()
 		if self:GetActive() then return false end
-		
+
 		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
-		
+
 		return true
 	end
-	
+
 	return
 end
 
@@ -92,17 +92,17 @@ end
 
 function SWEP:PrimaryAttack()
 	if self:GetActive() then return false end
-	
+
 	local ply = self:GetOwner()
 	local trace = ply:GetEyeTrace()
 	local ent = trace.Entity
-	
+
 	if not simfphys.IsCar( ent ) then return false end
-	
+
 	self:SetCar( ent )
-	
+
 	ply:ChatPrint("Remote Controller linked.")
-	
+
 	return true
 end
 
@@ -112,10 +112,10 @@ function SWEP:SecondaryAttack()
 	if self:GetCar():IsValid() then
 		self:SetCar( NULL )
 		self:GetOwner():ChatPrint("Remote Controller unlinked.")
-		
+
 		return true
 	end
-	
+
 	return false
 end
 
@@ -132,10 +132,10 @@ function SWEP:Enable()
 			else
 				self:SetActive( true )
 				self.OldMoveType = ply:GetMoveType()
-				
+
 				ply:SetMoveType( MOVETYPE_NONE )
 				ply:DrawViewModel( false )
-				
+
 				car.RemoteDriver = ply
 			end
 		end
@@ -146,7 +146,7 @@ function SWEP:Disable()
 
 	local ply = self:GetOwner()
 	local car = self:GetCar()
-	
+
 	if self:GetActive() then
 		if self.OldMoveType then
 	    		ply:SetMoveType( self.OldMoveType )
@@ -154,7 +154,7 @@ function SWEP:Disable()
 	    		ply:SetMoveType( MOVETYPE_WALK )
 		end
 	end
-	
+
 	self:SetActive( false )
 	self.OldMoveType = nil
 	ply:DrawViewModel( true )

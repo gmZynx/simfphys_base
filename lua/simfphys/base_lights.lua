@@ -3,17 +3,17 @@ local light_table = {
 	L_HeadLampAng = Angle(15,90,0),
 	R_HeadLampPos = Vector(42,148,21.1),
 	R_HeadLampAng = Angle(15,90,0),
-	
+
 	L_RearLampPos = Vector(45.6,-147,27.2),
 	L_RearLampAng = Angle(40,-90,0),
 	R_RearLampPos = Vector(-45.6,-147,27.2),
 	R_RearLampAng = Angle(40,-90,0),
-	
-	Headlight_sprites = { 
+
+	Headlight_sprites = {
 		Vector(-46.3,145.6,21.1),
 		Vector(46.3,145.6,21.1)
 	},
-	Headlamp_sprites = { 
+	Headlamp_sprites = {
 		Vector(-37.6,145.7,21),
 		Vector(37.6,145.7,21)
 	},
@@ -34,19 +34,19 @@ local light_table = {
 	L_HeadLampAng = Angle(15,90,0),
 	R_HeadLampPos = Vector(-30.75,79.5,28.9),
 	R_HeadLampAng = Angle(15,90,0),
-	
+
 	L_RearLampPos = Vector(15.9,-139.2,53),
 	L_RearLampAng = Angle(40,-90,0),
 	R_RearLampPos = Vector(-17.44,-139.2,53),
 	R_RearLampAng = Angle(40,-90,0),
-	
-	Headlight_sprites = { 
+
+	Headlight_sprites = {
 		Vector(-34.5,77.5,29),
 		Vector(36.4,77.5,29.5),
 		Vector(-27.1,77.5,29),
 		Vector(29,77.5,29.5)
 	},
-	Headlamp_sprites = { 
+	Headlamp_sprites = {
 		{pos =Vector(-34.5,77.5,29),size = 60},
 		{pos =Vector(36.4,77.5,29.5),size = 60},
 		{pos =Vector(-27.1,77.5,29),size = 60},
@@ -83,15 +83,15 @@ local light_table = {
 	L_HeadLampAng = Angle(20,90,0),
 	R_HeadLampPos = Vector(11,55,35),
 	R_HeadLampAng = Angle(20,90,0),
-	
+
 	L_RearLampPos = Vector(-14.9,-99.9,39.13),
 	L_RearLampAng = Angle(40,-90,0),
-	
-	Headlight_sprites = { 
+
+	Headlight_sprites = {
 		Vector(-11,57,38.8),
 		Vector(11,57,38.8)
 	},
-	Headlamp_sprites = { 
+	Headlamp_sprites = {
 		Vector(-11,57,38.8),
 		Vector(11,57,38.8)
 	},

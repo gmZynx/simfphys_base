@@ -11,7 +11,7 @@ function ENT:Think()
 	return false
 end
 
-if SERVER then 
+if SERVER then
 	function ENT:Initialize()
 		self:PhysicsInit( SOLID_VPHYSICS )
 		self:SetMoveType( MOVETYPE_VPHYSICS )

@@ -72,7 +72,7 @@ surface.CreateFont( "simfphysfont4", {
 } )
 
 surface.CreateFont( "DSimfphysFont", {
-	font = "Arial", 
+	font = "Arial",
 	extended = false,
 	size = 22,
 	weight = 500,
@@ -90,7 +90,7 @@ surface.CreateFont( "DSimfphysFont", {
 } )
 
 surface.CreateFont( "DSimfphysFont_hint", {
-	font = "Arial", 
+	font = "Arial",
 	extended = false,
 	size = 21,
 	weight = 500,

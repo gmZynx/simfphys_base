@@ -1,5 +1,5 @@
 local function ExitUsingMyTraces( ent, ply, b_ent )
-	
+
 	local Center = b_ent:LocalToWorld( b_ent:OBBCenter() )
 	local vel = b_ent:GetVelocity()
 	local radius = b_ent:BoundingRadius()
@@ -9,15 +9,15 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 	
 	local Wheels = b_ent.Wheels
 	for i = 1, #Wheels do
-		table.insert(Filter1, Wheels[i])
-		table.insert(Filter2, Wheels[i])
+		table.insert( Filter1, Wheels[ i ] )
+		table.insert( Filter2, Wheels[ i ] )
 	end
-	
+
 	if vel:Length() > 250 then
 		local pos = b_ent:GetPos()
 		local dir = vel:GetNormalized()
 		local targetpos = pos - dir *  (radius + 40)
-		
+
 		local tr = util.TraceHull( {
 			start = Center,
 			endpos = targetpos - Vector(0,0,10),
@@ -25,9 +25,9 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 			mins = -HullSize,
 			filter = Filter2
 		} )
-		
+
 		local exitpoint = tr.HitPos + Vector(0,0,10)
-		
+
 		if util.IsInWorld( exitpoint ) then
 			ply:SetPos(exitpoint)
 			ply:SetEyeAngles((pos - exitpoint):Angle())
@@ -35,7 +35,7 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 	else
 		local pos = ent:GetPos()
 		local targetpos = (pos + ent:GetRight() * 80)
-		
+
 		local tr1 = util.TraceLine( {
 			start = targetpos,
 			endpos = targetpos - Vector(0,0,100),
@@ -49,10 +49,10 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 			filter = Filter1
 		} )
 		local traceto = util.TraceLine( {start = Center,endpos = targetpos,filter = Filter2} )
-		
+
 		local HitGround = tr1.Hit
 		local HitWall = tr2.Hit or traceto.Hit
-		
+
 		local check0 = (HitWall == true or HitGround == false or util.IsInWorld( targetpos ) == false) and (pos - ent:GetRight() * 80) or targetpos
 		local tr = util.TraceHull( {
 			start = check0,
@@ -63,9 +63,9 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 		} )
 		local traceto = util.TraceLine( {start = Center,endpos = check0,filter = Filter2} )
 		local HitWall = tr.Hit or traceto.hit
-		
+
 		local check1 = (HitWall == true or HitGround == false or util.IsInWorld( check0 ) == false) and (pos + ent:GetUp() * 100) or check0
-		
+
 		local tr = util.TraceHull( {
 			start = check1,
 			endpos = check1 + Vector(0,0,80),
@@ -76,7 +76,7 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 		local traceto = util.TraceLine( {start = Center,endpos = check1,filter = Filter2} )
 		local HitWall = tr.Hit or traceto.hit
 		local check2 = (HitWall == true or util.IsInWorld( check1 ) == false) and (pos - ent:GetUp() * 100) or check1
-		
+
 		local tr = util.TraceHull( {
 			start = check2,
 			endpos = check2 + Vector(0,0,80),
@@ -87,7 +87,7 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 		local traceto = util.TraceLine( {start = Center,endpos = check2,filter = Filter2} )
 		local HitWall = tr.Hit or traceto.hit
 		local check3 = (HitWall == true or util.IsInWorld( check2 ) == false) and b_ent:LocalToWorld( Vector(0,radius,0) ) or check2
-		
+
 		local tr = util.TraceHull( {
 			start = check3,
 			endpos = check3 + Vector(0,0,80),
@@ -98,7 +98,7 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 		local traceto = util.TraceLine( {start = Center,endpos = check3,filter = Filter2} )
 		local HitWall = tr.Hit or traceto.hit
 		local check4 = (HitWall == true or util.IsInWorld( check3 ) == false) and b_ent:LocalToWorld( Vector(0,-radius,0) ) or check3
-		
+
 		local tr = util.TraceHull( {
 			start = check4,
 			endpos = check4 + Vector(0,0,80),
@@ -109,7 +109,7 @@ local function ExitUsingMyTraces( ent, ply, b_ent )
 		local traceto = util.TraceLine( {start = Center,endpos = check4,filter = Filter2} )
 		local HitWall = tr.Hit or traceto.hit
 		local exitpoint = (HitWall == true or util.IsInWorld( check4 ) == false) and b_ent:LocalToWorld( Vector(0,0,0) ) or check4
-		
+
 		if util.IsInWorld( exitpoint ) then
 			ply:SetPos(exitpoint)
 			ply:SetEyeAngles((pos - exitpoint):Angle())
@@ -124,22 +124,22 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 	
 	local Wheels = b_ent.Wheels
 	for i = 1, #Wheels do
-		table.insert(Filter, Wheels[i])
+		table.insert( Filter, Wheels[ i ] )
 	end
 
 	local IsDriverSeat = ent == b_ent:GetDriverSeat()
-	
+
 	if IsDriverSeat then
 		if LinkedDoorAnims then
 			for i,_ in pairs( b_ent.ModelInfo.LinkDoorAnims ) do
 				local seq_att = b_ent.ModelInfo.LinkDoorAnims[ i ].exit
 				local attachmentdata = b_ent:GetAttachment( b_ent:LookupAttachment( i ) )
-				
+
 				if attachmentdata then
 					local targetpos = attachmentdata.Pos
 					local targetang = attachmentdata.Ang
 					targetang.r = 0
-					
+
 					local tr = util.TraceLine( {
 						start = Center,
 						endpos = targetpos,
@@ -148,13 +148,13 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 					local Hit = tr.Hit
 					local InWorld = util.IsInWorld( targetpos )
 					local IsBlocked = Hit or not InWorld
-					
+
 					if not IsBlocked then
 						ply:SetPos( targetpos )
 						ply:SetEyeAngles( targetang )
 						b_ent:PlayAnimation( seq_att )
 						b_ent:ForceLightsOff()
-						
+
 						return
 					end
 				end
@@ -168,7 +168,7 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 					local targetpos = attachmentdata.Pos
 					local targetang = attachmentdata.Ang
 					targetang.r = 0
-					
+
 					local tr = util.TraceLine( {
 						start = Center,
 						endpos = targetpos,
@@ -177,20 +177,20 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 					local Hit = tr.Hit
 					local InWorld = util.IsInWorld( targetpos )
 					local IsBlocked = Hit or not InWorld
-					
+
 					if not IsBlocked then
 						ply:SetPos( targetpos )
 						ply:SetEyeAngles( targetang )
 						b_ent:PlayAnimation( seq_att )
 						b_ent:ForceLightsOff()
-						
+
 						return
 					end
 				end
 			end
 		end
 	end
-	
+
 	ExitUsingMyTraces( ent, ply, b_ent )
 end
 

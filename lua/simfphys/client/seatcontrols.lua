@@ -1,4 +1,8 @@
 local function lockControls( bLock )
+	local lp = LocalPlayer()
+	if not lp:InVehicle() then return end
+	if not lp:IsDrivingSimfphys() then return end
+
 	net.Start( "simfphys_blockcontrols" )
 		net.WriteBool( bLock )
 	net.SendToServer()
@@ -21,6 +25,7 @@ hook.Add( "OnSpawnMenuClose", "simfphys_seatswitching_menuclose", function()
 end )
 
 hook.Add( "FinishChat", "simfphys_seatswitching_chatend", function()
+	if not IsValid( LocalPlayer() ) then return end
 	lockControls( false )
 end )
 

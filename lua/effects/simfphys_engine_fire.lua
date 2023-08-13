@@ -24,7 +24,7 @@ function EFFECT:Init( data )
 	if not Entity:IsValid() then return end
 	
 	local Vel = Entity:GetVelocity() * 0.9
-	
+
 	self:DoFX( Pos, Vel )
 end
 
@@ -32,18 +32,18 @@ function EFFECT:DoFX( pos, vel )
 
 	local fpos = pos + VectorRand() * 5
 	local Spos = pos + VectorRand() * 5
-	
+
 	local emitter = ParticleEmitter( pos, false )
-	
+
 	if emitter then
-		local particle = emitter:Add( Materials[math.Round(math.Rand(1,#Materials),0)], pos )
+		local particle = emitter:Add( Materials[ math.Round( math.Rand( 1, #Materials ), 0 ) ], pos )
 		
 		local vz = math.min(vel:Length(),600)
-		
+
 		if particle then
 			particle:SetVelocity( VectorRand() * 5 + Vector(0,0,40 + vz) + vel * 0.1 )
 			particle:SetDieTime( 1 )
-			particle:SetAirResistance( vz ) 
+			particle:SetAirResistance( vz )
 			particle:SetStartAlpha( 100 )
 			particle:SetStartSize( 25 )
 			particle:SetEndSize( math.Rand(60,80) )
@@ -52,13 +52,13 @@ function EFFECT:DoFX( pos, vel )
 			particle:SetGravity( Vector( 0, 0, 100 ) )
 			particle:SetCollide( false )
 		end
-		
+
 		local particle = emitter:Add( "particles/fire1", fpos )
-		
+
 		if particle then
 			particle:SetVelocity( Vector(0,0,70) + vel )
 			particle:SetDieTime( 0.6 - (math.min(vel:Length(),600) / 600) * 0.4 )
-			particle:SetAirResistance( 0 ) 
+			particle:SetAirResistance( 0 )
 			particle:SetStartAlpha( 255 )
 			particle:SetStartSize( math.Rand(10,14) )
 			particle:SetEndSize( math.Rand(0,6) )
@@ -67,14 +67,14 @@ function EFFECT:DoFX( pos, vel )
 			particle:SetGravity( Vector( 0, 0, 70 ) )
 			particle:SetCollide( false )
 		end
-		
+
 		for i = 0,3 do
 			local particle = emitter:Add( "particles/flamelet"..math.random(1,5), Spos )
-			
+
 			if particle then
 				particle:SetVelocity( Vector(0,0,40) + vel )
 				particle:SetDieTime( 0.45 - (math.min(vel:Length(),600) / 600) * 0.25 )
-				particle:SetAirResistance( 0 ) 
+				particle:SetAirResistance( 0 )
 				particle:SetStartAlpha( 255 )
 				particle:SetStartSize( math.Rand(10,14) )
 				particle:SetEndSize( math.Rand(0,6) )
@@ -84,7 +84,7 @@ function EFFECT:DoFX( pos, vel )
 				particle:SetCollide( false )
 			end
 		end
-		
+
 		emitter:Finish()
 	end
 end

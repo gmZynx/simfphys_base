@@ -31,8 +31,8 @@ if (CLIENT) then
 	SWEP.Slot			= 1
 	SWEP.SlotPos			= 9
 	SWEP.IconLetter			= "k"
-	
-	SWEP.WepSelectIcon 			= surface.GetTextureID( "weapons/s_repair" ) 
+
+	SWEP.WepSelectIcon 			= surface.GetTextureID( "weapons/s_repair" )
 	--SWEP.DrawWeaponInfoBox 	= false
 end
 
@@ -51,41 +51,41 @@ function SWEP:PrimaryAttack()
 	local Owner = self:GetOwner()
 	local Trace = Owner:GetEyeTrace()
 	local ent = Trace.Entity
-	
+
 	if !IsValid(ent) then return end
 	local class = ent:GetClass():lower()
-	
+
 	local IsVehicle = class == "gmod_sent_vehicle_fphysics_base"
 	local IsWheel = class == "gmod_sent_vehicle_fphysics_wheel"
-	
+
 	if IsVehicle then
 		local Dist = (Trace.HitPos - Owner:GetPos()):Length()
-		
+
 		if (Dist <= 100) then
 			self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
 			Owner:SetAnimation( PLAYER_ATTACK1 )
-			
+
 			if (SERVER) then
 				local MaxHealth = ent:GetMaxHealth()
 				local Health = ent:GetCurHealth()
-				
+
 				if Health < MaxHealth then
 					local NewHealth = math.min(Health + 30,MaxHealth)
-					
+
 					if NewHealth > (MaxHealth * 0.6) then
 						ent:SetOnFire( false )
 						ent:SetOnSmoke( false )
 					end
-				
+
 					if NewHealth > (MaxHealth * 0.3) then
 						ent:SetOnFire( false )
 						if NewHealth <= (MaxHealth * 0.6) then
 							ent:SetOnSmoke( true )
 						end
 					end
-					
+
 					ent:SetCurHealth( NewHealth )
-					
+
 					local effect = ents.Create("env_spark")
 						effect:SetKeyValue("targetname", "target")
 						effect:SetPos( Trace.HitPos + Trace.HitNormal * 2 )
@@ -96,17 +96,17 @@ function SWEP:PrimaryAttack()
 						effect:SetKeyValue("TrailLength",0.2)
 						effect:Fire( "SparkOnce" )
 						effect:Fire("kill","",0.08)
-				else 
+				else
 					self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 )
-					
+
 					sound.Play(Sound( "hl1/fvox/beep.wav" ), self:GetPos(), 75)
-					
+
 					net.Start( "simfphys_lightsfixall" )
 						net.WriteEntity( ent )
 					net.Broadcast()
-					
+
 					ent:OnRepaired()
-					
+
 					hook.Run( "simfphysOnRepaired", ent )
 					
 					local Wheels = ent.Wheels
@@ -123,16 +123,16 @@ function SWEP:PrimaryAttack()
 		end
 	elseif IsWheel then
 		local Dist = (Trace.HitPos - Owner:GetPos()):Length()
-		
+
 		if (Dist <= 100) then
 			self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
 			Owner:SetAnimation( PLAYER_ATTACK1 )
-			
+
 			if (SERVER) then
 				if ent:GetDamaged() then
-					
+
 					ent:SetDamaged( false )
-					
+
 					local effect = ents.Create("env_spark")
 						effect:SetKeyValue("targetname", "target")
 						effect:SetPos( Trace.HitPos + Trace.HitNormal * 2 )
@@ -143,9 +143,9 @@ function SWEP:PrimaryAttack()
 						effect:SetKeyValue("TrailLength",0.2)
 						effect:Fire( "SparkOnce" )
 						effect:Fire("kill","",0.08)
-				else 
+				else
 					self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 )
-					
+
 					sound.Play(Sound( "hl1/fvox/beep.wav" ), self:GetPos(), 75)
 				end
 			end
@@ -155,7 +155,7 @@ end
 
 function SWEP:DrawHUD()
 	if (LocalPlayer():InVehicle()) then return end
-	
+
 	local screenw = ScrW()
 	local screenh = ScrH()
 	local Widescreen = (screenw / screenh) > (4 / 3)
@@ -163,27 +163,27 @@ function SWEP:DrawHUD()
 	local sizey = screenh
 	local xpos = sizex * 0.02
 	local ypos = sizey * 0.85
-	
+
 	local Trace = self:GetOwner():GetEyeTrace()
 	local ent = Trace.Entity
-	
+
 	draw.RoundedBox( 0, xpos, ypos, sizex * 0.118, sizey * 0.02, Color( 0, 0, 0, 80 ) )
-	
+
 	if (!IsValid(ent)) then
 		draw.SimpleText( "0 / 0", "simfphysfont", xpos + sizex * 0.059, ypos + sizey * 0.01, Color( 255, 235, 0, 255 ), 1, 1 )
 		return
 	end
-	
+
 	local IsVehicle = ent:GetClass():lower() == "gmod_sent_vehicle_fphysics_base"
-	
+
 	if (IsVehicle) then
 		local MaxHealth = ent:GetMaxHealth()
 		local Health = ent:GetCurHealth()
-		
+
 		draw.RoundedBox( 0, xpos, ypos, ((sizex * 0.118) / MaxHealth) * Health, sizey * 0.02, Color( (Health < MaxHealth * 0.6) and 255 or 0, (Health >= MaxHealth * 0.3) and 255 or 0, 0, 100 ) )
-		
+
 		draw.SimpleText( Health.." / "..MaxHealth, "simfphysfont", xpos + sizex * 0.059, ypos + sizey * 0.01, Color( 255, 235, 0, 255 ), 1, 1 )
-	else 
+	else
 		draw.SimpleText( "0 / 0", "simfphysfont", xpos + sizex * 0.059, ypos + sizey * 0.01, Color( 255, 235, 0, 255 ), 1, 1 )
 	end
 end
