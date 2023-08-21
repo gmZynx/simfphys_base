@@ -155,50 +155,49 @@ hook.Add("JoystickInitialize", "simfphys_joystick", function()
 		category = "Simfphys (Gears)",
 	}
 
-	hook.Add("Think","simfphys_joystickhandler",function()
+	local enable_joystick_convar = CreateConVar("sv_simfphys_joysticksupport", "0", FCVAR_SERVER_CAN_EXECUTE, "Enable joystick support?", 0, 1)
 
-		for i,ply in pairs( player.GetAll() ) do
+	hook.Add("Think", "simfphys_joystickhandler", function()
+		if not enable_joystick_convar:GetBool() then return end
+		local plys = player.GetAll()
 
-			if ply:IsConnected() then
-				local vehicle = ply:GetVehicle()
-				if not vehicle:IsValid() then return end
-				
-				if not vehicle.fphysSeat then return end
+		for i = 0, player.GetCount() do
+			local ply = plys[i]
+			if not ply:IsConnected() then continue end
+			local vehicle = ply:GetVehicle()
+			if not vehicle:IsValid() then return end
+			if not vehicle.fphysSeat then return end
+			if vehicle.base:GetDriverSeat() ~= vehicle then return end
 
-				if vehicle.base:GetDriverSeat() ~= vehicle then return end
+			for k, v in pairs(simfphys.jcon) do
+				if istable(v) and v.IsJoystickReg then continue end
+				local val = joystick.Get(ply, v.uid)
 
-				for k,v in pairs( simfphys.jcon ) do
-					if istable(v) and v.IsJoystickReg then
-						local val = joystick.Get( ply, v.uid )
-
-						if v.type == "analog" then
-							vehicle.base.PressedKeys[v.uid] = val and val / 255 or 0
+				if v.type == "analog" then
+					vehicle.base.PressedKeys[v.uid] = val and val / 255 or 0
+				else
+					if string.StartWith(v.uid, "joystick_gear_") then
+						if v.uid == "joystick_gear_r" then
+							if val then
+								vehicle.base:ForceGear(1)
+							end
+						elseif v.uid == "joystick_gear_n" then
+							if val then
+								vehicle.base:ForceGear(2)
+							end
 						else
-							if string.StartWith( v.uid, "joystick_gear_" ) then
-								if v.uid == "joystick_gear_r" then
+							for i = 1, 8 do
+								if v.uid == "joystick_gear_" .. i then
 									if val then
-										vehicle.base:ForceGear( 1 )
+										vehicle.base:ForceGear(i + 2)
 									end
 
-								elseif v.uid == "joystick_gear_n" then
-									if val then
-										vehicle.base:ForceGear( 2 )
-									end
-
-								else
-									for i = 1, 8 do
-										if v.uid == ("joystick_gear_"..i) then
-											if val then
-												vehicle.base:ForceGear( i + 2 )
-											end
-											break
-										end
-									end
+									break
 								end
-							else
-								vehicle.base.PressedKeys[v.uid] = val and 1 or 0
 							end
 						end
+					else
+						vehicle.base.PressedKeys[v.uid] = val and 1 or 0
 					end
 				end
 			end
