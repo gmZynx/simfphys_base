@@ -160,7 +160,7 @@ hook.Add("JoystickInitialize", "simfphys_joystick", function()
 	local function simfphys_joystickhandler()
 		local plys = player.GetAll()
 
-		for i = 0, player.GetCount() do
+		for i = 1, player.GetCount() do
 			local ply = plys[i]
 			if not ply:IsConnected() then continue end
 			local vehicle = ply:GetVehicle()
