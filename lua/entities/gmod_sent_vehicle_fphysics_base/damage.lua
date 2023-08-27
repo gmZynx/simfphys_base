@@ -124,15 +124,18 @@ function ENT:ExplodeVehicle()
 		bprop.MakeSound = true
 		bprop:Spawn()
 		bprop:Activate()
-		bprop:GetPhysicsObject():SetVelocity( self:GetVelocity() + Vector( math.random( -5, 5 ), math.random( -5, 5 ), math.random( 150, 250 ) ) )
-		bprop:GetPhysicsObject():SetMass( self.Mass * 0.75 )
+		local phys = bprop:GetPhysicsObject()
+		if IsValid( phys ) then
+			phys:SetVelocity( self:GetVelocity() + Vector( math.random( -5, 5 ), math.random( -5, 5 ), math.random( 150, 250 ) ) )
+			phys:SetMass( self.Mass * 0.75 )
+		end
 		bprop.DoNotDuplicate = true
 		bprop:SetColor( Col )
 		bprop:SetSkin( skin )
 
 		self.Gib = bprop
 
-		simfphys.SetOwner( ply , bprop )
+		simfphys.SetOwner( ply, bprop )
 
 		if IsValid( ply ) then
 			undo.Create( "Gib" )
