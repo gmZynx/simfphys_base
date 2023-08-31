@@ -118,7 +118,7 @@ if SERVER then
 		end
 
 		if self.RollSound_Broken then
-			local Volume = FastClamp( SkidSound * 0.5 + ForwardSpeed / div_1500, 0, 1 ) * WheelOnGround
+			local Volume = FastClamp( SkidSound * 0.5 + ForwardSpeed / div_1500, 0, 1 ) * ( WheelOnGround and 1 or 0 )
 			local PlaySound = Volume > 0.1
 
 			self.OldPlaySound = self.OldPlaySound or false
