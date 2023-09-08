@@ -1,6 +1,7 @@
 hook.Add("CalcMainActivity", "simfphysSeatActivityOverride", function(ply)
-	local veh = ply:GetSimfphys()
+	local veh, inVehicle = ply:GetSimfphys()
 
+	if not inVehicle then return end
 	if not IsValid( veh ) then return end
 
 	if ply.m_bWasNoclipping then
@@ -33,12 +34,13 @@ hook.Add("CalcMainActivity", "simfphysSeatActivityOverride", function(ply)
 	return ply.CalcIdeal, ply.CalcSeqOverride
 end)
 
-hook.Add("UpdateAnimation", "simfphysPoseparameters", function(ply , vel, seq)
-	if CLIENT then
+if CLIENT then
+	hook.Add("UpdateAnimation", "simfphysPoseparameters", function(ply , vel, seq)
 		if not ply:IsDrivingSimfphys() then return end
 
-		local Car = ply:GetSimfphys()
+		local Car, inVehicle = ply:GetSimfphys()
 
+		if not inVehicle then return end
 		if not IsValid( Car ) then return end
 
 		local Steer = Car:GetVehicleSteer()
@@ -47,8 +49,8 @@ hook.Add("UpdateAnimation", "simfphysPoseparameters", function(ply , vel, seq)
 		ply:InvalidateBoneCache()
 
 		GAMEMODE:GrabEarAnimation( ply )
- 		GAMEMODE:MouthMoveAnimation( ply )
+		GAMEMODE:MouthMoveAnimation( ply )
 
 		return true
-	end
-end)
+	end)
+end
