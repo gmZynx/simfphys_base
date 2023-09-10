@@ -62,6 +62,8 @@ end
 
 local meta = FindMetaTable( "Player" )
 function meta:IsDrivingSimfphys()
+	if not self:InVehicle() then return false end
+
 	local Car = self:GetSimfphys()
 	if not Car:IsValid() then return false end
 	if not Car.GetDriverSeat or not isfunction( Car.GetDriverSeat ) then return false end
@@ -70,30 +72,30 @@ function meta:IsDrivingSimfphys()
 end
 
 function meta:GetSimfphys()
-	if not self:InVehicle() then return NULL end
+	if not self:InVehicle() then return NULL, false end
 
 	local Pod = self:GetVehicle()
-	if not Pod:IsValid() then return NULL end
+	if not Pod:IsValid() then return NULL, false end
 
 	if Pod.SPHYSchecked == true then
 
-		return Pod.SPHYSBaseEnt
+		return Pod.SPHYSBaseEnt, true
 
 	elseif Pod.SPHYSchecked == nil then
 
 		local Parent = Pod:GetParent()
-		if not Parent:IsValid() then Pod.SPHYSchecked = false return NULL end
+		if not Parent:IsValid() then Pod.SPHYSchecked = false return NULL, false end
 
-		if not simfphys.IsCar( Parent ) then Pod.SPHYSchecked = false return NULL end
+		if not simfphys.IsCar( Parent ) then Pod.SPHYSchecked = false return NULL, false end
 
 		Pod.SPHYSchecked = true
 		Pod.SPHYSBaseEnt = Parent
 		Pod.vehiclebase = Parent -- compatibility for old addons
 
-		return Parent
+		return Parent, true
 	else
 
-		return NULL
+		return NULL, false
 	end
 end
 

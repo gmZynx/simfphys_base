@@ -135,7 +135,7 @@ function ENT:ExplodeVehicle()
 
 		self.Gib = bprop
 
-		simfphys.SetOwner( ply , bprop )
+		simfphys.SetOwner( ply, bprop )
 
 		if ply and ply:IsValid() then
 			undo.Create( "Gib" )
