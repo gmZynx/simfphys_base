@@ -1089,8 +1089,9 @@ function ENT:OnFrontSuspensionHeightChanged(name, old, new)
 	end
 
 	if not self:IsInitialized() then return end
+	local wheels = self.Wheels
 
-	if self.Wheels[1]:IsValid() then
+	if wheels[ 1 ] and wheels[ 1 ]:IsValid() then
 		local Elastic = self.Elastics[1]
 
 		if Elastic:IsValid() then
@@ -1106,7 +1107,7 @@ function ENT:OnFrontSuspensionHeightChanged(name, old, new)
 		end
 	end
 
-	if self.Wheels[2]:IsValid() then
+	if wheels[ 2 ] and wheels[ 2 ]:IsValid() then
 		local Elastic = self.Elastics[2]
 
 		if Elastic:IsValid() then
@@ -1132,7 +1133,9 @@ function ENT:OnRearSuspensionHeightChanged(name, old, new)
 
 	if not self:IsInitialized() then return end
 
-	if self.Wheels[3]:IsValid() then
+	local wheels = self.Wheels
+
+	if wheels[ 3 ] and wheels[ 3 ]:IsValid() then
 		local Elastic = self.Elastics[3]
 
 		if Elastic:IsValid() then
@@ -1148,7 +1151,7 @@ function ENT:OnRearSuspensionHeightChanged(name, old, new)
 		end
 	end
 
-	if self.Wheels[4]:IsValid() then
+	if wheels[ 4 ] and wheels[ 4 ]:IsValid() then
 		local Elastic = self.Elastics[4]
 
 		if Elastic:IsValid() then
@@ -1164,7 +1167,7 @@ function ENT:OnRearSuspensionHeightChanged(name, old, new)
 		end
 	end
 
-	if self.Wheels[5]:IsValid() then
+	if wheels[ 5 ] and wheels[ 5 ]:IsValid() then
 		local Elastic = self.Elastics[5]
 
 		if Elastic:IsValid() then
@@ -1180,7 +1183,7 @@ function ENT:OnRearSuspensionHeightChanged(name, old, new)
 		end
 	end
 
-	if self.Wheels[6]:IsValid() then
+	if wheels[ 6 ] and wheels[ 6 ]:IsValid() then
 		local Elastic = self.Elastics[6]
 
 		if Elastic:IsValid() then

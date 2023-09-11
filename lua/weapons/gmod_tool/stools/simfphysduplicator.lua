@@ -783,7 +783,7 @@ function TOOL:LeftClick( trace )
 		if Ent.CustomWheels then
 			if Ent.GhostWheels then
 				timer.Simple( Update and 0.25 or 0, function()
-					if not ent:IsValid() then return end
+					if not Ent:IsValid() then return end
 					if ply.TOOLMemory.WheelTool_Foffset and ply.TOOLMemory.WheelTool_Roffset then
 						SetWheelOffset( Ent, ply.TOOLMemory.WheelTool_Foffset, ply.TOOLMemory.WheelTool_Roffset )
 					end
