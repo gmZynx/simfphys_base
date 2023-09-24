@@ -790,7 +790,7 @@ function ENT:DamagedStall()
 
 	timer.Simple( rtimer, function()
 		if not IsValid( self ) then return end
-		net.Start( "simfphys_backfire" )
+		net.Start( "simfphys_backfire", true )
 			net.WriteEntity( self )
 		net.Broadcast()
 	end)

@@ -246,7 +246,7 @@ function ENT:OnTakeDamage( dmginfo )
 	self.LastInflictor = dmginfo:GetInflictor()
 
 	if simfphys.DamageEnabled then
-		net.Start( "simfphys_spritedamage" )
+		net.Start( "simfphys_spritedamage", true )
 			net.WriteEntity( self )
 			net.WriteVector( self:WorldToLocal( DamagePos ) )
 			net.WriteBool( false )
