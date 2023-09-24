@@ -129,7 +129,7 @@ hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 	if lastMouseSteer == SteerVehicle then return end
 	lastMouseSteer = SteerVehicle
 
-	net.Start( "simfphys_mousesteer" )
+	net.Start( "simfphys_mousesteer", true )
 		net.WriteEntity( vehicle )
 		net.WriteInt( SteerVehicle * 255, 9 )
 	net.SendToServer()
