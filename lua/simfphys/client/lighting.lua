@@ -804,46 +804,44 @@ hook.Add( "Think", "simfphys_lights_managment", function()
 end )
 
 hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function()
-    if vtable then
-        for i, ent in pairs( vtable ) do
-            if IsValid( ent ) then
-                local entTable = ent:GetTable()
-                if ent:GetEMSEnabled() then
-                    DrawEMSLights( ent )
-                end
+    if not vtable then return end
+    for i, ent in pairs( vtable ) do
+        if IsValid( ent ) then
+            local entTable = ent:GetTable()
+            if ent:GetEMSEnabled() then
+                DrawEMSLights( ent )
+            end
 
-                if SpritesDisabled then return end
-                if not istable( entTable.triggers ) then return end
+            if SpritesDisabled then return end
+            if not istable( entTable.triggers ) then return end
 
-                for _, sprite in pairs( entTable.Sprites ) do
+            for i, sprite in pairs( entTable.Sprites ) do
+                if not sprite.Damaged then
+                    local regTrigger = entTable.triggers[ sprite.trigger ]
+                    local typeSpecial = (sprite.trigger == 8 and entTable.triggers[ 6 ]) or (sprite.trigger == 9 and entTable.triggers[7])
+                    if typeSpecial then regTrigger = false end
 
-                    if not sprite.Damaged then
-                        local regTrigger = entTable.triggers[ sprite.trigger ]
-                        local typeSpecial = (sprite.trigger == 8 and entTable.triggers[ 6 ]) or (sprite.trigger == 9 and entTable.triggers[7])
-                        if typeSpecial then regTrigger = false end
+                    if regTrigger or typeSpecial then
+                        local LightPos = ent:LocalToWorld( sprite.pos )
+                        local visible = util.PixelVisible( LightPos, 4, sprite.PixVis )
+                        local s_col = sprite.color
+                        local s_mat = sprite.material
+                        local s_size = sprite.size
 
-                        if regTrigger or typeSpecial then
-                            local LightPos = ent:LocalToWorld( sprite.pos )
-                            local Visible = util.PixelVisible( LightPos, 4, sprite.PixVis )
-                            local s_col = sprite.color
-                            local s_mat = sprite.material
-                            local s_size = sprite.size
+                        if sprite.bodygroups then
+                            visible = BodyGroupIsValid( sprite.bodygroups, ent ) and visible or 0
+                        end
 
-                            if sprite.bodygroups then
-                                Visible = BodyGroupIsValid( sprite.bodygroups, ent ) and Visible or 0
+                        if visible and visible >= 0.6 then
+                            visible = (visible - 0.6) / 0.4
+                            render.SetMaterial( s_mat )
+
+                            local c_Alpha = s_col["a"] * visible
+                            if sprite.trigger == 6 or sprite.trigger == 7 or typeSpecial then
+                                c_Alpha = c_Alpha * (ent:GetFlasher() ^ 7)
                             end
 
-                            if Visible and Visible >= 0.6 then
-                                Visible = (Visible - 0.6) / 0.4
-                                render.SetMaterial( s_mat )
-
-                                local c_Alpha = s_col["a"] * Visible
-                                if sprite.trigger == 6 or sprite.trigger == 7 or typeSpecial then
-                                    c_Alpha = c_Alpha * (ent:GetFlasher() ^ 7)
-                                end
-
-                                render.DrawSprite( LightPos, s_size, s_size,  Color( s_col["r"], s_col["g"], s_col["b"],  c_Alpha) )
-                            end
+                            render.DrawSprite( LightPos, s_size, s_size,  Color( s_col["r"], s_col["g"], s_col["b"],  c_Alpha) )
                         end
                     end
                 end
