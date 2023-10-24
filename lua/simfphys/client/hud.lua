@@ -695,7 +695,7 @@ hook.Add( "HUDPaint", "simfphys_HUD", function()
 		else
 			net.Start( "simfphys_turnsignal" )
 				net.WriteEntity( vehiclebase )
-				net.WriteInt( turnmode, 32 )
+				net.WriteInt( turnmode, 3 )
 			net.SendToServer()
 
 			if turnmode == 1 or turnmode == 2 or turnmode == 3 then
@@ -705,7 +705,7 @@ hook.Add( "HUDPaint", "simfphys_HUD", function()
 			end
 		end
 	end
-end)
+end )
 
 local TipColor = Color( 0, 127, 255, 255 )
 hook.Add("HUDPaint", "simfphys_vehicleditorinfo", function()

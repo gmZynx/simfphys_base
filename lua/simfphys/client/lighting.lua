@@ -965,7 +965,7 @@ net.Receive("simfphys_lightsfixall", spriterepair)
 
 net.Receive( "simfphys_turnsignal", function( length )
     local ent = net.ReadEntity()
-    local turnmode = net.ReadInt( 32 )
+    local turnmode = net.ReadInt( 3 )
 
     if not IsValid( ent ) then return end
 
