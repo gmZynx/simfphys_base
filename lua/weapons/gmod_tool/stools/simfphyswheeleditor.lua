@@ -89,7 +89,7 @@ local function ApplyWheel(ply, ent, data)
                 local Right = swap_y and -rAng:Forward() or rAng:Forward()
                 local Up = ent:GetUp()
 
-                local Camber = data[5] or 0
+                local Camber = tonumber( data[5] or 0 )
 
                 local ghostAng = Right:Angle()
                 local mirAng = swap_y and 1 or -1
