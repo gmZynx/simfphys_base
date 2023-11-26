@@ -63,8 +63,10 @@ function ENT:HurtPlayers( damage )
 	if not istable( self.PassengerSeats ) then return end
 
 	for i = 1, table.Count( self.PassengerSeats ) do
-		local Passenger = self.pSeat[i]:GetDriver()
+		local seat = self.pSeat[i]
+		if not IsValid( seat ) then continue end
 
+		local Passenger = seat:GetDriver()
 		if not IsValid( Passenger ) then continue end
 
 		local dmginfo = DamageInfo()
