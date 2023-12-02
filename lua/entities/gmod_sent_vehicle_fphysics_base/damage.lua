@@ -63,15 +63,18 @@ function ENT:HurtPlayers( damage )
 	if not istable( self.PassengerSeats ) then return end
 
 	for i = 1, #self.PassengerSeats do
-		local Passenger = self.pSeat[i]:GetDriver()
-		if Passenger:IsValid() then
-			local dmginfo = DamageInfo()
-			dmginfo:SetDamage( damage )
-			dmginfo:SetAttacker( game.GetWorld() )
-			dmginfo:SetInflictor( self )
-			dmginfo:SetDamageType( DMG_DIRECT )
+		local seat = self.pSeat[ i ]
+		if seat and seat:IsValid() then
+			local Passenger = seat:GetDriver()
+			if Passenger:IsValid() then
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage( damage )
+				dmginfo:SetAttacker( game.GetWorld() )
+				dmginfo:SetInflictor( self )
+				dmginfo:SetDamageType( DMG_DIRECT )
 
-			Passenger:TakeDamageInfo( dmginfo )
+				Passenger:TakeDamageInfo( dmginfo )
+			end
 		end
 	end
 end
@@ -248,7 +251,7 @@ function ENT:OnTakeDamage( dmginfo )
 	self.LastInflictor = dmginfo:GetInflictor()
 
 	if simfphys.DamageEnabled then
-		net.Start( "simfphys_spritedamage" )
+		net.Start( "simfphys_spritedamage", true )
 			net.WriteEntity( self )
 			net.WriteVector( self:WorldToLocal( DamagePos ) )
 			net.WriteBool( false )

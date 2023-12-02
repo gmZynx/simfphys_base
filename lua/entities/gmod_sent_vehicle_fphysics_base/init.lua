@@ -57,16 +57,21 @@ end
 
 function ENT:Think()
 	local Time = CurTime()
+	local selfTable = self:GetTable()
+
 	self:OnTick()
-	hook.Run("simfphysOnTick", self, Time)
-	self.NextTick = self.NextTick or 0
 
-	if self.NextTick < Time then
-		self.NextTick = Time + 0.025
+	hook.Run( "simfphysOnTick", self, Time )
 
-		if self.DriverSeat and self.DriverSeat:IsValid() then
-			local Driver = self.DriverSeat:GetDriver()
-			Driver = self.RemoteDriver and self.RemoteDriver:IsValid() and self.RemoteDriver or Driver
+	selfTable.NextTick = selfTable.NextTick or 0
+	if selfTable.NextTick < Time then
+		selfTable.NextTick = Time + 0.025
+
+		if IsValid( selfTable.DriverSeat ) then
+			local Driver = selfTable.DriverSeat:GetDriver()
+			local RemoteDriver = selfTable.RemoteDriver
+			Driver = RemoteDriver and RemoteDriver:IsValid() and RemoteDriver or Driver
+
 			local OldDriver = self:GetDriver()
 
 			if OldDriver ~= Driver then
@@ -86,27 +91,25 @@ function ENT:Think()
 						self:StartEngine()
 					end
 				else
-					if self.ems then
-						self.ems:Stop()
+					if selfTable.ems then
+						selfTable.ems:Stop()
 					end
 
-					if self.horn then
-						self.horn:Stop()
+					if selfTable.horn then
+						selfTable.horn:Stop()
 					end
 
-					if self.PressedKeys then
-						for k, v in pairs(self.PressedKeys) do
-							if isbool(v) then
-								self.PressedKeys[k] = false
+					if selfTable.PressedKeys then
+						for k,v in pairs( selfTable.PressedKeys ) do
+							if isbool( v ) then
+								selfTable.PressedKeys[k] = false
 							end
 						end
 					end
 
-					if self.keys then
-						local keys = self.keys
-
-						for i = 1, #keys do
-							numpad.Remove(keys[i])
+					if selfTable.keys then
+						for i = 1, #selfTable.keys do
+							numpad.Remove( selfTable.keys[i] )
 						end
 					end
 
@@ -139,15 +142,14 @@ function ENT:Think()
 				self:UpdateWireOutputs()
 			end
 
-			self.NextWaterCheck = self.NextWaterCheck or 0
-
-			if self.NextWaterCheck < Time then
-				self.NextWaterCheck = Time + 0.2
+			selfTable.NextWaterCheck = selfTable.NextWaterCheck or 0
+			if selfTable.NextWaterCheck < Time then
+				selfTable.NextWaterCheck = Time + 0.2
 				self:WaterPhysics()
 			end
 
 			if self:GetActive() then
-				self:SetPhysics(math.abs(self.ForwardSpeed) < 50 and (self.Brake > 0 or self.HandBrake > 0))
+				self:SetPhysics( ((math.abs(selfTable.ForwardSpeed) < 50) and (selfTable.Brake > 0 or selfTable.HandBrake > 0)) )
 			else
 				self:SetPhysics(true)
 			end
@@ -446,36 +448,29 @@ function ENT:SetColors()
 	end
 end
 
-function ENT:ControlLighting(curtime)
-	if (self.NextLightCheck or 0) < curtime then
-		if self.LightsActivated ~= self.DoCheck then
-			self.DoCheck = self.LightsActivated
+function ENT:ControlLighting( curtime )
+	if ( self.NextLightCheck or 0 ) < curtime and self.LightsActivated ~= self.DoCheck then
+		self.DoCheck = self.LightsActivated
 
-			if self.LightsActivated then
-				self:SetLightsEnabled(true)
-			end
+		if self.LightsActivated then
+			self:SetLightsEnabled( true )
 		end
 	end
 end
 
-function ENT:SetTSInternal(mode)
+function ENT:SetTSInternal( mode )
 	self.TSMode = mode
 end
 
 function ENT:GetTSEnabled()
-	if self.TSMode ~= nil then
-		return self.TSMode
-	else
-		return 0
-	end
+	if self.TSMode ~= nil then return self.TSMode else return 0 end
 end
 
 function ENT:GetEngineData()
-	local LimitRPM = math.max(self:GetLimitRPM(), 4)
-	local Powerbandend = math.Clamp(self:GetPowerBandEnd(), 3, LimitRPM - 1)
-	local Powerbandstart = math.Clamp(self:GetPowerBandStart(), 2, Powerbandend - 1)
-	local IdleRPM = math.Clamp(self:GetIdleRPM(), 1, Powerbandstart - 1)
-
+	local LimitRPM = math.max( self:GetLimitRPM(), 4 )
+	local Powerbandend = math.Clamp( self:GetPowerBandEnd(), 3, LimitRPM - 1 )
+	local Powerbandstart = math.Clamp( self:GetPowerBandStart(), 2, Powerbandend - 1 )
+	local IdleRPM = math.Clamp( self:GetIdleRPM(), 1, Powerbandstart - 1 )
 	local Data = {
 		IdleRPM = IdleRPM,
 		Powerbandstart = Powerbandstart,
@@ -488,99 +483,111 @@ end
 
 function ENT:SimulateVehicle(curtime)
 	local Active = self:GetActive()
+	local selfTable = self:GetTable()
+
 	local EngineData = self:GetEngineData()
 	local LimitRPM = EngineData.LimitRPM
 	local Powerbandend = EngineData.Powerbandend
 	local Powerbandstart = EngineData.Powerbandstart
 	local IdleRPM = EngineData.IdleRPM
-	self.Forward = self:LocalToWorldAngles(self.VehicleData.LocalAngForward):Forward()
-	self.Right = self:LocalToWorldAngles(self.VehicleData.LocalAngRight):Forward()
-	self.Up = self:GetUp()
-	self.Vel = self:GetVelocity()
-	self.VelNorm = self.Vel:GetNormalized()
-	self.MoveDir = math.acos(math.Clamp(self.Forward:Dot(self.VelNorm), -1, 1)) * 180 / math.pi
-	self.ForwardSpeed = math.cos(self.MoveDir * math.pi / 180) * self.Vel:Length()
 
-	if self.poseon then
-		self.cpose = self.cpose or self.LightsPP.min
-		local anglestep = math.abs(math.max(self.LightsPP.max or self.LightsPP.min)) / 3
-		self.cpose = self.cpose + math.Clamp(self.poseon - self.cpose, -anglestep, anglestep)
-		self:SetPoseParameter(self.LightsPP.name, self.cpose)
+	selfTable.Forward =  self:LocalToWorldAngles( selfTable.VehicleData.LocalAngForward ):Forward()
+	selfTable.Right = self:LocalToWorldAngles( selfTable.VehicleData.LocalAngRight ):Forward()
+	selfTable.Up = self:GetUp()
+
+	selfTable.Vel = self:GetVelocity()
+	selfTable.VelNorm = selfTable.Vel:GetNormalized()
+
+	selfTable.MoveDir = math.acos( math.Clamp( selfTable.Forward:Dot( selfTable.VelNorm ), -1, 1 ) ) * ( 180 / math.pi )
+	selfTable.ForwardSpeed = math.cos( selfTable.MoveDir * ( math.pi / 180 ) ) * selfTable.Vel:Length()
+
+	if selfTable.poseon then
+		selfTable.cpose = selfTable.cpose or selfTable.LightsPP.min
+		local anglestep = math.abs( math.max( selfTable.LightsPP.max or selfTable.LightsPP.min ) ) / 3
+		selfTable.cpose = selfTable.cpose + math.Clamp( selfTable.poseon - selfTable.cpose, -anglestep, anglestep )
+		self:SetPoseParameter( selfTable.LightsPP.name, selfTable.cpose )
 	end
 
-	self:SetPoseParameter("vehicle_guage", (math.abs(self.ForwardSpeed) * 0.0568182 * 0.75) / (self.SpeedoMax or 120))
+	self:SetPoseParameter( "vehicle_guage", ( math.abs( selfTable.ForwardSpeed ) * 0.0568182 * 0.75 ) / ( selfTable.SpeedoMax or 120 ) )
 
-	if self.RPMGaugePP then
+	if selfTable.RPMGaugePP then
 		local flywheelrpm = self:GetFlyWheelRPM()
 		local rpm
 
 		if self:GetRevlimiter() then
 			local throttle = self:GetThrottle()
 			local maxrpm = self:GetLimitRPM()
-			local revlimiter = maxrpm > 2500 and throttle > 0
-			rpm = math.Round(flywheelrpm >= maxrpm - 200 and revlimiter and math.Round(flywheelrpm - 200 + math.sin(curtime * 50) * 600, 0) or flywheelrpm, 0)
+			local revlimiter = ( maxrpm > 2500 ) and ( throttle > 0 )
+			rpm = math.Round( ( ( flywheelrpm >= maxrpm - 200 ) and revlimiter ) and math.Round( flywheelrpm - 200 + math.sin( curtime * 50 ) * 600, 0 ) or flywheelrpm, 0 )
 		else
 			rpm = flywheelrpm
 		end
 
-		self:SetPoseParameter(self.RPMGaugePP, rpm / self.RPMGaugeMax)
+		self:SetPoseParameter( selfTable.RPMGaugePP,  rpm / selfTable.RPMGaugeMax )
 	end
 
 	if Active then
 		local ply = self:GetDriver()
-		local IsValidDriver = ply:IsValid()
-		local GearUp = self.PressedKeys["M1"] and 1 or self.PressedKeys["joystick_gearup"]
-		local GearDown = self.PressedKeys["M2"] and 1 or self.PressedKeys["joystick_geardown"]
-		local W = self.PressedKeys["W"] and 1 or 0
-		local A = self.PressedKeys["A"] and 1 or self.PressedKeys["joystick_steer_left"]
-		local S = self.PressedKeys["S"] and 1 or 0
-		local D = self.PressedKeys["D"] and 1 or self.PressedKeys["joystick_steer_right"]
+		local IsValidDriver = IsValid( ply )
+
+		local GearUp = selfTable.PressedKeys["M1"] and 1 or selfTable.PressedKeys["joystick_gearup"]
+		local GearDown = selfTable.PressedKeys["M2"] and 1 or selfTable.PressedKeys["joystick_geardown"]
+
+		local W = selfTable.PressedKeys["W"] and 1 or 0
+		local A = selfTable.PressedKeys["A"] and 1 or selfTable.PressedKeys["joystick_steer_left"]
+		local S = selfTable.PressedKeys["S"] and 1 or 0
+		local D = selfTable.PressedKeys["D"] and 1 or selfTable.PressedKeys["joystick_steer_right"]
 
 		if IsValidDriver then
 			self:PlayerSteerVehicle(ply, A, D)
 		end
 
-		local aW = self.PressedKeys["aW"] and 1 or self.PressedKeys["joystick_air_w"]
-		local aA = self.PressedKeys["aA"] and 1 or self.PressedKeys["joystick_air_a"]
-		local aS = self.PressedKeys["aS"] and 1 or self.PressedKeys["joystick_air_s"]
-		local aD = self.PressedKeys["aD"] and 1 or self.PressedKeys["joystick_air_d"]
+		local aW = selfTable.PressedKeys["aW"] and 1 or selfTable.PressedKeys["joystick_air_w"]
+		local aA = selfTable.PressedKeys["aA"] and 1 or selfTable.PressedKeys["joystick_air_a"]
+		local aS = selfTable.PressedKeys["aS"] and 1 or selfTable.PressedKeys["joystick_air_s"]
+		local aD = selfTable.PressedKeys["aD"] and 1 or selfTable.PressedKeys["joystick_air_d"]
+
 		local cruise = self:GetIsCruiseModeOn()
-		local k_sanic = IsValidDriver and ply:GetInfoNum("cl_simfphys_sanic", 0) or 1
-		local sanicmode = isnumber(k_sanic) and k_sanic or 0
-		local k_Shift = self.PressedKeys["Shift"]
-		local Shift = sanicmode == 1 and (k_Shift and 0 or 1) or k_Shift and 1 or 0
-		local sportsmode = IsValidDriver and ply:GetInfoNum("cl_simfphys_sport", 0) or 1
-		local k_auto = IsValidDriver and ply:GetInfoNum("cl_simfphys_auto", 0) or 1
+
+		local k_sanic = IsValidDriver and ply:GetInfoNum( "cl_simfphys_sanic", 0 ) or 1
+		local sanicmode = isnumber( k_sanic ) and k_sanic or 0
+		local k_Shift = selfTable.PressedKeys["Shift"]
+		local Shift = ( sanicmode == 1 ) and ( k_Shift and 0 or 1 ) or ( k_Shift and 1 or 0 )
+
+		local sportsmode = IsValidDriver and ply:GetInfoNum( "cl_simfphys_sport", 0 ) or 1
+		local k_auto = IsValidDriver and ply:GetInfoNum( "cl_simfphys_auto", 0 ) or 1
 		local transmode = k_auto == 1
-		local Alt = self.PressedKeys["Alt"] and 1 or 0
-		local Space = self.PressedKeys["Space"] and 1 or self.PressedKeys["joystick_handbrake"]
+
+		local Alt = selfTable.PressedKeys["Alt"] and 1 or 0
+		local Space = selfTable.PressedKeys["Space"] and 1 or selfTable.PressedKeys["joystick_handbrake"]
 
 		if cruise then
-			if self.PressedKeys["joystick_gearup"] + self.PressedKeys["joystick_geardown"] + self.PressedKeys["joystick_handbrake"] + self.PressedKeys["joystick_throttle"] + self.PressedKeys["joystick_clutch"] + self.PressedKeys["joystick_brake"] > 0 then
-				self:SetIsCruiseModeOn(false)
+			if ( selfTable.PressedKeys["joystick_gearup"] + selfTable.PressedKeys["joystick_geardown"] + selfTable.PressedKeys["joystick_handbrake"] + selfTable.PressedKeys["joystick_throttle"] + selfTable.PressedKeys["joystick_clutch"] + selfTable.PressedKeys["joystick_brake"] ) > 0 then
+				self:SetIsCruiseModeOn( false )
 			end
 
 			if k_Shift then
-				self.cc_speed = math.Round(self:GetVelocity():Length(), 0) + 70
+				selfTable.cc_speed = math.Round( self:GetVelocity():Length(), 0 ) + 70
 			end
 
 			if Alt == 1 then
-				self.cc_speed = math.Round(self:GetVelocity():Length(), 0) - 25
+				selfTable.cc_speed = math.Round( self:GetVelocity():Length(), 0 ) - 25
 			end
 		end
 
-		self:SimulateTransmission(W, S, Shift, Alt, Space, GearUp, GearDown, transmode, IdleRPM, Powerbandstart, Powerbandend, sportsmode, cruise, curtime)
-		self:SimulateEngine(IdleRPM, LimitRPM, Powerbandstart, Powerbandend, curtime)
-		self:SimulateWheels(math.max(Space, Alt), LimitRPM)
-		self:SimulateAirControls(aW, aS, aA, aD)
+		self:SimulateTransmission( W, S, Shift, Alt, Space, GearUp, GearDown, transmode, IdleRPM, Powerbandstart, Powerbandend, sportsmode, cruise, curtime )
 
-		if self.WheelOnGroundDelay < curtime then
+		self:SimulateEngine( IdleRPM, LimitRPM, Powerbandstart, Powerbandend, curtime )
+		self:SimulateWheels( math.max( Space, Alt ), LimitRPM )
+		self:SimulateAirControls( aW, aS, aA, aD )
+
+		if selfTable.WheelOnGroundDelay < curtime then
 			self:WheelOnGround()
-			self.WheelOnGroundDelay = curtime + 0.15
+			selfTable.WheelOnGroundDelay = curtime + 0.15
 		end
 	end
 
-	if self.CustomWheels then
+	if selfTable.CustomWheels then
 		self:PhysicalSteer()
 	end
 end
@@ -596,7 +603,7 @@ function ENT:SetupControls(ply)
 		end
 	end
 
-	if ply:IsValid() then
+	if ply and ply:IsValid() then
 		self.cl_SteerSettings = {
 			Overwrite = ply:GetInfoNum("cl_simfphys_overwrite", 0) >= 1,
 			TurnSpeed = ply:GetInfoNum("cl_simfphys_steerspeed", 8),

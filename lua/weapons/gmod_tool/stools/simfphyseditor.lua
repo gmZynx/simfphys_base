@@ -120,7 +120,7 @@ function TOOL:Think()
 		if not simfphys.IsCar( ent ) then return end
 
 		if ply.simeditor_nextrequest < CurTime() then
-			net.Start( "simfphys_plyrequestinfo" )
+			net.Start( "simfphys_plyrequestinfo", true )
 				net.WriteEntity( ent )
 			net.SendToServer()
 

@@ -169,9 +169,10 @@ hook.Add("StartCommand", "simfphysmove", function(ply, cmd)
 
 	if lastMouseSteer == SteerVehicle then return end
 	lastMouseSteer = SteerVehicle
-	net.Start("simfphys_mousesteer")
-	net.WriteEntity(vehicle)
-	net.WriteInt(SteerVehicle * 255, 9)
+
+	net.Start( "simfphys_mousesteer", true )
+		net.WriteEntity( vehicle )
+		net.WriteInt( SteerVehicle * 255, 9 )
 	net.SendToServer()
 end)
 
@@ -730,9 +731,9 @@ hook.Add("HUDPaint", "simfphys_HUD", function()
 		if turnmenu_isopen then
 			turnmode = 0
 		else
-			net.Start("simfphys_turnsignal")
-			net.WriteEntity(vehiclebase)
-			net.WriteInt(turnmode, 32)
+			net.Start( "simfphys_turnsignal" )
+				net.WriteEntity( vehiclebase )
+				net.WriteInt( turnmode, 3 )
 			net.SendToServer()
 
 			if turnmode == 1 or turnmode == 2 or turnmode == 3 then
@@ -742,7 +743,7 @@ hook.Add("HUDPaint", "simfphys_HUD", function()
 			end
 		end
 	end
-end)
+end )
 
 local TipColor = Color(0, 127, 255, 255)
 

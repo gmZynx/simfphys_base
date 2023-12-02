@@ -133,18 +133,22 @@ if SERVER then
 		net.Send( ply )
 	end )
 
-	net.Receive( "simfphys_turnsignal", function( length, ply )
+	net.Receive( "simfphys_turnsignal", function( _, ply )
 		if not ply:IsDrivingSimfphys() then return end
 
+		ply.simturnsignal_nextrequest = ply.simturnsignal_nextrequest or 0
+		if ply.simturnsignal_nextrequest > CurTime() then return end
+		ply.simturnsignal_nextrequest = CurTime() + 0.5
+
 		local ent = net.ReadEntity()
-		local mode = net.ReadInt( 32 )
+		local mode = net.ReadInt( 3 )
 
 		if not ent:IsValid() or ply:GetSimfphys() ~= ent then return end
 		ent:SetTSInternal( mode )
 
 		net.Start( "simfphys_turnsignal" )
 			net.WriteEntity( ent )
-			net.WriteInt( mode, 32 )
+			net.WriteInt( mode, 3 )
 		net.Broadcast()
 	end )
 
