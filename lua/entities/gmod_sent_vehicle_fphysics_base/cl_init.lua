@@ -27,9 +27,10 @@ function ENT:Think()
 	if selfTable.RunNext < curtime then
 		self:ManageEffects( Active, Throttle, LimitRPM, selfTable )
 		self:CalcFlasher()
+	end
 
 	if selfTable.RunNext < curtime then
-		self:ManageEffects(Active, Throttle, LimitRPM)
+		self:ManageEffects( Active, Throttle, LimitRPM, selfTable )
 		self:CalcFlasher()
 		selfTable.RunNext = curtime + 0.06
 	end
@@ -248,7 +249,7 @@ function ENT:ManageSounds(Active, fThrottle, LimitRPM)
 
 	if Active ~= selfTable.OldActive then
 		local preset = self:GetEngineSoundPreset()
-		local UseGearResetter = self:SetSoundPreset(preset)
+		local UseGearResetter = self:SetSoundPreset(preset, selfTable)
 		selfTable.SoundMode = UseGearResetter and 2 or 1
 		selfTable.OldActive = Active
 
@@ -469,12 +470,14 @@ function ENT:Draw()
 	self:DrawModel()
 end
 
-function ENT:SetSoundPreset(index)
+local blank = {}
+function ENT:SetSoundPreset(index, selfTable)
 	local vehiclelist = list.Get("simfphys_vehicles")[self:GetSpawn_List()] or false
+	local Members = vehiclelist and vehiclelist.Members or blank
 
 	if vehiclelist then
-		if not self.ExhaustPositions then
-			self.ExhaustPositions = vehiclelist.Members.ExhaustPositions
+		if not selfTable.ExhaustPositions then
+			selfTable.ExhaustPositions = Members.ExhaustPositions
 		end
 	end
 
@@ -484,51 +487,49 @@ function ENT:SetSoundPreset(index)
 			local data = string.Explode(",", soundoverride)
 
 			if soundoverride ~= "" and data[1] == "1" then
-				self.EngineSounds["Idle"] = data[4]
-				self.EngineSounds["LowRPM"] = data[6]
-				self.EngineSounds["HighRPM"] = data[2]
-				self.EngineSounds["RevDown"] = data[8]
-				self.EngineSounds["ShiftUpToHigh"] = data[10]
-				self.EngineSounds["ShiftDownToHigh"] = data[9]
-				self.PitchMulLow = data[7]
-				self.PitchMulHigh = data[3]
-				self.PitchMulAll = data[5]
+				selfTable.EngineSounds["Idle"] = data[4]
+				selfTable.EngineSounds["LowRPM"] = data[6]
+				selfTable.EngineSounds["HighRPM"] = data[2]
+				selfTable.EngineSounds["RevDown"] = data[8]
+				selfTable.EngineSounds["ShiftUpToHigh"] = data[10]
+				selfTable.EngineSounds["ShiftDownToHigh"] = data[9]
+				selfTable.PitchMulLow = data[7]
+				selfTable.PitchMulHigh = data[3]
+				selfTable.PitchMulAll = data[5]
 			else
-				local idle = vehiclelist.Members.snd_idle or ""
-				local low = vehiclelist.Members.snd_low or ""
-				local mid = vehiclelist.Members.snd_mid or ""
-				local revdown = vehiclelist.Members.snd_low_revdown or ""
-				local gearup = vehiclelist.Members.snd_mid_gearup or ""
-				local geardown = vehiclelist.Members.snd_mid_geardown or ""
-				self.EngineSounds["Idle"] = idle ~= "" and idle or false
-				self.EngineSounds["LowRPM"] = low ~= "" and low or false
-				self.EngineSounds["HighRPM"] = mid ~= "" and mid or false
-				self.EngineSounds["RevDown"] = revdown ~= "" and revdown or low
-				self.EngineSounds["ShiftUpToHigh"] = gearup ~= "" and gearup or mid
-				self.EngineSounds["ShiftDownToHigh"] = geardown ~= "" and geardown or gearup
-				self.PitchMulLow = vehiclelist.Members.snd_low_pitch or 1
-				self.PitchMulHigh = vehiclelist.Members.snd_mid_pitch or 1
-				self.PitchMulAll = vehiclelist.Members.snd_pitch or 1
+				local idle = Members.snd_idle or ""
+				local low = Members.snd_low or ""
+				local mid = Members.snd_mid or ""
+				local revdown = Members.snd_low_revdown or ""
+				local gearup = Members.snd_mid_gearup or ""
+				local geardown = Members.snd_mid_geardown or ""
+				selfTable.EngineSounds["Idle"] = idle ~= "" and idle or false
+				selfTable.EngineSounds["LowRPM"] = low ~= "" and low or false
+				selfTable.EngineSounds["HighRPM"] = mid ~= "" and mid or false
+				selfTable.EngineSounds["RevDown"] = revdown ~= "" and revdown or low
+				selfTable.EngineSounds["ShiftUpToHigh"] = gearup ~= "" and gearup or mid
+				selfTable.EngineSounds["ShiftDownToHigh"] = geardown ~= "" and geardown or gearup
+				selfTable.PitchMulLow = Members.snd_low_pitch or 1
+				selfTable.PitchMulHigh = Members.snd_mid_pitch or 1
+				selfTable.PitchMulAll = Members.snd_pitch or 1
 			end
 		else
 			local ded = "common/bugreporter_failed.wav"
-			self.EngineSounds["Idle"] = ded
-			self.EngineSounds["LowRPM"] = ded
-			self.EngineSounds["HighRPM"] = ded
-			self.EngineSounds["RevDown"] = ded
-			self.EngineSounds["ShiftUpToHigh"] = ded
-			self.EngineSounds["ShiftDownToHigh"] = ded
-			self.PitchMulLow = 0
-			self.PitchMulHigh = 0
-			self.PitchMulAll = 0
+			selfTable.EngineSounds["Idle"] = ded
+			selfTable.EngineSounds["LowRPM"] = ded
+			selfTable.EngineSounds["HighRPM"] = ded
+			selfTable.EngineSounds["RevDown"] = ded
+			selfTable.EngineSounds["ShiftUpToHigh"] = ded
+			selfTable.EngineSounds["ShiftDownToHigh"] = ded
+			selfTable.PitchMulLow = 0
+			selfTable.PitchMulHigh = 0
+			selfTable.PitchMulAll = 0
 		end
 
-		if self.EngineSounds["Idle"] ~= false and self.EngineSounds["LowRPM"] ~= false and self.EngineSounds["HighRPM"] ~= false then
-			self:PrecacheSounds()
-
+		if selfTable.EngineSounds["Idle"] ~= false and selfTable.EngineSounds["LowRPM"] ~= false and selfTable.EngineSounds["HighRPM"] ~= false then
 			return true
 		else
-			self:SetSoundPreset(0)
+			self:SetSoundPreset(0, selfTable)
 
 			return false
 		end
@@ -539,77 +540,62 @@ function ENT:SetSoundPreset(index)
 		local data = string.Explode(",", soundoverride)
 
 		if soundoverride ~= "" and data[1] ~= "1" then
-			self.EngineSounds["IdleSound"] = data[1]
-			self.Idle_PitchMul = data[2]
-			self.EngineSounds["LowSound"] = data[3]
-			self.Mid_PitchMul = data[4]
-			self.Mid_VolumeMul = data[5]
-			self.Mid_FadeOutRPMpercent = data[6]
-			self.Mid_FadeOutRate = data[7]
-			self.EngineSounds["HighSound"] = data[8]
-			self.High_PitchMul = data[9]
-			self.High_VolumeMul = data[10]
-			self.High_FadeInRPMpercent = data[11]
-			self.High_FadeInRate = data[12]
-			self.EngineSounds["ThrottleSound"] = data[13]
-			self.Throttle_PitchMul = data[14]
-			self.Throttle_VolumeMul = data[15]
+			selfTable.EngineSounds["IdleSound"] = data[1]
+			selfTable.Idle_PitchMul = data[2]
+			selfTable.EngineSounds["LowSound"] = data[3]
+			selfTable.Mid_PitchMul = data[4]
+			selfTable.Mid_VolumeMul = data[5]
+			selfTable.Mid_FadeOutRPMpercent = data[6]
+			selfTable.Mid_FadeOutRate = data[7]
+			selfTable.EngineSounds["HighSound"] = data[8]
+			selfTable.High_PitchMul = data[9]
+			selfTable.High_VolumeMul = data[10]
+			selfTable.High_FadeInRPMpercent = data[11]
+			selfTable.High_FadeInRate = data[12]
+			selfTable.EngineSounds["ThrottleSound"] = data[13]
+			selfTable.Throttle_PitchMul = data[14]
+			selfTable.Throttle_VolumeMul = data[15]
 		else
-			self.EngineSounds["IdleSound"] = vehiclelist and vehiclelist.Members.Sound_Idle or "simulated_vehicles/misc/e49_idle.wav"
-			self.Idle_PitchMul = vehiclelist and vehiclelist.Members.Sound_IdlePitch or 1
-			self.EngineSounds["LowSound"] = vehiclelist and vehiclelist.Members.Sound_Mid or "simulated_vehicles/misc/gto_onlow.wav"
-			self.Mid_PitchMul = vehiclelist and vehiclelist.Members.Sound_MidPitch or 1
-			self.Mid_VolumeMul = vehiclelist and vehiclelist.Members.Sound_MidVolume or 0.75
-			self.Mid_FadeOutRPMpercent = vehiclelist and vehiclelist.Members.Sound_MidFadeOutRPMpercent or 68
-			self.Mid_FadeOutRate = vehiclelist and vehiclelist.Members.Sound_MidFadeOutRate or 0.4
-			self.EngineSounds["HighSound"] = vehiclelist and vehiclelist.Members.Sound_High or "simulated_vehicles/misc/nv2_onlow_ex.wav"
-			self.High_PitchMul = vehiclelist and vehiclelist.Members.Sound_HighPitch or 1
-			self.High_VolumeMul = vehiclelist and vehiclelist.Members.Sound_HighVolume or 1
-			self.High_FadeInRPMpercent = vehiclelist and vehiclelist.Members.Sound_HighFadeInRPMpercent or 26.6
-			self.High_FadeInRate = vehiclelist and vehiclelist.Members.Sound_HighFadeInRate or 0.266
-			self.EngineSounds["ThrottleSound"] = vehiclelist and vehiclelist.Members.Sound_Throttle or "simulated_vehicles/valve_noise.wav"
-			self.Throttle_PitchMul = vehiclelist and vehiclelist.Members.Sound_ThrottlePitch or 0.65
-			self.Throttle_VolumeMul = vehiclelist and vehiclelist.Members.Sound_ThrottleVolume or 1
+			selfTable.EngineSounds["IdleSound"] = Members.Sound_Idle or "simulated_vehicles/misc/e49_idle.wav"
+			selfTable.Idle_PitchMul = Members.Sound_IdlePitch or 1
+			selfTable.EngineSounds["LowSound"] = Members.Sound_Mid or "simulated_vehicles/misc/gto_onlow.wav"
+			selfTable.Mid_PitchMul = Members.Sound_MidPitch or 1
+			selfTable.Mid_VolumeMul = Members.Sound_MidVolume or 0.75
+			selfTable.Mid_FadeOutRPMpercent = Members.Sound_MidFadeOutRPMpercent or 68
+			selfTable.Mid_FadeOutRate = Members.Sound_MidFadeOutRate or 0.4
+			selfTable.EngineSounds["HighSound"] = Members.Sound_High or "simulated_vehicles/misc/nv2_onlow_ex.wav"
+			selfTable.High_PitchMul = Members.Sound_HighPitch or 1
+			selfTable.High_VolumeMul = Members.Sound_HighVolume or 1
+			selfTable.High_FadeInRPMpercent = Members.Sound_HighFadeInRPMpercent or 26.6
+			selfTable.High_FadeInRate = Members.Sound_HighFadeInRate or 0.266
+			selfTable.EngineSounds["ThrottleSound"] = Members.Sound_Throttle or "simulated_vehicles/valve_noise.wav"
+			selfTable.Throttle_PitchMul = Members.Sound_ThrottlePitch or 0.65
+			selfTable.Throttle_VolumeMul = Members.Sound_ThrottleVolume or 1
 		end
 
-		self.PitchMulLow = 1
-		self.PitchMulHigh = 1
-		self.PitchMulAll = 1
-		self:PrecacheSounds()
+		selfTable.PitchMulLow = 1
+		selfTable.PitchMulHigh = 1
+		selfTable.PitchMulAll = 1
 
 		return false
 	end
 
 	if index > 0 then
 		local clampindex = math.Clamp(index, 1, #simfphys.SoundPresets)
-		self.EngineSounds["Idle"] = simfphys.SoundPresets[clampindex][1]
-		self.EngineSounds["LowRPM"] = simfphys.SoundPresets[clampindex][2]
-		self.EngineSounds["HighRPM"] = simfphys.SoundPresets[clampindex][3]
-		self.EngineSounds["RevDown"] = simfphys.SoundPresets[clampindex][4]
-		self.EngineSounds["ShiftUpToHigh"] = simfphys.SoundPresets[clampindex][5]
-		self.EngineSounds["ShiftDownToHigh"] = simfphys.SoundPresets[clampindex][6]
-		self.PitchMulLow = simfphys.SoundPresets[clampindex][7]
-		self.PitchMulHigh = simfphys.SoundPresets[clampindex][8]
-		self.PitchMulAll = simfphys.SoundPresets[clampindex][9]
-		self:PrecacheSounds()
+		selfTable.EngineSounds["Idle"] = simfphys.SoundPresets[clampindex][1]
+		selfTable.EngineSounds["LowRPM"] = simfphys.SoundPresets[clampindex][2]
+		selfTable.EngineSounds["HighRPM"] = simfphys.SoundPresets[clampindex][3]
+		selfTable.EngineSounds["RevDown"] = simfphys.SoundPresets[clampindex][4]
+		selfTable.EngineSounds["ShiftUpToHigh"] = simfphys.SoundPresets[clampindex][5]
+		selfTable.EngineSounds["ShiftDownToHigh"] = simfphys.SoundPresets[clampindex][6]
+		selfTable.PitchMulLow = simfphys.SoundPresets[clampindex][7]
+		selfTable.PitchMulHigh = simfphys.SoundPresets[clampindex][8]
+		selfTable.PitchMulAll = simfphys.SoundPresets[clampindex][9]
 
 		return true
 	end
 
 	return false
-end
-
-function ENT:PrecacheSounds()
-	for index, sound in pairs(self.EngineSounds) do
-		if not isbool(sound) then
-			if file.Exists("sound/" .. sound, "GAME") then
-				util.PrecacheSound(sound)
-			else
-				print("Warning soundfile \"" .. sound .. "\" not found. Using \"common/null.wav\" instead to prevent fps rape")
-				self.EngineSounds[index] = "common/null.wav"
-			end
-		end
-	end
 end
 
 function ENT:GetVehicleInfo()
