@@ -138,7 +138,7 @@ function ENT:Think()
 			self:ControlLighting(Time)
 			self:ControlHorn()
 
-			if istable(WireLib) then
+			if selfTable.OutputUpdates then
 				self:UpdateWireOutputs()
 			end
 
@@ -178,7 +178,7 @@ function ENT:ControlHorn()
 end
 
 function ENT:createWireIO()
-	self.Inputs = WireLib.CreateInputs(self, {"Eject Driver", "Eject Passengers", "Lock", "Engine Start", "Engine Stop", "Engine Toggle", "Steer", "Throttle", "Gear Up", "Gear Down", "Set Gear", "Clutch", "Handbrake", "Brake/Reverse"})
+	self.Inputs = WireLib.CreateInputs(self, {"Eject Driver", "Eject Passengers", "Lock", "Engine Start", "Engine Stop", "Engine Toggle", "Steer", "Throttle", "Gear Up", "Gear Down", "Set Gear", "Clutch", "Handbrake", "Brake/Reverse", "Output Updates"})
 
 	--self.Inputs = WireLib.CreateSpecialInputs(self, { "blah" }, { "NORMAL" })
 	self.Outputs = WireLib.CreateSpecialOutputs(self, {"Active", "Health", "RPM", "Torque", "DriverSeat", "PassengerSeats", "Driver", "Gear", "Ratio", "Lights Enabled", "Highbeams Enabled", "Foglights Enabled", "Sirens Enabled", "Turn Signals Enabled", "Remaining Fuel"}, {"NORMAL", "NORMAL", "NORMAL", "NORMAL", "ENTITY", "ARRAY", "ENTITY", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL"})
@@ -292,6 +292,10 @@ function ENT:TriggerInput(name, value)
 
 	if name == "Handbrake" then
 		self.PressedKeys["joystick_handbrake"] = value > 0 and 1 or 0
+	end
+
+	if name == "Output Updates" then
+		self.OutputUpdates = value >= 1
 	end
 end
 
