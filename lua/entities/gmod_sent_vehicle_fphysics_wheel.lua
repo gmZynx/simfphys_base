@@ -243,6 +243,7 @@ if SERVER then
 	end
 
 	function ENT:WheelFx()
+		local selfTbl = self:GetTable()
 		local ForwardSpeed = math.abs( self:GetSpeed() )
 		local SkidSound = math.Clamp( self:GetSkidSound(),0,255)
 		local Speed = self:GetVelocity():Length()
@@ -251,167 +252,167 @@ if SERVER then
 		local Material = self:GetSurfaceMaterial()
 		local GripLoss = self:GetGripLoss()
 
-		if EnableDust ~= self.OldVar then
-			self.OldVar = EnableDust
+		if EnableDust ~= selfTbl.OldVar then
+			selfTbl.OldVar = EnableDust
 
-			if self.RainDetected then
+			if selfTbl.RainDetected then
 				if EnableDust then
-					if IsValid( self.WheelSplash ) then
-						self.WheelSplash:Fire( "Start" )
+					if IsValid( selfTbl.WheelSplash ) then
+						selfTbl.WheelSplash:Fire( "Start" )
 					end
 				else
-					if IsValid( self.WheelSplash ) then
-						self.WheelSplash:Fire( "Stop" )
+					if IsValid( selfTbl.WheelSplash ) then
+						selfTbl.WheelSplash:Fire( "Stop" )
 					end
 				end
 			else
-				if IsValid( self.WheelSplash ) then
-					self.WheelSplash:Fire( "Stop" )
+				if IsValid( selfTbl.WheelSplash ) then
+					selfTbl.WheelSplash:Fire( "Stop" )
 				end
 			end
 
 			if EnableDust then
 				if Material == "grass" then
-					if IsValid( self.WheelDust ) then
-						self.WheelDust:Fire( "Start" )
+					if IsValid( selfTbl.WheelDust ) then
+						selfTbl.WheelDust:Fire( "Start" )
 					end
-					self.RollSound_Grass = CreateSound(self, self.snd_roll_grass)
-					self.RollSound_Grass:PlayEx(0,0)
-					self.RollSound_Dirt:Stop()
-					self.RollSound:Stop()
+					selfTbl.RollSound_Grass = CreateSound(self, selfTbl.snd_roll_grass)
+					selfTbl.RollSound_Grass:PlayEx(0,0)
+					selfTbl.RollSound_Dirt:Stop()
+					selfTbl.RollSound:Stop()
 				elseif Material == "dirt" or Material == "sand" then
-					if IsValid( self.WheelDust ) then
-						self.WheelDust:Fire( "Start" )
+					if IsValid( selfTbl.WheelDust ) then
+						selfTbl.WheelDust:Fire( "Start" )
 					end
-					self.RollSound_Dirt = CreateSound(self, self.snd_roll_dirt)
-					self.RollSound_Dirt:PlayEx(0,0)
-					self.RollSound_Grass:Stop()
-					self.RollSound:Stop()
+					selfTbl.RollSound_Dirt = CreateSound(self, selfTbl.snd_roll_dirt)
+					selfTbl.RollSound_Dirt:PlayEx(0,0)
+					selfTbl.RollSound_Grass:Stop()
+					selfTbl.RollSound:Stop()
 				else
-					self.RollSound_Grass:Stop()
-					self.RollSound_Dirt:Stop()
-					self.RollSound = CreateSound(self, self.snd_roll)
-					self.RollSound:PlayEx(0,0)
+					selfTbl.RollSound_Grass:Stop()
+					selfTbl.RollSound_Dirt:Stop()
+					selfTbl.RollSound = CreateSound(self, selfTbl.snd_roll)
+					selfTbl.RollSound:PlayEx(0,0)
 				end
 			else
-				if IsValid( self.WheelDust )then
-					self.WheelDust:Fire( "Stop" )
+				if IsValid( selfTbl.WheelDust )then
+					selfTbl.WheelDust:Fire( "Stop" )
 				end
-				self.RollSound:Stop()
-				self.RollSound_Grass:Stop()
-				self.RollSound_Dirt:Stop()
+				selfTbl.RollSound:Stop()
+				selfTbl.RollSound_Grass:Stop()
+				selfTbl.RollSound_Dirt:Stop()
 			end
 		end
 
 		if EnableDust then
-			if Material ~= self.OldMaterial then
+			if Material ~= selfTbl.OldMaterial then
 				if Material == "grass" then
-					if IsValid(self.WheelDust) then
-						self.WheelDust:Fire( "Start" )
+					if IsValid(selfTbl.WheelDust) then
+						selfTbl.WheelDust:Fire( "Start" )
 					end
-					self.RollSound_Grass = CreateSound(self, self.snd_roll_grass)
-					self.RollSound_Grass:PlayEx(0,0)
-					self.RollSound_Dirt:Stop()
-					self.RollSound:Stop()
+					selfTbl.RollSound_Grass = CreateSound(self, selfTbl.snd_roll_grass)
+					selfTbl.RollSound_Grass:PlayEx(0,0)
+					selfTbl.RollSound_Dirt:Stop()
+					selfTbl.RollSound:Stop()
 
 				elseif Material == "dirt" or Material == "sand" then
-					if IsValid(self.WheelDust) then
-						self.WheelDust:Fire( "Start" )
+					if IsValid(selfTbl.WheelDust) then
+						selfTbl.WheelDust:Fire( "Start" )
 					end
-					self.RollSound_Grass:Stop()
-					self.RollSound_Dirt = CreateSound(self, self.snd_roll_dirt)
-					self.RollSound_Dirt:PlayEx(0,0)
-					self.RollSound:Stop()
+					selfTbl.RollSound_Grass:Stop()
+					selfTbl.RollSound_Dirt = CreateSound(self, selfTbl.snd_roll_dirt)
+					selfTbl.RollSound_Dirt:PlayEx(0,0)
+					selfTbl.RollSound:Stop()
 				else
-					if IsValid(self.WheelDust) then
-						self.WheelDust:Fire( "Stop" )
+					if IsValid(selfTbl.WheelDust) then
+						selfTbl.WheelDust:Fire( "Stop" )
 					end
-					self.RollSound_Grass:Stop()
-					self.RollSound_Dirt:Stop()
-					self.RollSound = CreateSound(self, self.snd_roll)
-					self.RollSound:PlayEx(0,0)
+					selfTbl.RollSound_Grass:Stop()
+					selfTbl.RollSound_Dirt:Stop()
+					selfTbl.RollSound = CreateSound(self, selfTbl.snd_roll)
+					selfTbl.RollSound:PlayEx(0,0)
 				end
-				self.OldMaterial = Material
+				selfTbl.OldMaterial = Material
 			end
 
 			if Material == "grass" then
-				self.RollSound_Grass:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1600,0,1), 0)
-				self.RollSound_Grass:ChangePitch(80 + math.Clamp((ForwardSpeed - 100) / 250,0,255), 0)
+				selfTbl.RollSound_Grass:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1600,0,1), 0)
+				selfTbl.RollSound_Grass:ChangePitch(80 + math.Clamp((ForwardSpeed - 100) / 250,0,255), 0)
 			elseif Material == "dirt" or Material == "sand" then
-				self.RollSound_Dirt:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1600,0,1), 0)
-				self.RollSound_Dirt:ChangePitch(80 + math.Clamp((ForwardSpeed - 100) / 250,0,255), 0)
+				selfTbl.RollSound_Dirt:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1600,0,1), 0)
+				selfTbl.RollSound_Dirt:ChangePitch(80 + math.Clamp((ForwardSpeed - 100) / 250,0,255), 0)
 			else
-				self.RollSound:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1500,0,1), 0)
-				self.RollSound:ChangePitch(100 + math.Clamp((ForwardSpeed - 400) / 200,0,255), 0)
+				selfTbl.RollSound:ChangeVolume(math.Clamp((ForwardSpeed - 100) / 1500,0,1), 0)
+				selfTbl.RollSound:ChangePitch(100 + math.Clamp((ForwardSpeed - 400) / 200,0,255), 0)
 			end
 		end
 
 
-		if WheelOnGround ~= self.OldVar2 then
-			self.OldVar2 = WheelOnGround
+		if WheelOnGround ~= selfTbl.OldVar2 then
+			selfTbl.OldVar2 = WheelOnGround
 			if WheelOnGround == 1 then
 				if Material == "grass" or Material == "snow" then
-					self.Skid:Stop()
-					self.Skid_Grass = CreateSound(self, self.snd_skid_grass)
-					self.Skid_Grass:PlayEx(0,0)
-					self.Skid_Dirt:Stop()
+					selfTbl.Skid:Stop()
+					selfTbl.Skid_Grass = CreateSound(self, selfTbl.snd_skid_grass)
+					selfTbl.Skid_Grass:PlayEx(0,0)
+					selfTbl.Skid_Dirt:Stop()
 				elseif Material == "dirt" or Material == "sand" then
-					self.Skid_Grass:Stop()
-					self.Skid_Dirt = CreateSound(self, self.snd_skid_dirt)
-					self.Skid_Dirt:PlayEx(0,0)
-					self.Skid:Stop()
+					selfTbl.Skid_Grass:Stop()
+					selfTbl.Skid_Dirt = CreateSound(self, selfTbl.snd_skid_dirt)
+					selfTbl.Skid_Dirt:PlayEx(0,0)
+					selfTbl.Skid:Stop()
 				elseif Material == "ice" then
-					self.Skid_Grass:Stop()
-					self.Skid_Dirt:Stop()
-					self.Skid:Stop()
+					selfTbl.Skid_Grass:Stop()
+					selfTbl.Skid_Dirt:Stop()
+					selfTbl.Skid:Stop()
 				else
-					self.Skid = CreateSound(self, self.snd_skid)
-					self.Skid:PlayEx(0,0)
-					self.Skid_Grass:Stop()
-					self.Skid_Dirt:Stop()
+					selfTbl.Skid = CreateSound(self, selfTbl.snd_skid)
+					selfTbl.Skid:PlayEx(0,0)
+					selfTbl.Skid_Grass:Stop()
+					selfTbl.Skid_Dirt:Stop()
 				end
 			else
-				self.Skid:Stop()
-				self.Skid_Grass:Stop()
-				self.Skid_Dirt:Stop()
+				selfTbl.Skid:Stop()
+				selfTbl.Skid_Grass:Stop()
+				selfTbl.Skid_Dirt:Stop()
 			end
 		end
 
 		if WheelOnGround == 1 then
-			if Material ~= self.OldMaterial2 then
+			if Material ~= selfTbl.OldMaterial2 then
 				if Material == "grass" or Material == "snow" then
-					self.Skid:Stop()
-					self.Skid_Grass = CreateSound(self, self.snd_skid_grass)
-					self.Skid_Grass:PlayEx(0,0)
-					self.Skid_Dirt:Stop()
+					selfTbl.Skid:Stop()
+					selfTbl.Skid_Grass = CreateSound(self, selfTbl.snd_skid_grass)
+					selfTbl.Skid_Grass:PlayEx(0,0)
+					selfTbl.Skid_Dirt:Stop()
 
 				elseif Material == "dirt" or Material == "sand" then
-					self.Skid:Stop()
-					self.Skid_Grass:Stop()
-					self.Skid_Dirt = CreateSound(self, self.snd_skid_dirt)
-					self.Skid_Dirt:PlayEx(0,0)
+					selfTbl.Skid:Stop()
+					selfTbl.Skid_Grass:Stop()
+					selfTbl.Skid_Dirt = CreateSound(self, selfTbl.snd_skid_dirt)
+					selfTbl.Skid_Dirt:PlayEx(0,0)
 				elseif Material == "ice" then
-					self.Skid_Grass:Stop()
-					self.Skid_Dirt:Stop()
-					self.Skid:Stop()
+					selfTbl.Skid_Grass:Stop()
+					selfTbl.Skid_Dirt:Stop()
+					selfTbl.Skid:Stop()
 				else
-					self.Skid = CreateSound(self, self.snd_skid)
-					self.Skid:PlayEx(0,0)
-					self.Skid_Grass:Stop()
-					self.Skid_Dirt:Stop()
+					selfTbl.Skid = CreateSound(self, selfTbl.snd_skid)
+					selfTbl.Skid:PlayEx(0,0)
+					selfTbl.Skid_Grass:Stop()
+					selfTbl.Skid_Dirt:Stop()
 				end
-				self.OldMaterial2 = Material
+				selfTbl.OldMaterial2 = Material
 			end
 
 			if Material == "grass" or Material == "snow" then
-				self.Skid_Grass:ChangeVolume( math.Clamp(SkidSound,0,1) )
-				self.Skid_Grass:ChangePitch(math.min(90 + (SkidSound * Speed / 500),150))
+				selfTbl.Skid_Grass:ChangeVolume( math.Clamp(SkidSound,0,1) )
+				selfTbl.Skid_Grass:ChangePitch(math.min(90 + (SkidSound * Speed / 500),150))
 			elseif Material == "dirt" or Material == "sand" then
-				self.Skid_Dirt:ChangeVolume( math.Clamp(SkidSound,0,1) * 0.8)
-				self.Skid_Dirt:ChangePitch(math.min(120 + (SkidSound * Speed / 500),150))
+				selfTbl.Skid_Dirt:ChangeVolume( math.Clamp(SkidSound,0,1) * 0.8)
+				selfTbl.Skid_Dirt:ChangePitch(math.min(120 + (SkidSound * Speed / 500),150))
 			else
-				self.Skid:ChangeVolume( math.Clamp(SkidSound * 0.5,0,1) )
-				self.Skid:ChangePitch(math.min(85 + (SkidSound * Speed / 800) + GripLoss * 22,150))
+				selfTbl.Skid:ChangeVolume( math.Clamp(SkidSound * 0.5,0,1) )
+				selfTbl.Skid:ChangePitch(math.min(85 + (SkidSound * Speed / 800) + GripLoss * 22,150))
 			end
 		end
 	end

@@ -157,17 +157,18 @@ function ENT:Think()
 end
 
 function ENT:ControlHorn()
-	local HornVol = self.HornKeyIsDown and 1 or 0
-	self.HornVolume = self.HornVolume and self.HornVolume + math.Clamp(HornVol - self.HornVolume,-0.45,0.8) or 0
+	local selfTbl = self:GetTable()
+	local HornVol = selfTbl.HornKeyIsDown and 1 or 0
+	selfTbl.HornVolume = selfTbl.HornVolume and selfTbl.HornVolume + math.Clamp(HornVol - selfTbl.HornVolume,-0.45,0.8) or 0
 
-	if self.horn then
-		if self.HornVolume <= 0 then
-			if self.horn then
-				self.horn:Stop()
-				self.horn = nil
+	if selfTbl.horn then
+		if selfTbl.HornVolume <= 0 then
+			if selfTbl.horn then
+				selfTbl.horn:Stop()
+				selfTbl.horn = nil
 			end
 		else
-			self.horn:ChangeVolume( self.HornVolume ^ 2 )
+			selfTbl.horn:ChangeVolume( selfTbl.HornVolume ^ 2 )
 		end
 	end
 end
@@ -722,27 +723,27 @@ function ENT:PlayAnimation( animation )
 end
 
 function ENT:PhysicalSteer()
-
-	if IsValid(self.SteerMaster) then
-		local physobj = self.SteerMaster:GetPhysicsObject()
+	local selfTbl = self:GetTable()
+	if IsValid(selfTbl.SteerMaster) then
+		local physobj = selfTbl.SteerMaster:GetPhysicsObject()
 		if not IsValid(physobj) then return end
 
 		if physobj:IsMotionEnabled() then
 			physobj:EnableMotion(false)
 		end
 
-		self.SteerMaster:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(-self.VehicleData[ "Steer" ],-self.CustomSteerAngle,self.CustomSteerAngle),0) ) )
+		selfTbl.SteerMaster:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(-selfTbl.VehicleData[ "Steer" ],-selfTbl.CustomSteerAngle,selfTbl.CustomSteerAngle),0) ) )
 	end
 
-	if IsValid(self.SteerMaster2) then
-		local physobj = self.SteerMaster2:GetPhysicsObject()
+	if IsValid(selfTbl.SteerMaster2) then
+		local physobj = selfTbl.SteerMaster2:GetPhysicsObject()
 		if not IsValid(physobj) then return end
 
 		if physobj:IsMotionEnabled() then
 			physobj:EnableMotion(false)
 		end
 
-		self.SteerMaster2:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(self.VehicleData[ "Steer" ],-self.CustomSteerAngle,self.CustomSteerAngle),0) ) )
+		selfTbl.SteerMaster2:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(selfTbl.VehicleData[ "Steer" ],-selfTbl.CustomSteerAngle,selfTbl.CustomSteerAngle),0) ) )
 	end
 end
 
