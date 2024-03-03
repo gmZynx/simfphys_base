@@ -314,36 +314,37 @@ function ENT:LogicWheelPos( index )
 end
 
 function ENT:SimulateWheels(k_clutch,LimitRPM)
+	local selfTbl = self:GetTable()
 	local Steer = self:GetTransformedDirection()
 	local MaxGrip = self:GetMaxTraction()
 	local Efficiency = self:GetEfficiency()
 	local GripOffset = self:GetTractionBias() * MaxGrip
 
-	for i = 1, table.Count( self.Wheels ) do
-		local Wheel = self.Wheels[i]
+	for i = 1, table.Count( selfTbl.Wheels ) do
+		local Wheel = selfTbl.Wheels[i]
 
 		if IsValid( Wheel ) then
 			local WheelPos = self:LogicWheelPos( i )
-			local WheelRadius = WheelPos.IsFrontWheel and self.FrontWheelRadius or self.RearWheelRadius
+			local WheelRadius = WheelPos.IsFrontWheel and selfTbl.FrontWheelRadius or selfTbl.RearWheelRadius
 			local WheelDiameter = WheelRadius * 2
-			local SurfaceMultiplicator = self.VehicleData[ "SurfaceMul_" .. i ]
+			local SurfaceMultiplicator = selfTbl.VehicleData[ "SurfaceMul_" .. i ]
 			local MaxTraction = (WheelPos.IsFrontWheel and (MaxGrip + GripOffset) or  (MaxGrip - GripOffset)) * SurfaceMultiplicator
 
-			local IsPoweredWheel = (WheelPos.IsFrontWheel and self.FrontWheelPowered or not WheelPos.IsFrontWheel and self.RearWheelPowered) and 1 or 0
+			local IsPoweredWheel = (WheelPos.IsFrontWheel and selfTbl.FrontWheelPowered or not WheelPos.IsFrontWheel and selfTbl.RearWheelPowered) and 1 or 0
 
 			local Velocity = Wheel:GetVelocity()
 			local VelForward = Velocity:GetNormalized()
-			local OnGround = self.VehicleData[ "onGround_" .. i ]
+			local OnGround = selfTbl.VehicleData[ "onGround_" .. i ]
 
-			local Forward = WheelPos.IsFrontWheel and Steer.Forward or self.Forward
-			local Right = WheelPos.IsFrontWheel and Steer.Right or self.Right
+			local Forward = WheelPos.IsFrontWheel and Steer.Forward or selfTbl.Forward
+			local Right = WheelPos.IsFrontWheel and Steer.Right or selfTbl.Right
 
-			if self.CustomWheels then
+			if selfTbl.CustomWheels then
 				if WheelPos.IsFrontWheel then
-					Forward = IsValid(self.SteerMaster) and Steer.Forward or self.Forward
-					Right = IsValid(self.SteerMaster) and Steer.Right or self.Right
+					Forward = IsValid(selfTbl.SteerMaster) and Steer.Forward or selfTbl.Forward
+					Right = IsValid(selfTbl.SteerMaster) and Steer.Right or selfTbl.Right
 				else
-					if IsValid( self.SteerMaster2 ) then
+					if IsValid( selfTbl.SteerMaster2 ) then
 						Forward = Steer.Forward2
 						Right = Steer.Right2
 					end
@@ -360,10 +361,10 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 			local absFx = math.abs(Fx)
 
 			local PowerBiasMul = WheelPos.IsFrontWheel and (1 - self:GetPowerDistribution()) * 0.5 or (1 + self:GetPowerDistribution()) * 0.5
-			local BrakeForce = math.Clamp(-Fx,-self.Brake,self.Brake) * SurfaceMultiplicator
+			local BrakeForce = math.Clamp(-Fx,-selfTbl.Brake,selfTbl.Brake) * SurfaceMultiplicator
 
-			local TorqueConv = self.EngineTorque * PowerBiasMul * IsPoweredWheel
-			local ForwardForce = TorqueConv + (not WheelPos.IsFrontWheel and math.Clamp(-Fx,-self.HandBrake,self.HandBrake) or 0) + BrakeForce * 0.5
+			local TorqueConv = selfTbl.EngineTorque * PowerBiasMul * IsPoweredWheel
+			local ForwardForce = TorqueConv + (not WheelPos.IsFrontWheel and math.Clamp(-Fx,-selfTbl.HandBrake,selfTbl.HandBrake) or 0) + BrakeForce * 0.5
 
 			local TractionCycle = Vector(math.min(absFy,MaxTraction),ForwardForce,0):Length()
 
@@ -372,14 +373,14 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 			--local GripRemaining = math.max(MaxTraction - GripLoss,math.min(absFy / 25,MaxTraction / 2))
 
 			local signForwardForce = ((ForwardForce > 0) and 1 or 0) + ((ForwardForce < 0) and -1 or 0)
-			local signEngineTorque = ((self.EngineTorque > 0) and 1 or 0) + ((self.EngineTorque < 0) and -1 or 0)
+			local signEngineTorque = ((selfTbl.EngineTorque > 0) and 1 or 0) + ((selfTbl.EngineTorque < 0) and -1 or 0)
 
 			local Power = ForwardForce * Efficiency - GripLoss * signForwardForce + math.Clamp(BrakeForce * 0.5,-MaxTraction,MaxTraction)
 
 			local Force = -Right * math.Clamp(Fy,-GripRemaining,GripRemaining) + Forward * Power
 
 			local wRad = Wheel:GetDamaged() and Wheel.dRadius or WheelRadius
-			local TurnWheel = ((Fx + GripLoss * 35 * signEngineTorque * IsPoweredWheel) / wRad * 1.85) + self.EngineRPM / 80 * (1 - OnGround) * IsPoweredWheel * (1 - k_clutch)
+			local TurnWheel = ((Fx + GripLoss * 35 * signEngineTorque * IsPoweredWheel) / wRad * 1.85) + selfTbl.EngineRPM / 80 * (1 - OnGround) * IsPoweredWheel * (1 - k_clutch)
 
 			Wheel.FX = Fx
 			Wheel.skid = ((MaxTraction - (MaxTraction - Vector(absFy,math.abs(ForwardForce * 10),0):Length())) / MaxTraction) - 10
@@ -387,30 +388,30 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 			local RPM = (absFx / (3.14 * WheelDiameter)) * 52 * OnGround
 			local GripLossFaktor = math.Clamp(GripLoss,0,MaxTraction) / MaxTraction
 
-			self.VehicleData[ "WheelRPM_".. i ] = RPM
-			self.VehicleData[ "GripLossFaktor_".. i ] = GripLossFaktor
-			self.VehicleData[ "Exp_GLF_".. i ] = GripLossFaktor ^ 2
+			selfTbl.VehicleData[ "WheelRPM_".. i ] = RPM
+			selfTbl.VehicleData[ "GripLossFaktor_".. i ] = GripLossFaktor
+			selfTbl.VehicleData[ "Exp_GLF_".. i ] = GripLossFaktor ^ 2
 			Wheel:SetGripLoss( GripLossFaktor )
 
-			local WheelOPow = math.abs( self.CurrentGear == 1 and math.min( TorqueConv, 0 ) or math.max( TorqueConv, 0 ) ) > 0
-			local FrontWheelCanTurn = (WheelOPow and 0 or self.Brake) < MaxTraction * 1.75
-			local RearWheelCanTurn = (self.HandBrake < MaxTraction) and (WheelOPow and 0 or self.Brake) < MaxTraction * 2
+			local WheelOPow = math.abs( selfTbl.CurrentGear == 1 and math.min( TorqueConv, 0 ) or math.max( TorqueConv, 0 ) ) > 0
+			local FrontWheelCanTurn = (WheelOPow and 0 or selfTbl.Brake) < MaxTraction * 1.75
+			local RearWheelCanTurn = (selfTbl.HandBrake < MaxTraction) and (WheelOPow and 0 or selfTbl.Brake) < MaxTraction * 2
 
 			if WheelPos.IsFrontWheel then
 				if FrontWheelCanTurn then
-					self.VehicleData[ "spin_" .. i ] = self.VehicleData[ "spin_" .. i ] + TurnWheel
+					selfTbl.VehicleData[ "spin_" .. i ] = selfTbl.VehicleData[ "spin_" .. i ] + TurnWheel
 				end
 			else
 				if RearWheelCanTurn then
-					self.VehicleData[ "spin_" .. i ] = self.VehicleData[ "spin_" .. i ] + TurnWheel
+					selfTbl.VehicleData[ "spin_" .. i ] = selfTbl.VehicleData[ "spin_" .. i ] + TurnWheel
 				end
 			end
 
-			if self.CustomWheels then
-				local GhostEnt = self.GhostWheels[i]
+			if selfTbl.CustomWheels then
+				local GhostEnt = selfTbl.GhostWheels[i]
 				if IsValid( GhostEnt ) then
 					local Angle = GhostEnt:GetAngles()
-					local offsetang = WheelPos.IsFrontWheel and self.CustomWheelAngleOffset or (self.CustomWheelAngleOffset_R or self.CustomWheelAngleOffset)
+					local offsetang = WheelPos.IsFrontWheel and selfTbl.CustomWheelAngleOffset or (selfTbl.CustomWheelAngleOffset_R or selfTbl.CustomWheelAngleOffset)
 					local Direction = GhostEnt:LocalToWorldAngles( offsetang ):Forward()
 					local TFront = FrontWheelCanTurn and TurnWheel or 0
 					local TBack = RearWheelCanTurn and TurnWheel or 0
@@ -418,13 +419,13 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 					local AngleStep = WheelPos.IsFrontWheel and TFront or TBack
 					Angle:RotateAroundAxis(Direction, WheelPos.IsRightWheel and AngleStep or -AngleStep)
 
-					self.GhostWheels[i]:SetAngles( Angle )
+					selfTbl.GhostWheels[i]:SetAngles( Angle )
 				end
 			else
-				self:SetPoseParameter(self.VehicleData[ "pp_spin_" .. i ],self.VehicleData[ "spin_" .. i ])
+				self:SetPoseParameter(selfTbl.VehicleData[ "pp_spin_" .. i ],selfTbl.VehicleData[ "spin_" .. i ])
 			end
 
-			if not self.PhysicsEnabled then
+			if not selfTbl.PhysicsEnabled then
 				local phys = Wheel:GetPhysicsObject()
 				if IsValid( phys ) then
 					phys:ApplyForceCenter( Force * 185 * OnGround )
@@ -433,27 +434,27 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 		end
 	end
 
-	local target_diff = math.max(LimitRPM * 0.95 - self.EngineRPM,0)
+	local target_diff = math.max(LimitRPM * 0.95 - selfTbl.EngineRPM,0)
 
-	if self.FrontWheelPowered and self.RearWheelPowered then
-		self.WheelRPM = math.max(self.VehicleData[ "WheelRPM_1" ] or 0,self.VehicleData[ "WheelRPM_2" ] or 0,self.VehicleData[ "WheelRPM_3" ] or 0,self.VehicleData[ "WheelRPM_4" ] or 0)
-		self.RPM_DIFFERENCE = target_diff * math.max(self.VehicleData[ "GripLossFaktor_1" ] or 0,self.VehicleData[ "GripLossFaktor_2" ] or 0,self.VehicleData[ "GripLossFaktor_3" ] or 0,self.VehicleData[ "GripLossFaktor_4" ] or 0)
-		self.exprpmdiff = target_diff * math.max(self.VehicleData[ "Exp_GLF_1" ] or 0,self.VehicleData[ "Exp_GLF_2" ] or 0,self.VehicleData[ "Exp_GLF_3" ] or 0,self.VehicleData[ "Exp_GLF_4" ] or 0)
+	if selfTbl.FrontWheelPowered and selfTbl.RearWheelPowered then
+		selfTbl.WheelRPM = math.max(selfTbl.VehicleData[ "WheelRPM_1" ] or 0,selfTbl.VehicleData[ "WheelRPM_2" ] or 0,selfTbl.VehicleData[ "WheelRPM_3" ] or 0,selfTbl.VehicleData[ "WheelRPM_4" ] or 0)
+		selfTbl.RPM_DIFFERENCE = target_diff * math.max(selfTbl.VehicleData[ "GripLossFaktor_1" ] or 0,selfTbl.VehicleData[ "GripLossFaktor_2" ] or 0,selfTbl.VehicleData[ "GripLossFaktor_3" ] or 0,selfTbl.VehicleData[ "GripLossFaktor_4" ] or 0)
+		selfTbl.exprpmdiff = target_diff * math.max(selfTbl.VehicleData[ "Exp_GLF_1" ] or 0,selfTbl.VehicleData[ "Exp_GLF_2" ] or 0,selfTbl.VehicleData[ "Exp_GLF_3" ] or 0,selfTbl.VehicleData[ "Exp_GLF_4" ] or 0)
 
-	elseif not self.FrontWheelPowered and self.RearWheelPowered then
-		self.WheelRPM = math.max(self.VehicleData[ "WheelRPM_3" ] or 0,self.VehicleData[ "WheelRPM_4" ] or 0)
-		self.RPM_DIFFERENCE = target_diff * math.max(self.VehicleData[ "GripLossFaktor_3" ] or 0,self.VehicleData[ "GripLossFaktor_4" ] or 0)
-		self.exprpmdiff = target_diff * math.max(self.VehicleData[ "Exp_GLF_3" ] or 0,self.VehicleData[ "Exp_GLF_4" ] or 0)
+	elseif not selfTbl.FrontWheelPowered and selfTbl.RearWheelPowered then
+		selfTbl.WheelRPM = math.max(selfTbl.VehicleData[ "WheelRPM_3" ] or 0,selfTbl.VehicleData[ "WheelRPM_4" ] or 0)
+		selfTbl.RPM_DIFFERENCE = target_diff * math.max(selfTbl.VehicleData[ "GripLossFaktor_3" ] or 0,selfTbl.VehicleData[ "GripLossFaktor_4" ] or 0)
+		selfTbl.exprpmdiff = target_diff * math.max(selfTbl.VehicleData[ "Exp_GLF_3" ] or 0,selfTbl.VehicleData[ "Exp_GLF_4" ] or 0)
 
-	elseif self.FrontWheelPowered and not self.RearWheelPowered then
-		self.WheelRPM = math.max(self.VehicleData[ "WheelRPM_1" ] or 0,self.VehicleData[ "WheelRPM_2" ] or 0)
-		self.RPM_DIFFERENCE = target_diff * math.max(self.VehicleData[ "GripLossFaktor_1" ] or 0,self.VehicleData[ "GripLossFaktor_2" ] or 0)
-		self.exprpmdiff = target_diff * math.max(self.VehicleData[ "Exp_GLF_1" ] or 0,self.VehicleData[ "Exp_GLF_2" ] or 0)
+	elseif selfTbl.FrontWheelPowered and not selfTbl.RearWheelPowered then
+		selfTbl.WheelRPM = math.max(selfTbl.VehicleData[ "WheelRPM_1" ] or 0,selfTbl.VehicleData[ "WheelRPM_2" ] or 0)
+		selfTbl.RPM_DIFFERENCE = target_diff * math.max(selfTbl.VehicleData[ "GripLossFaktor_1" ] or 0,selfTbl.VehicleData[ "GripLossFaktor_2" ] or 0)
+		selfTbl.exprpmdiff = target_diff * math.max(selfTbl.VehicleData[ "Exp_GLF_1" ] or 0,selfTbl.VehicleData[ "Exp_GLF_2" ] or 0)
 
 	else
-		self.WheelRPM = 0
-		self.RPM_DIFFERENCE = 0
-		self.exprpmdiff = 0
+		selfTbl.WheelRPM = 0
+		selfTbl.RPM_DIFFERENCE = 0
+		selfTbl.exprpmdiff = 0
 	end
 end
 
