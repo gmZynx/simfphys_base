@@ -60,33 +60,33 @@ function ENT:SimulateAirControls(tilt_forward,tilt_back,tilt_left,tilt_right)
 end
 
 function ENT:SimulateEngine(IdleRPM,LimitRPM,Powerbandstart,Powerbandend,c_time)
+	local selfTbl = self:GetTable()
 	local PObj = self:GetPhysicsObject()
 
 	local IsRunning = self:EngineActive()
 	local Throttle = self:GetThrottle()
 
-	local selftable = self:GetTable()
 	if not self:IsDriveWheelsOnGround() then
-		selftable.Clutch = 1
+		selfTbl.Clutch = 1
 	end
 
-	if selftable.Gears[selftable.CurrentGear] == 0 then
-		selftable.GearRatio = 1
-		selftable.Clutch = 1
-		selftable.HandBrake = selftable.HandBrake + (selftable.HandBrakePower - selftable.HandBrake) * 0.2
+	if selfTbl.Gears[selfTbl.CurrentGear] == 0 then
+		selfTbl.GearRatio = 1
+		selfTbl.Clutch = 1
+		selfTbl.HandBrake = selfTbl.HandBrake + (selfTbl.HandBrakePower - selfTbl.HandBrake) * 0.2
 	else
-		selftable.GearRatio = selftable.Gears[selftable.CurrentGear] * self:GetDiffGear()
+		selfTbl.GearRatio = selfTbl.Gears[selfTbl.CurrentGear] * self:GetDiffGear()
 	end
 
-	self:SetClutch( selftable.Clutch )
-	local InvClutch = 1 - selftable.Clutch
+	self:SetClutch( selfTbl.Clutch )
+	local InvClutch = 1 - selfTbl.Clutch
 
-	local GearedRPM = selftable.WheelRPM / math.abs(selftable.GearRatio)
+	local GearedRPM = selfTbl.WheelRPM / math.abs(selfTbl.GearRatio)
 
 	local MaxTorque = self:GetMaxTorque()
 
 	local DesRPM = Lerp(InvClutch, math.max(IdleRPM + (LimitRPM - IdleRPM) * Throttle,0), GearedRPM )
-	local Drag = (MaxTorque * (math.max( selftable.EngineRPM - IdleRPM, 0) / Powerbandend) * ( 1 - Throttle) / 0.15) * InvClutch
+	local Drag = (MaxTorque * (math.max( selfTbl.EngineRPM - IdleRPM, 0) / Powerbandend) * ( 1 - Throttle) / 0.15) * InvClutch
 
 	local TurboCharged = self:GetTurboCharged()
 	local SuperCharged = self:GetSuperCharged()
@@ -96,43 +96,43 @@ function ENT:SimulateEngine(IdleRPM,LimitRPM,Powerbandstart,Powerbandend,c_time)
 		MaxTorque = MaxTorque * (self:GetCurHealth() / (self:GetMaxHealth() * 0.3))
 	end
 
-	selftable.EngineRPM = math.Clamp(selftable.EngineRPM + math.Clamp(DesRPM - selftable.EngineRPM,-math.max(selftable.EngineRPM / 15, 1 ),math.max(-selftable.RpmDiff / 1.5 * InvClutch + (selftable.Torque * 5) / 0.15 * selftable.Clutch, 1)) + selftable.RPM_DIFFERENCE * Throttle,0,LimitRPM) * selftable.EngineIsOn
-	selftable.Torque = (Throttle + boost) * math.max(MaxTorque * math.min(selftable.EngineRPM / Powerbandstart, (LimitRPM - selftable.EngineRPM) / (LimitRPM - Powerbandend),1), 0)
-	self:SetFlyWheelRPM( math.min(selftable.EngineRPM + selftable.exprpmdiff * 2 * InvClutch,LimitRPM) )
+	selfTbl.EngineRPM = math.Clamp(selfTbl.EngineRPM + math.Clamp(DesRPM - selfTbl.EngineRPM,-math.max(selfTbl.EngineRPM / 15, 1 ),math.max(-selfTbl.RpmDiff / 1.5 * InvClutch + (selfTbl.Torque * 5) / 0.15 * selfTbl.Clutch, 1)) + selfTbl.RPM_DIFFERENCE * Throttle,0,LimitRPM) * selfTbl.EngineIsOn
+	selfTbl.Torque = (Throttle + boost) * math.max(MaxTorque * math.min(selfTbl.EngineRPM / Powerbandstart, (LimitRPM - selfTbl.EngineRPM) / (LimitRPM - Powerbandend),1), 0)
+	self:SetFlyWheelRPM( math.min(selfTbl.EngineRPM + selfTbl.exprpmdiff * 2 * InvClutch,LimitRPM) )
 
-	selftable.RpmDiff = selftable.EngineRPM - GearedRPM
+	selfTbl.RpmDiff = selfTbl.EngineRPM - GearedRPM
 
-	local signGearRatio = ((selftable.GearRatio > 0) and 1 or 0) + ((selftable.GearRatio < 0) and -1 or 0)
+	local signGearRatio = ((selfTbl.GearRatio > 0) and 1 or 0) + ((selfTbl.GearRatio < 0) and -1 or 0)
 	local signThrottle = (Throttle > 0) and 1 or 0
-	local signSpeed = ((selftable.ForwardSpeed > 0) and 1 or 0) + ((selftable.ForwardSpeed < 0) and -1 or 0)
+	local signSpeed = ((selfTbl.ForwardSpeed > 0) and 1 or 0) + ((selfTbl.ForwardSpeed < 0) and -1 or 0)
 
-	local TorqueDiff = (selftable.RpmDiff / LimitRPM) * 0.15 * selftable.Torque
-	local EngineBrake = (signThrottle == 0) and math.min( selftable.EngineRPM * (selftable.EngineRPM / LimitRPM) ^ 2 / 60 * signSpeed, 100 ) or 0
+	local TorqueDiff = (selfTbl.RpmDiff / LimitRPM) * 0.15 * selfTbl.Torque
+	local EngineBrake = (signThrottle == 0) and math.min( selfTbl.EngineRPM * (selfTbl.EngineRPM / LimitRPM) ^ 2 / 60 * signSpeed, 100 ) or 0
 
-	local GearedPower = ((selftable.ThrottleDelay <= c_time and (selftable.Torque + TorqueDiff) * signThrottle * signGearRatio or 0) - EngineBrake) / math.abs(selftable.GearRatio) / 50
+	local GearedPower = ((selfTbl.ThrottleDelay <= c_time and (selfTbl.Torque + TorqueDiff) * signThrottle * signGearRatio or 0) - EngineBrake) / math.abs(selfTbl.GearRatio) / 50
 
-	selftable.EngineTorque = IsRunning and GearedPower * InvClutch or 0
+	selfTbl.EngineTorque = IsRunning and GearedPower * InvClutch or 0
 
 	if not self:GetDoNotStall() then
 		if IsRunning then
-			if selftable.EngineRPM <= IdleRPM * 0.2 then
-				selftable.CurrentGear = 2
+			if selfTbl.EngineRPM <= IdleRPM * 0.2 then
+				selfTbl.CurrentGear = 2
 				self:StallAndRestart()
 			end
 		end
 	end
 
 	if simfphys.Fuel then
-		local FuelUse = (Throttle * 0.3 + 0.7) * ((selftable.EngineRPM / LimitRPM) * MaxTorque + selftable.Torque) / 1500000
+		local FuelUse = (Throttle * 0.3 + 0.7) * ((selfTbl.EngineRPM / LimitRPM) * MaxTorque + selfTbl.Torque) / 1500000
 		local Fuel = self:GetFuel()
 		self:SetFuel( Fuel - FuelUse * (1 / simfphys.FuelMul) )
 
-		selftable.UsedFuel = selftable.UsedFuel and (selftable.UsedFuel + FuelUse) or 0
-		selftable.CheckUse = selftable.CheckUse or 0
-		if selftable.CheckUse < CurTime() then
-			selftable.CheckUse = CurTime() + 1
-			self:SetFuelUse( selftable.UsedFuel * 60 )
-			selftable.UsedFuel = 0
+		selfTbl.UsedFuel = selfTbl.UsedFuel and (selfTbl.UsedFuel + FuelUse) or 0
+		selfTbl.CheckUse = selfTbl.CheckUse or 0
+		if selfTbl.CheckUse < CurTime() then
+			selfTbl.CheckUse = CurTime() + 1
+			self:SetFuelUse( selfTbl.UsedFuel * 60 )
+			selfTbl.UsedFuel = 0
 		end
 
 		if Fuel <= 0 and IsRunning then
@@ -142,12 +142,12 @@ function ENT:SimulateEngine(IdleRPM,LimitRPM,Powerbandstart,Powerbandend,c_time)
 		self:SetFuelUse( -1 )
 	end
 
-	local ReactionForce = (selftable.EngineTorque * 2 - math.Clamp(selftable.ForwardSpeed,-selftable.Brake,selftable.Brake)) * selftable.DriveWheelsOnGround
+	local ReactionForce = (selfTbl.EngineTorque * 2 - math.Clamp(selfTbl.ForwardSpeed,-selfTbl.Brake,selfTbl.Brake)) * selfTbl.DriveWheelsOnGround
 	local BaseMassCenter = PObj:GetMassCenter()
 	local dt_mul = math.max( math.min(self:GetPowerDistribution() + 0.5,1),0)
 
-	PObj:ApplyForceOffset( -selftable.Forward * selftable.Mass * ReactionForce, BaseMassCenter + selftable.Up * dt_mul )
-	PObj:ApplyForceOffset( selftable.Forward * selftable.Mass * ReactionForce, BaseMassCenter - selftable.Up * dt_mul )
+	PObj:ApplyForceOffset( -selfTbl.Forward * selfTbl.Mass * ReactionForce, BaseMassCenter + selfTbl.Up * dt_mul )
+	PObj:ApplyForceOffset( selfTbl.Forward * selfTbl.Mass * ReactionForce, BaseMassCenter - selfTbl.Up * dt_mul )
 end
 
 function ENT:SimulateTransmission(k_throttle,k_brake,k_fullthrottle,k_clutch,k_handbrake,k_gearup,k_geardown,isauto,IdleRPM,Powerbandstart,Powerbandend,shiftmode,cruisecontrol,curtime)
@@ -320,6 +320,7 @@ function ENT:LogicWheelPos( index )
 end
 
 function ENT:SimulateWheels(k_clutch,LimitRPM)
+	local selfTbl = self:GetTable()
 	local Steer = self:GetTransformedDirection()
 	local MaxGrip = self:GetMaxTraction()
 	local Efficiency = self:GetEfficiency()

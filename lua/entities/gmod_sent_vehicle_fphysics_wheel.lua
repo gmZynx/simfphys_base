@@ -140,6 +140,7 @@ if SERVER then
 	end
 
 	function ENT:WheelFx()
+		local selfTbl = self:GetTable()
 		local ForwardSpeed = math.abs( self:GetSpeed() )
 		local SkidSound = FastClamp( self:GetSkidSound(), 0, 255 )
 		local Speed = self:GetVelocity():Length()
@@ -256,9 +257,9 @@ if SERVER then
 					selftable.Skid_Dirt = CreateSound(self, selftable.snd_skid_dirt)
 					selftable.Skid_Dirt:PlayEx(0,0)
 				elseif Material == "ice" then
-					self.Skid_Grass:Stop()
-					self.Skid_Dirt:Stop()
-					self.Skid:Stop()
+					selfTbl.Skid_Grass:Stop()
+					selfTbl.Skid_Dirt:Stop()
+					selfTbl.Skid:Stop()
 				else
 					selftable.Skid = CreateSound(self, selftable.snd_skid)
 					selftable.Skid:PlayEx(0,0)
