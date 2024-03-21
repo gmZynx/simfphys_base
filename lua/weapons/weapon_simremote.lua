@@ -139,7 +139,6 @@ function SWEP:Enable()
 				ply:ChatPrint("vehicle is locked")
 			else
 				self:SetActive( true )
-				self.OldMoveType = ply:GetMoveType()
 
 				ply:SetMoveType( MOVETYPE_NONE )
 				ply:DrawViewModel( false )
@@ -156,11 +155,7 @@ function SWEP:Disable()
 	local car = self:GetCar()
 
 	if self:GetActive() then
-		if self.OldMoveType then
-	    		ply:SetMoveType( self.OldMoveType )
-		else
-	    		ply:SetMoveType( MOVETYPE_WALK )
-		end
+		ply:SetMoveType( MOVETYPE_WALK )
 	end
 
 	self:SetActive( false )
