@@ -24,11 +24,11 @@ SWEP.Secondary.Automatic		= false
 SWEP.Secondary.Ammo		= "none"
 
 function SWEP:SetupDataTables()
-	self:NetworkVar( "Entity",0, "Car" )
-	self:NetworkVar( "Bool",0, "Active" )
+	self:NetworkVar( "Entity", 0, "Car" )
+	self:NetworkVar( "Bool", 0, "Active" )
 end
 
-if (CLIENT) then
+if CLIENT then
 	SWEP.PrintName		= "Remote Controller"
 	SWEP.Purpose			= "remote controls simfphys vehicles"
 	SWEP.Instructions		= "Left-Click on a simfphys car to link. Press the Use-Key to start remote controlling."
@@ -43,18 +43,15 @@ if (CLIENT) then
 		if IsValid( ply ) and IsValid( weapon ) then
 			if ply:InVehicle() then return end
 
-			if weapon:GetClass() == "weapon_simremote" then
-				if not weapon:GetActive() then
-					local car = weapon:GetCar()
+			if weapon:GetClass() == "weapon_simremote" and not weapon:GetActive()  then
+				local car = weapon:GetCar()
 
-					if IsValid( car ) then
-						halo.Add( {car}, Color( 0, 127, 255 ) )
-					end
+				if IsValid( car ) then
+					halo.Add( { car }, Color( 0, 127, 255 ) )
 				end
 			end
 		end
 	end )
-
 
 	function SWEP:PrimaryAttack()
 		if self:GetActive() then return false end
@@ -64,7 +61,7 @@ if (CLIENT) then
 
 		if not simfphys.IsCar( ent ) then return false end
 
-		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
+		self:EmitSound( "Weapon_Pistol.Empty" )
 
 		return true
 	end
@@ -72,7 +69,7 @@ if (CLIENT) then
 	function SWEP:SecondaryAttack()
 		if self:GetActive() then return false end
 
-		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
+		self:EmitSound( "Weapon_Pistol.Empty" )
 
 		return true
 	end
@@ -81,7 +78,7 @@ if (CLIENT) then
 end
 
 function SWEP:Initialize()
-	self.Weapon:SetHoldType( self.HoldType )
+	self:SetHoldType( self.HoldType )
 end
 
 function SWEP:OwnerChanged()
@@ -97,6 +94,12 @@ function SWEP:Think()
 	end
 end
 
+local function canControl( ply, car )
+	if CPPI and not car:CPPICanTool( ply, "weapon_simremote" ) then return false end
+
+	return true
+end
+
 function SWEP:PrimaryAttack()
 	if self:GetActive() then return false end
 
@@ -105,10 +108,11 @@ function SWEP:PrimaryAttack()
 	local ent = trace.Entity
 
 	if not simfphys.IsCar( ent ) then return false end
+	if not canControl( ply, ent ) then return false end
 
 	self:SetCar( ent )
 
-	ply:ChatPrint("Remote Controller linked.")
+	ply:ChatPrint( "Remote Controller linked." )
 
 	return true
 end
@@ -118,7 +122,7 @@ function SWEP:SecondaryAttack()
 
 	if IsValid( self:GetCar() ) then
 		self:SetCar( NULL )
-		self:GetOwner():ChatPrint("Remote Controller unlinked.")
+		self:GetOwner():ChatPrint( "Remote Controller unlinked." )
 
 		return true
 	end
@@ -133,10 +137,10 @@ function SWEP:Enable()
 
 		local ply = self:GetOwner()
 		if IsValid( car:GetDriver() ) then
-			ply:ChatPrint("vehicle is already in use")
+			ply:ChatPrint( "Vehicle is already in use." )
 		else
 			if car:GetIsVehicleLocked() then
-				ply:ChatPrint("vehicle is locked")
+				ply:ChatPrint( "Vehicle is locked." )
 			else
 				self:SetActive( true )
 
@@ -168,7 +172,7 @@ function SWEP:Disable()
 end
 
 function SWEP:Deploy()
-	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
+	self:SendWeaponAnim( ACT_VM_DRAW )
 	return true
 end
 
