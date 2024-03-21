@@ -171,6 +171,18 @@ function SWEP:Disable()
 	end
 end
 
+hook.Add( "simfphysOnDelete", "simfphysOnDelete_remote", function( ent )
+	local driver = ent.RemoteDriver
+	if not driver then return end
+
+	local ply = ent.RemoteDriver
+	local weapon = ply:GetActiveWeapon()
+
+	if IsValid( weapon ) and weapon:GetClass() == "weapon_simremote" then
+		weapon:Disable()
+	end
+end )
+
 function SWEP:Deploy()
 	self:SendWeaponAnim( ACT_VM_DRAW )
 	return true
