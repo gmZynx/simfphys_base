@@ -808,7 +808,7 @@ hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function( _
 
     if not vtable then return end
     for i, ent in pairs( vtable ) do
-        if IsValid( ent ) then
+        if IsValid( ent ) and not ent:IsDormant() then
             local entTable = ent:GetTable()
             if ent:GetEMSEnabled() then
                 DrawEMSLights( ent )
