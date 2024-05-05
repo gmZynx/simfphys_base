@@ -534,10 +534,12 @@ if CLIENT then
 		timer.Simple( 0.01, function()
 			if not IsValid( self ) then return end
 			self.Radius = self:BoundingRadius()
-		end)
+		end )
 	end
 
 	function ENT:Think()
+		if self:IsDormant() then return end
+
 		local curtime = CurTime()
 		local entTable = self:GetTable()
 		entTable.SmokeTimer = entTable.SmokeTimer or 0
