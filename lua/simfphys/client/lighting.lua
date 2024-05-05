@@ -803,7 +803,9 @@ hook.Add( "Think", "simfphys_lights_managment", function()
     end
 end )
 
-hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function()
+hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function( _, skybox, skybox3d )
+    if skybox or skybox3d then return end
+
     if not vtable then return end
     for i, ent in pairs( vtable ) do
         if IsValid( ent ) then
