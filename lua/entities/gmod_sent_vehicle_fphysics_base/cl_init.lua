@@ -16,6 +16,8 @@ function ENT:Initialize()
 end
 
 function ENT:Think()
+	if self:IsDormant() then return end
+
 	local selfTable = self:GetTable()
 	local curtime = CurTime()
 
