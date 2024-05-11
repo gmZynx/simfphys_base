@@ -1,6 +1,13 @@
 local function receiveppdata()
 	local ent = net.ReadEntity()
 	if not IsValid( ent ) then return end
+
+	local isCustom = net.ReadBool()
+	if isCustom then
+		ent.CustomWheels = true
+		return
+	end
+
 	ent.CustomWheels = false
 
 	local wheelFL = net.ReadEntity()

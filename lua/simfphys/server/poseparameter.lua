@@ -3,15 +3,23 @@ util.AddNetworkString( "simfphys_send_ppdata" )
 
 local function sendppdata( _, ply )
 	local ent = net.ReadEntity()
-
 	if not IsValid( ent ) then return end
 
 	if ent.IsInitialized and not ent:IsInitialized() then return end
 	if not istable( ent.Wheels ) then return end
-	if ent.CustomWheels then return end
+
+	if ent.CustomWheels then
+		net.Start( "simfphys_send_ppdata", true )
+			net.WriteEntity( ent )
+			net.WriteBool( true )
+		net.Send( ply )
+
+		return
+	end
 
 	net.Start( "simfphys_send_ppdata", true )
 		net.WriteEntity( ent )
+		net.WriteBool( false )
 
 		net.WriteEntity( ent.Wheels[1] )
 		net.WriteFloat( ent.posepositions.PoseL_Pos_FL.z )
