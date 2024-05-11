@@ -82,12 +82,12 @@ function ENT:SetPoseParameters( curtime )
 
 	if not istable( selfTable.pp_data ) then
 		selfTable.ppNextCheck = selfTable.ppNextCheck or curtime + 0.5
-		if selfTable.ppNextCheck < curtime then
+		if selfTable.ppNextCheck < curtime and not selfTable.CustomWheels then
 			selfTable.ppNextCheck = curtime + 0.5
 
-			-- net.Start("simfphys_request_ppdata",true)
-			-- 	net.WriteEntity( self )
-			-- net.SendToServer()
+			net.Start( "simfphys_request_ppdata", true )
+				net.WriteEntity( self )
+			net.SendToServer()
 		end
 	else
 		if not selfTable.CustomWheels then
