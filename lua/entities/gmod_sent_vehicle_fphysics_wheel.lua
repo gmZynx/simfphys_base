@@ -230,7 +230,7 @@ if SERVER then
 			if PlaySound ~= self.OldPlaySound then
 				self.OldPlaySound = PlaySound
 				if PlaySound then
-					self.RollSound_Broken:Play()
+					self.RollSound_Broken:PlayEx(0,0)
 				else
 					self.RollSound_Broken:Stop()
 				end
@@ -277,7 +277,7 @@ if SERVER then
 						selfTbl.WheelDust:Fire( "Start" )
 					end
 					selfTbl.RollSound_Grass = CreateSound(self, selfTbl.snd_roll_grass)
-					selfTbl.RollSound_Grass:Play()
+					selfTbl.RollSound_Grass:PlayEx(0,0)
 					selfTbl.RollSound_Dirt:Stop()
 					selfTbl.RollSound:Stop()
 				elseif Material == "dirt" or Material == "sand" then
@@ -285,14 +285,14 @@ if SERVER then
 						selfTbl.WheelDust:Fire( "Start" )
 					end
 					selfTbl.RollSound_Dirt = CreateSound(self, selfTbl.snd_roll_dirt)
-					selfTbl.RollSound_Dirt:Play()
+					selfTbl.RollSound_Dirt:PlayEx(0,0)
 					selfTbl.RollSound_Grass:Stop()
 					selfTbl.RollSound:Stop()
 				else
 					selfTbl.RollSound_Grass:Stop()
 					selfTbl.RollSound_Dirt:Stop()
 					selfTbl.RollSound = CreateSound(self, selfTbl.snd_roll)
-					selfTbl.RollSound:Play()
+					selfTbl.RollSound:PlayEx(0,0)
 				end
 			else
 				if IsValid( selfTbl.WheelDust )then
@@ -311,7 +311,7 @@ if SERVER then
 						selfTbl.WheelDust:Fire( "Start" )
 					end
 					selfTbl.RollSound_Grass = CreateSound(self, selfTbl.snd_roll_grass)
-					selfTbl.RollSound_Grass:Play()
+					selfTbl.RollSound_Grass:PlayEx(0,0)
 					selfTbl.RollSound_Dirt:Stop()
 					selfTbl.RollSound:Stop()
 
@@ -321,7 +321,7 @@ if SERVER then
 					end
 					selfTbl.RollSound_Grass:Stop()
 					selfTbl.RollSound_Dirt = CreateSound(self, selfTbl.snd_roll_dirt)
-					selfTbl.RollSound_Dirt:Play()
+					selfTbl.RollSound_Dirt:PlayEx(0,0)
 					selfTbl.RollSound:Stop()
 				else
 					if IsValid(selfTbl.WheelDust) then
@@ -330,7 +330,7 @@ if SERVER then
 					selfTbl.RollSound_Grass:Stop()
 					selfTbl.RollSound_Dirt:Stop()
 					selfTbl.RollSound = CreateSound(self, selfTbl.snd_roll)
-					selfTbl.RollSound:Play()
+					selfTbl.RollSound:PlayEx(0,0)
 				end
 				selfTbl.OldMaterial = Material
 			end
@@ -354,12 +354,12 @@ if SERVER then
 				if Material == "grass" or Material == "snow" then
 					selfTbl.Skid:Stop()
 					selfTbl.Skid_Grass = CreateSound(self, selfTbl.snd_skid_grass)
-					selfTbl.Skid_Grass:Play()
+					selfTbl.Skid_Grass:PlayEx(0,0)
 					selfTbl.Skid_Dirt:Stop()
 				elseif Material == "dirt" or Material == "sand" then
 					selfTbl.Skid_Grass:Stop()
 					selfTbl.Skid_Dirt = CreateSound(self, selfTbl.snd_skid_dirt)
-					selfTbl.Skid_Dirt:Play()
+					selfTbl.Skid_Dirt:PlayEx(0,0)
 					selfTbl.Skid:Stop()
 				elseif Material == "ice" then
 					selfTbl.Skid_Grass:Stop()
@@ -367,7 +367,7 @@ if SERVER then
 					selfTbl.Skid:Stop()
 				else
 					selfTbl.Skid = CreateSound(self, selfTbl.snd_skid)
-					selfTbl.Skid:Play()
+					selfTbl.Skid:PlayEx(0,0)
 					selfTbl.Skid_Grass:Stop()
 					selfTbl.Skid_Dirt:Stop()
 				end
@@ -383,21 +383,21 @@ if SERVER then
 				if Material == "grass" or Material == "snow" then
 					selfTbl.Skid:Stop()
 					selfTbl.Skid_Grass = CreateSound(self, selfTbl.snd_skid_grass)
-					selfTbl.Skid_Grass:Play()
+					selfTbl.Skid_Grass:PlayEx(0,0)
 					selfTbl.Skid_Dirt:Stop()
 
 				elseif Material == "dirt" or Material == "sand" then
 					selfTbl.Skid:Stop()
 					selfTbl.Skid_Grass:Stop()
 					selfTbl.Skid_Dirt = CreateSound(self, selfTbl.snd_skid_dirt)
-					selfTbl.Skid_Dirt:Play()
+					selfTbl.Skid_Dirt:PlayEx(0,0)
 				elseif Material == "ice" then
 					selfTbl.Skid_Grass:Stop()
 					selfTbl.Skid_Dirt:Stop()
 					selfTbl.Skid:Stop()
 				else
 					selfTbl.Skid = CreateSound(self, selfTbl.snd_skid)
-					selfTbl.Skid:Play()
+					selfTbl.Skid:PlayEx(0,0)
 					selfTbl.Skid_Grass:Stop()
 					selfTbl.Skid_Dirt:Stop()
 				end

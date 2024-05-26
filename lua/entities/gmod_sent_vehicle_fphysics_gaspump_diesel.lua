@@ -187,7 +187,7 @@ function ENT:OnActiveChanged( name, old, new)
 			self.sound = nil
 		end
 		self.sound = CreateSound(self, "vehicles/crane/crane_idle_loop3.wav")
-		self.sound:Play()
+		self.sound:PlayEx(0,0)
 		self.sound:ChangeVolume( 0.4,2 )
 		self.sound:ChangePitch( 255,3 )
 		if IsValid( self.PumpEnt ) then
