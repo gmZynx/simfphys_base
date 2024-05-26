@@ -267,7 +267,7 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 			local Health = self:GetCurHealth()
 
 			if Health <= (MaxHealth * 0.6) then
-				selfTable.DamageSnd:PlayEx(0,0)
+				selfTable.DamageSnd:Play()
 			end
 
 			if selfTable.SoundMode == 2 then
@@ -275,9 +275,9 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 				selfTable.LowRPM = CreateSound(self, selfTable.EngineSounds[ "LowRPM" ])
 				selfTable.Idle = CreateSound(self, selfTable.EngineSounds[ "Idle" ])
 
-				selfTable.HighRPM:PlayEx(0,0)
-				selfTable.LowRPM:PlayEx(0,0)
-				selfTable.Idle:PlayEx(0,0)
+				selfTable.HighRPM:Play()
+				selfTable.LowRPM:Play()
+				selfTable.Idle:Play()
 			else
 				local IdleSound = selfTable.EngineSounds[ "IdleSound" ]
 				local LowSound = selfTable.EngineSounds[ "LowSound" ]
@@ -286,22 +286,22 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 
 				if IdleSound then
 					selfTable.Idle = CreateSound(self, IdleSound)
-					selfTable.Idle:PlayEx(0,0)
+					selfTable.Idle:Play()
 				end
 
 				if LowSound then
 					selfTable.LowRPM = CreateSound(self, LowSound)
-					selfTable.LowRPM:PlayEx(0,0)
+					selfTable.LowRPM:Play()
 				end
 
 				if HighSound then
 					selfTable.HighRPM = CreateSound(self, HighSound)
-					selfTable.HighRPM:PlayEx(0,0)
+					selfTable.HighRPM:Play()
 				end
 
 				if ThrottleSound then
 					selfTable.Valves = CreateSound(self, ThrottleSound)
-					selfTable.Valves:PlayEx(0,0)
+					selfTable.Valves:Play()
 				end
 			end
 		else
@@ -328,7 +328,7 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 								selfTable.LowRPM:Stop()
 							end
 							selfTable.LowRPM = CreateSound(self, selfTable.EngineSounds[ "RevDown" ] )
-							selfTable.LowRPM:PlayEx(0,0)
+							selfTable.LowRPM:Play()
 						end
 					end
 				end
@@ -343,7 +343,7 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 							end
 
 							selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "ShiftUpToHigh" ] )
-							selfTable.HighRPM:PlayEx(0,0)
+							selfTable.HighRPM:Play()
 
 							if selfTable.SmoothRPM > LimitRPM * 0.6 then
 								if math.random(0,4) >= 3 then
@@ -360,7 +360,7 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 								end
 
 								selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "ShiftDownToHigh" ] )
-								selfTable.HighRPM:PlayEx(0,0)
+								selfTable.HighRPM:Play()
 							end
 						end
 					end
@@ -372,7 +372,7 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 							end
 
 							selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "ShiftDownToHigh" ] )
-							selfTable.HighRPM:PlayEx(0,0)
+							selfTable.HighRPM:Play()
 						else
 							if selfTable.HighRPM then
 								selfTable.HighRPM:Stop()
@@ -384,8 +384,8 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 
 							selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "HighRPM" ] )
 							selfTable.LowRPM = CreateSound(self, selfTable.EngineSounds[ "LowRPM" ])
-							selfTable.HighRPM:PlayEx(0,0)
-							selfTable.LowRPM:PlayEx(0,0)
+							selfTable.HighRPM:Play()
+							selfTable.LowRPM:Play()
 						end
 					end
 				end

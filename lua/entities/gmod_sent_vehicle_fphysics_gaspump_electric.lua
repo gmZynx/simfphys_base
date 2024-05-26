@@ -170,7 +170,7 @@ function ENT:OnActiveChanged( name, old, new)
 			self.sound = nil
 		end
 		self.sound = CreateSound(self, "npc/scanner/combat_scan_loop6.wav")
-		self.sound:PlayEx(0,0)
+		self.sound:Play()
 		self.sound:ChangeVolume( 0.8,1 )
 		self.sound:ChangePitch( 130,2 )
 		if IsValid( self.PumpEnt ) then
