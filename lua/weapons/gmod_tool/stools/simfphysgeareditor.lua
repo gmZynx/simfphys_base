@@ -42,19 +42,16 @@ function TOOL:LeftClick( trace )
 
 	if not simfphys.IsCar( ent ) then return false end
 
-	if (SERVER) then
-		local vname = ent:GetSpawn_List()
-		local VehicleList = list.Get( "simfphys_vehicles" )[vname]
-
-		local gears = {math.Clamp(self:GetClientNumber( "gear_r" ), -5, -0.001),0}
+	if SERVER then
+		local gears = { math.Clamp(self:GetClientNumber( "gear_r" ), -5, -0.01 ), 0 }
 		local gearCount = math.Clamp( self:GetClientNumber( "numgears" ), 1, 12 )
 		for i = 1, gearCount do
 			local index = i + 2
-			gears[index] = math.Clamp( self:GetClientNumber( "gear_"..i ), 0.001, 5)
+			gears[index] = math.Clamp( self:GetClientNumber( "gear_" .. i ), 0.01, 5 )
 		end
 
-		SetGears(self:GetOwner(), ent, gears )
-		ent:SetDifferentialGear( math.Clamp( self:GetClientNumber( "gear_diff" ),0.2,6 ) )
+		SetGears( self:GetOwner(), ent, gears )
+		ent:SetDifferentialGear( math.Clamp( self:GetClientNumber( "gear_diff" ), 0.2, 6 ) )
 
 		if tobool( self:GetClientInfo( "forcetype" ) ) then
 			ent.ForceTransmission =  math.Clamp( self:GetClientNumber( "type" ), 1, 2 )
@@ -66,23 +63,19 @@ function TOOL:LeftClick( trace )
 	return true
 end
 
-
 function TOOL:RightClick( trace )
 	local ent = trace.Entity
 	local ply = self:GetOwner()
 
 	if not simfphys.IsCar( ent ) then return false end
 
-	if (SERVER) then
-		local vname = ent:GetSpawn_List()
-		local VehicleList = list.Get( "simfphys_vehicles" )[vname]
-
+	if SERVER then
 		local gears = ent.Gears
 		local diffgear = ent:GetDifferentialGear()
 		local num = table.Count( gears ) - 2
 
 		for i = 3, 13 do
-			ply:ConCommand( "simfphysgeareditor_gear_"..(i - 2).." "..(gears[i] or 0.001))
+			ply:ConCommand( "simfphysgeareditor_gear_"..(i - 2).." "..(gears[i] or 0.01))
 		end
 		ply:ConCommand( "simfphysgeareditor_gear_r "..gears[1])
 		ply:ConCommand( "simfphysgeareditor_numgears "..num)
@@ -159,7 +152,7 @@ function TOOL.BuildCPanel( panel )
 			local g_slider = vgui.Create( "DNumSlider", Frame)
 			g_slider:SetPos( 5, yy )
 			g_slider:SetSize( 275, 40 )
-			g_slider:SetMin( 0.001 )
+			g_slider:SetMin( 0.01 )
 			g_slider:SetMax( 5 )
 			g_slider:SetDecimals( 3 )
 			g_slider:SetConVar( "simfphysgeareditor_gear_"..i )
@@ -178,7 +171,7 @@ function TOOL.BuildCPanel( panel )
 		g_slider:SetPos( 5, yy )
 		g_slider:SetSize( 275, 40 )
 		g_slider:SetMin( -5 )
-		g_slider:SetMax( -0.001 )
+		g_slider:SetMax( -0.01 )
 		g_slider:SetDecimals( 3 )
 		g_slider:SetConVar( "simfphysgeareditor_gear_r" )
 
@@ -192,7 +185,7 @@ function TOOL.BuildCPanel( panel )
 		local g_slider = vgui.Create( "DNumSlider", Frame)
 		g_slider:SetPos( 5, yy )
 		g_slider:SetSize( 275, 40 )
-		g_slider:SetMin( 0.001 )
+		g_slider:SetMin( 0.01 )
 		g_slider:SetMax( 5 )
 		g_slider:SetDecimals( 3 )
 		g_slider:SetConVar( "simfphysgeareditor_gear_diff" )
