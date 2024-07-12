@@ -36,23 +36,6 @@ if CLIENT then
 	SWEP.Slot				= 1
 	SWEP.SlotPos			= 10
 
-	hook.Add( "PreDrawHalos", "s_remote_halos", function()
-		local ply = LocalPlayer()
-		local weapon = ply:GetActiveWeapon()
-
-		if IsValid( ply ) and IsValid( weapon ) then
-			if ply:InVehicle() then return end
-
-			if weapon:GetClass() == "weapon_simremote" and not weapon:GetActive()  then
-				local car = weapon:GetCar()
-
-				if IsValid( car ) then
-					halo.Add( { car }, Color( 0, 127, 255 ) )
-				end
-			end
-		end
-	end )
-
 	function SWEP:PrimaryAttack()
 		if self:GetActive() then return false end
 
@@ -72,6 +55,33 @@ if CLIENT then
 		self:EmitSound( "Weapon_Pistol.Empty" )
 
 		return true
+	end
+
+	function SWEP:Think()
+		if self.HasHaloHook then return end
+		self.HasHaloHook = true
+
+		hook.Add( "PreDrawHalos", "simfphys_remote_halos", function()
+			local ply = LocalPlayer()
+			local weapon = ply:GetActiveWeapon()
+			if weapon:GetClass() ~= "weapon_simremote" then
+				hook.Remove( "PreDrawHalos", "simfphys_remote_halos" )
+				self.HasHaloHook = nil
+				return
+			end
+
+			if IsValid( weapon ) then
+				if ply:InVehicle() then return end
+
+				if not weapon:GetActive() then
+					local car = weapon:GetCar()
+
+					if IsValid( car ) then
+						halo.Add( { car }, Color( 0, 127, 255 ) )
+					end
+				end
+			end
+		end )
 	end
 
 	return
@@ -154,7 +164,6 @@ function SWEP:Enable()
 end
 
 function SWEP:Disable()
-
 	local ply = self:GetOwner()
 	local car = self:GetCar()
 
