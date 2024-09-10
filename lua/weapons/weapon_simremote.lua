@@ -152,6 +152,7 @@ function SWEP:Enable()
 			if car:GetIsVehicleLocked() then
 				ply:ChatPrint( "Vehicle is locked." )
 			else
+				self.UsingPlayer = ply
 				self:SetActive( true )
 
 				ply:SetMoveType( MOVETYPE_NONE )
@@ -164,16 +165,16 @@ function SWEP:Enable()
 end
 
 function SWEP:Disable()
-	local ply = self:GetOwner()
+	local ply = self.UsingPlayer
 	local car = self:GetCar()
 
-	if self:GetActive() then
+	if self:GetActive() and IsValid( ply ) then
 		ply:SetMoveType( MOVETYPE_WALK )
+		ply:DrawViewModel( true )
 	end
 
 	self:SetActive( false )
 	self.OldMoveType = nil
-	ply:DrawViewModel( true )
 
 	if IsValid( car ) then
 		car.RemoteDriver = nil
