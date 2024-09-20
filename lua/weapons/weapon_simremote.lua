@@ -64,7 +64,7 @@ if CLIENT then
 		hook.Add( "PreDrawHalos", "simfphys_remote_halos", function()
 			local ply = LocalPlayer()
 			local weapon = ply:GetActiveWeapon()
-			if weapon:GetClass() ~= "weapon_simremote" then
+			if not weapon:IsValid() or weapon:GetClass() ~= "weapon_simremote" then
 				hook.Remove( "PreDrawHalos", "simfphys_remote_halos" )
 				self.HasHaloHook = nil
 				return
