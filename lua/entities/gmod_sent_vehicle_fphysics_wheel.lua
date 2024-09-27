@@ -402,7 +402,7 @@ if CLIENT then
 		timer.Simple( 0.01, function()
 			if not self:IsValid() then return end
 			self.Radius = self:BoundingRadius()
-		end)
+		end )
 	end
 
 	function ENT:Think()

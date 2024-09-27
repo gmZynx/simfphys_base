@@ -42,6 +42,22 @@ simfphys.pDamageEnabled = GetConVar( "sv_simfphys_playerdamage" ):GetBool()
 simfphys.Fuel = GetConVar( "sv_simfphys_fuel" ):GetBool()
 simfphys.FuelMul = GetConVar( "sv_simfphys_fuelscale" ):GetFloat()
 
+if not simfphys.Fuel then
+	local simfphysFuelSents = {
+		gmod_sent_vehicle_fphysics_gaspump = true,
+		gmod_sent_vehicle_fphysics_gaspump_electric = true,
+		gmod_sent_vehicle_fphysics_gaspump_diesel = true,
+		weapon_simfillerpistol = true
+	}
+	hook.Add( "PreRegisterSENT", "simfphys_RemoveFuelSents", function( _, class )
+		if simfphysFuelSents[class] then return false end
+	end )
+
+	hook.Add( "PreRegisterSWEP", "simfphys_RemoveFuelSents", function( _, class )
+		if simfphysFuelSents[class] then return false end
+	end )
+end
+
 simfphys.ice = CreateConVar( "sv_simfphys_traction_ice", "0.35", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 simfphys.gmod_ice = CreateConVar( "sv_simfphys_traction_gmod_ice", "0.1", {FCVAR_REPLICATED , FCVAR_ARCHIVE})
 simfphys.snow = CreateConVar( "sv_simfphys_traction_snow", "0.7", {FCVAR_REPLICATED , FCVAR_ARCHIVE})

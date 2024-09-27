@@ -24,30 +24,17 @@ SWEP.Secondary.Automatic		= false
 SWEP.Secondary.Ammo		= "none"
 
 function SWEP:SetupDataTables()
-	self:NetworkVar( "Entity",0, "Car" )
-	self:NetworkVar( "Bool",0, "Active" )
+	self:NetworkVar( "Entity", 0, "Car" )
+	self:NetworkVar( "Bool", 0, "Active" )
 end
 
-if (CLIENT) then
+if CLIENT then
 	SWEP.PrintName		= "Remote Controller"
 	SWEP.Purpose			= "remote controls simfphys vehicles"
 	SWEP.Instructions		= "Left-Click on a simfphys car to link. Press the Use-Key to start remote controlling."
 	SWEP.Author			= "Blu"
 	SWEP.Slot				= 1
 	SWEP.SlotPos			= 10
-	
-	local color_blue = Color( 0, 127, 255 )
-	hook.Add( "PreDrawHalos", "s_remote_halos", function()
-		local ply = LocalPlayer()
-		if ply:IsValid() and not ply:InVehicle() then
-			local weapon = ply:GetActiveWeapon()
-			if weapon:IsValid() and weapon:GetClass() == "weapon_simremote" and not weapon:GetActive() then	
-				local car = weapon:GetCar()
-				if car:IsValid() then halo.Add( { car }, color_blue ) end
-			end
-		end
-	end )
-
 
 	function SWEP:PrimaryAttack()
 		if self:GetActive() then return false end
@@ -57,7 +44,7 @@ if (CLIENT) then
 
 		if not simfphys.IsCar( ent ) then return false end
 
-		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
+		self:EmitSound( "Weapon_Pistol.Empty" )
 
 		return true
 	end
@@ -65,16 +52,43 @@ if (CLIENT) then
 	function SWEP:SecondaryAttack()
 		if self:GetActive() then return false end
 
-		self.Weapon:EmitSound( "Weapon_Pistol.Empty" )
+		self:EmitSound( "Weapon_Pistol.Empty" )
 
 		return true
+	end
+
+	function SWEP:Think()
+		if self.HasHaloHook then return end
+		self.HasHaloHook = true
+
+		hook.Add( "PreDrawHalos", "simfphys_remote_halos", function()
+			local ply = LocalPlayer()
+			local weapon = ply:GetActiveWeapon()
+			if not weapon:IsValid() or weapon:GetClass() ~= "weapon_simremote" then
+				hook.Remove( "PreDrawHalos", "simfphys_remote_halos" )
+				self.HasHaloHook = nil
+				return
+			end
+
+			if IsValid( weapon ) then
+				if ply:InVehicle() then return end
+
+				if not weapon:GetActive() then
+					local car = weapon:GetCar()
+
+					if IsValid( car ) then
+						halo.Add( { car }, Color( 0, 127, 255 ) )
+					end
+				end
+			end
+		end )
 	end
 
 	return
 end
 
 function SWEP:Initialize()
-	self.Weapon:SetHoldType( self.HoldType )
+	self:SetHoldType( self.HoldType )
 end
 
 function SWEP:OwnerChanged()
@@ -90,6 +104,12 @@ function SWEP:Think()
 	end
 end
 
+local function canControl( ply, car )
+	if CPPI and not car:CPPICanTool( ply, "weapon_simremote" ) then return false end
+
+	return true
+end
+
 function SWEP:PrimaryAttack()
 	if self:GetActive() then return false end
 
@@ -98,10 +118,11 @@ function SWEP:PrimaryAttack()
 	local ent = trace.Entity
 
 	if not simfphys.IsCar( ent ) then return false end
+	if not canControl( ply, ent ) then return false end
 
 	self:SetCar( ent )
 
-	ply:ChatPrint("Remote Controller linked.")
+	ply:ChatPrint( "Remote Controller linked." )
 
 	return true
 end
@@ -111,7 +132,7 @@ function SWEP:SecondaryAttack()
 	
 	if self:GetCar():IsValid() then
 		self:SetCar( NULL )
-		self:GetOwner():ChatPrint("Remote Controller unlinked.")
+		self:GetOwner():ChatPrint( "Remote Controller unlinked." )
 
 		return true
 	end
@@ -128,10 +149,10 @@ function SWEP:Enable()
 			ply:ChatPrint("vehicle is already in use")
 		else
 			if car:GetIsVehicleLocked() then
-				ply:ChatPrint("vehicle is locked")
+				ply:ChatPrint( "Vehicle is locked." )
 			else
+				self.UsingPlayer = ply
 				self:SetActive( true )
-				self.OldMoveType = ply:GetMoveType()
 
 				ply:SetMoveType( MOVETYPE_NONE )
 				ply:DrawViewModel( false )
@@ -143,16 +164,12 @@ function SWEP:Enable()
 end
 
 function SWEP:Disable()
-
-	local ply = self:GetOwner()
+	local ply = self.UsingPlayer
 	local car = self:GetCar()
 
-	if self:GetActive() then
-		if self.OldMoveType then
-	    		ply:SetMoveType( self.OldMoveType )
-		else
-	    		ply:SetMoveType( MOVETYPE_WALK )
-		end
+	if self:GetActive() and IsValid( ply ) then
+		ply:SetMoveType( MOVETYPE_WALK )
+		ply:DrawViewModel( true )
 	end
 
 	self:SetActive( false )
@@ -164,8 +181,20 @@ function SWEP:Disable()
 	end
 end
 
+hook.Add( "simfphysOnDelete", "simfphysOnDelete_remote", function( ent )
+	local driver = ent.RemoteDriver
+	if not driver then return end
+
+	local ply = ent.RemoteDriver
+	local weapon = ply:GetActiveWeapon()
+
+	if IsValid( weapon ) and weapon:GetClass() == "weapon_simremote" then
+		weapon:Disable()
+	end
+end )
+
 function SWEP:Deploy()
-	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
+	self:SendWeaponAnim( ACT_VM_DRAW )
 	return true
 end
 

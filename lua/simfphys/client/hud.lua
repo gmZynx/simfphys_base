@@ -489,6 +489,9 @@ local function drawsimfphysHUD(vehicle, SeatCount)
 		draw.RoundedBox(8, s_xpos + o_x, s_ypos + o_y, sizex * 0.118, sizey * 0.075, color_black_trans2)
 	end
 
+	local color_cruisecontrol_orange = Color( 255, 127, 0, 255 )
+	local color_cruisecontrol_yellow = Color( 255, 235, 0, 255 )
+
 	if cruisecontrol then
 		draw.SimpleText("cruise", "simfphysfont", s_xpos + sizex * 0.115 + o_x, s_ypos + sizey * 0.035 + o_y, color_orange, 2, 1)
 	end
@@ -652,9 +655,9 @@ local function PaintSeatSwitcher(ent, pSeats, SeatCount)
 		yPos = y + radius * 1.2 - (SeatCount + 1) * 30 - 10 + hudoffset_y * screenh
 	end
 
-	for _, Pod in pairs(pSeats) do
-		local I = Pod:GetNWInt("pPodIndex", -1)
-
+	for _, Pod in pairs( pSeats ) do
+        if not IsValid( Pod ) then continue end
+		local I = Pod:GetNWInt( "pPodIndex", -1 )
 		if I >= 0 then
 			if I == MySeat then
 				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(127, 0, 0, 100 + 50 * smHider))

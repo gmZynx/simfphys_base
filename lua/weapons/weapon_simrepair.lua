@@ -37,7 +37,7 @@ if (CLIENT) then
 end
 
 function SWEP:Initialize()
-	self.Weapon:SetHoldType( self.HoldType )
+	self:SetHoldType( self.HoldType )
 end
 
 function SWEP:OwnerChanged()
@@ -47,7 +47,7 @@ function SWEP:Think()
 end
 
 function SWEP:PrimaryAttack()
-	self.Weapon:SetNextPrimaryFire( CurTime() + 0.1 )
+	self:SetNextPrimaryFire( CurTime() + 0.1 )
 	local Owner = self:GetOwner()
 	local Trace = Owner:GetEyeTrace()
 	local ent = Trace.Entity
@@ -62,7 +62,7 @@ function SWEP:PrimaryAttack()
 		local Dist = (Trace.HitPos - Owner:GetPos()):Length()
 
 		if (Dist <= 100) then
-			self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
+			self:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
 			Owner:SetAnimation( PLAYER_ATTACK1 )
 
 			if (SERVER) then
@@ -70,7 +70,7 @@ function SWEP:PrimaryAttack()
 				local Health = ent:GetCurHealth()
 
 				if Health < MaxHealth then
-					local NewHealth = math.min(Health + 30,MaxHealth)
+					local NewHealth = math.min( Health + 150, MaxHealth )
 
 					if NewHealth > (MaxHealth * 0.6) then
 						ent:SetOnFire( false )
@@ -97,7 +97,7 @@ function SWEP:PrimaryAttack()
 						effect:Fire( "SparkOnce" )
 						effect:Fire("kill","",0.08)
 				else
-					self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 )
+					self:SetNextPrimaryFire( CurTime() + 0.5 )
 
 					sound.Play(Sound( "hl1/fvox/beep.wav" ), self:GetPos(), 75)
 
@@ -124,8 +124,8 @@ function SWEP:PrimaryAttack()
 	elseif IsWheel then
 		local Dist = (Trace.HitPos - Owner:GetPos()):Length()
 
-		if (Dist <= 100) then
-			self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
+		if Dist <= 100 then
+			self:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
 			Owner:SetAnimation( PLAYER_ATTACK1 )
 
 			if (SERVER) then
@@ -144,7 +144,7 @@ function SWEP:PrimaryAttack()
 						effect:Fire( "SparkOnce" )
 						effect:Fire("kill","",0.08)
 				else
-					self.Weapon:SetNextPrimaryFire( CurTime() + 0.5 )
+					self:SetNextPrimaryFire( CurTime() + 0.5 )
 
 					sound.Play(Sound( "hl1/fvox/beep.wav" ), self:GetPos(), 75)
 				end
@@ -193,7 +193,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Deploy()
-	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
+	self:SendWeaponAnim( ACT_VM_DRAW )
 	return true
 end
 
