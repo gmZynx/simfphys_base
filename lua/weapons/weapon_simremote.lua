@@ -174,7 +174,6 @@ function SWEP:Disable()
 
 	self:SetActive( false )
 	self.OldMoveType = nil
-	ply:DrawViewModel( true )
 	
 	if car:IsValid() then
 		car.RemoteDriver = nil
